@@ -1,0 +1,48 @@
+version: "3"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    platform: linux/x86_64
+    restart: always
+    ports:
+      - "13306:3306"
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Seoul
+    volumes:
+      - ./db/mysql/data:/var/lib/mysql
+      - ./db/mysql/config:/etc/mysql/conf.d
+      - ./db/mysql/init:/docker-entrypoint-initdb.d
+
+  adminer:
+    container_name: adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+      - ADMINER_DESIGN=hydra  # Optional, Adminer UI theme
+      - ADMINER_PLUGINS=tables-filter tinymce  # Optional, Comma separated list of plugins to enable
+    depends_on:
+      - mysql
+
+  application:
+    container_name: application
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:8080"
+    depends_on:
+      - mysql
+
+
