@@ -1,5 +1,6 @@
 package com.example.meetup_study.user.fakeUser;
 
+import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.user.domain.ProviderType;
 import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +19,7 @@ public class FakeUserController {
 
     private final FakeUserServiceImpl fakeUserService;
     private final FakeRepository fakeUserRepository;
+    private final JwtService jwtService;
 
     @GetMapping
     public String getFakeUser() {
@@ -73,16 +77,22 @@ public class FakeUserController {
             return ResponseEntity.notFound().build();
         }
 
-        String accessToken = jwtServiceImpl.generateAccessToken(user.getEmail(), user.getId());
+        String accessToken = jwtService.generateAccessToken(user.getEmail(), user.getId());
 
-        String refreshToken = jwtServiceImpl.generateRefreshToken(user.getEmail(), user.getId());
+        String refreshToken = jwtService.generateRefreshToken(user.getEmail(), user.getId());
 
-        fakeUserServiceImpl.updateRefreshToken(user, refreshToken);
+        fakeUserService.updateRefreshToken(user, refreshToken);
 
         FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getImageUrl(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
 
 
         return ResponseEntity.ok(fakeUserDto);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> findAll() {
+        System.out.println("======\n [FakeUserController] findAll");
+        return ResponseEntity.ok(fakeUserService.findAll());
     }
 
 }
