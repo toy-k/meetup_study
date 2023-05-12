@@ -1,10 +1,12 @@
 package com.example.meetup_study.user.fakeUser;
 
+import com.example.meetup_study.user.domain.ProviderType;
+import com.example.meetup_study.user.domain.RoleType;
+import com.example.meetup_study.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -12,9 +14,75 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fakeuser")
 public class FakeUserController {
 
+    private final FakeUserServiceImpl fakeUserService;
+    private final FakeRepository fakeUserRepository;
+
     @GetMapping
     public String getFakeUser() {
         return "fakeUser";
+    }
+
+    @PostMapping
+    public String createFakeUser() {
+        log.debug("[FakeUserController] createFakeUser");
+
+        String username;
+        String imageUrl;
+        String email;
+        String description;
+
+        for(int i = 1; i<6; i++){
+            username = "fakeuser"+i;
+            imageUrl = "fakeuser"+i+"imageUrl";
+            email = "fakeuser"+i+"@fake.com";
+            description = "fakeuser"+i+"description";
+
+
+            User user = new User(username, imageUrl, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
+
+            fakeUserService.createFakeUser(user);
+
+
+        };
+        return "createFakeUser";
+    }
+    @DeleteMapping
+    public String deleteFakeUsers() {
+
+        log.debug("======\n [FakeUserController] deleteFakeUse");
+
+        for(int i=1; i<6; i++) {
+
+            User user = fakeUserRepository.findByUsername("fakeuser"+i).orElse(null);
+
+            fakeUserService.deleteFakeUser(user);
+
+        }
+
+        return "deleteFakeUsers";
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<FakeUserDto> readFakeUser(@PathVariable("username") String username) {
+
+        System.out.println("======\n [FakeUserController] readFakeUse");
+
+        User user = fakeUserRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String accessToken = jwtServiceImpl.generateAccessToken(user.getEmail(), user.getId());
+
+        String refreshToken = jwtServiceImpl.generateRefreshToken(user.getEmail(), user.getId());
+
+        fakeUserServiceImpl.updateRefreshToken(user, refreshToken);
+
+        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getImageUrl(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
+
+
+        return ResponseEntity.ok(fakeUserDto);
     }
 
 }

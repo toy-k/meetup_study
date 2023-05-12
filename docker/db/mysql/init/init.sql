@@ -6,4 +6,4 @@ ${INIT_SQL_USER}@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO
 ${INIT_SQL_USER}@'%';
 
-CREATE DATABASE mysqldb DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE meetup_study_DB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
