@@ -5,6 +5,7 @@ import com.example.meetup_study.common.domain.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class User extends BaseEntity {
 
     @Id
@@ -67,6 +69,10 @@ public class User extends BaseEntity {
         this.providerId = providerId;
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        log.debug("[User entity] updateRefreshToken");
+        this.refreshToken = refreshToken;
+    }
 
 
 }
