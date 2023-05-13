@@ -81,5 +81,16 @@ public class User extends BaseEntity {
         this.refreshToken = refreshToken;
     }
 
+    public void changeUsername(String username) {
+        this.username = username;
+    }
+
+    public void changeImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
 
 }

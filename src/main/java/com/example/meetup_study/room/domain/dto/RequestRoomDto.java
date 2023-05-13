@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RequestRoomDto {
 
+
+
     @NotBlank(message = "title은 필수 입력 값입니다.")
     private String title;
 
