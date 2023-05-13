@@ -2,12 +2,15 @@ package com.example.meetup_study.user.domain;
 
 
 import com.example.meetup_study.common.domain.BaseEntity;
+import com.example.meetup_study.joinedUser.JoinedUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Table(name = "users")
@@ -49,6 +52,10 @@ public class User extends BaseEntity {
 
     @Column(name = "refresh_token")
     private String refreshToken;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column(name="joined_user_list")
+    private List<JoinedUser> joinedUserList = new ArrayList<>();
 
 
     User(Long id, String username, String imageUrl, String email, String description) {
