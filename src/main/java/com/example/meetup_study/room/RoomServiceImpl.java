@@ -1,9 +1,12 @@
 package com.example.meetup_study.room;
 
+import com.example.meetup_study.joinedUser.JoinedUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +24,20 @@ import static java.time.LocalDateTime.now;
 public class RoomServiceImpl implements RoomService{
 
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public Optional<Room> createRoom(RequestRoomDto requestRoomDto) {
+    public Optional<Room> createRoom(RequestRoomDto requestRoomDto, Long userId) {
         Room room = roomRepository.save(new Room(requestRoomDto));
-        return Optional.ofNullable(room);
+        Optional<User> userOpt = userRepository.findById(userId);
+        if(userOpt.isPresent()){
+            JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
+            room.addJoinedUser(joinedUser);
+            return Optional.ofNullable(room);
+        }else{
+            throw new IllegalArgumentException("User가 없습니다.");
+        }
+
     }
 
     @Override
@@ -87,11 +99,6 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<RoomDto> deleteAllRooms(Long id, Long userId) {
         Optional <Room> room = roomRepository.findById(id);
         if(room.isPresent() && room.get().getHostUserId().equals(userId)) {
             roomRepository.delete(room.get());
@@ -102,6 +109,7 @@ public class RoomServiceImpl implements RoomService{
         }
     }
 
+    @Override
     public void deleteAllRooms() {
         roomRepository.deleteAll();
     }

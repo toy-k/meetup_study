@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto {
 
     @NotBlank(message = "id는 필수 입력 값입니다.")
@@ -37,6 +36,10 @@ public class UserDto {
         this.imageUrl = imageUrl;
         this.email = email;
         this.description = description;
+    }
+
+    public UserDto() {
+
     }
 
     public UserDto converToUserDto(User user) {
