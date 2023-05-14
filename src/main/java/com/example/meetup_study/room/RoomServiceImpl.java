@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class RoomServiceImpl implements RoomService{
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public Optional<Room> createRoom(RequestRoomDto requestRoomDto, Long userId) {
         Room room = roomRepository.save(new Room(requestRoomDto));
