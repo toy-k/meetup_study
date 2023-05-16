@@ -71,11 +71,9 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public void setResponseAccessToken(HttpServletResponse res, String accessToken) {
-        log.debug("[JwtServiceImpl] setResponseToken()");
+        log.debug("[JwtServiceImpl] setResponseAccessToken()");
 
-        String token = BEARER + accessToken;
-
-        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, token);
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setMaxAge(Math.toIntExact(ACCESSTOKENEXPIRATION / 1000));
         accessTokenCookie.setPath("/");
@@ -90,9 +88,7 @@ public class JwtServiceImpl implements JwtService {
     public void setResponseRefreshToken(HttpServletResponse res, String refreshToken){
         log.debug("[JwtServiceImpl] setResponseRefreshToken()");
 
-        String token = BEARER + refreshToken;
-
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, token);
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(Math.toIntExact(REFRESHTOKENEXPIRATION / 1000));
         refreshTokenCookie.setPath("/");

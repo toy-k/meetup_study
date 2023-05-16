@@ -37,8 +37,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private void loginSuccess(HttpServletResponse response, UserPrincipal customOAuth2User) {
         log.debug("[OAuth2AuthenticationSuccessHandler] loginSuccess()");
 
-        String accessToken = "Bearer " + jwtServiceImpl.generateAccessToken(customOAuth2User.getEmail(), customOAuth2User.getUserId());
-        String refreshToken = "Bearer " + jwtServiceImpl.generateRefreshToken(customOAuth2User.getEmail(), customOAuth2User.getUserId());
+        String accessToken = jwtServiceImpl.generateAccessToken(customOAuth2User.getEmail(), customOAuth2User.getUserId());
+
+        String refreshToken = jwtServiceImpl.generateRefreshToken(customOAuth2User.getEmail(), customOAuth2User.getUserId());
 
         jwtServiceImpl.setResponseAccessToken(response, accessToken);
         jwtServiceImpl.setResponseRefreshToken(response, refreshToken);
