@@ -25,7 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-      log.debug("[CustomOAuth2UserService] loadUser()");
 
         OAuth2User user =  super.loadUser(userRequest);
 
@@ -37,7 +36,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
-        log.debug("[CustomOAuth2UserService] process()");
 
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
@@ -61,7 +59,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(CustomOauth2UserInfo customOauth2UserInfo, ProviderType providerType) {
-        log.debug("[CustomOAuth2UserService] createUser()");
 
         User user = new User(
                 customOauth2UserInfo.getName(),
@@ -76,7 +73,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void updateUser(User user, CustomOauth2UserInfo customOauth2UserInfo) {
-        log.debug("[CustomOAuth2UserService] updateUser()");
 
         if(customOauth2UserInfo.getName() != null && !user.getUsername().equals(customOauth2UserInfo.getName())){
             user.changeUsername(customOauth2UserInfo.getName());

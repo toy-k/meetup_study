@@ -28,7 +28,6 @@ public class FakeUserController {
 
     @PostMapping
     public String createFakeUser() {
-        log.debug("[FakeUserController] createFakeUser");
 
         String username;
         String imageUrl;
@@ -53,7 +52,6 @@ public class FakeUserController {
     @DeleteMapping
     public String deleteFakeUsers() {
 
-        log.debug("======\n [FakeUserController] deleteFakeUse");
 
         for(int i=1; i<6; i++) {
 
@@ -69,7 +67,6 @@ public class FakeUserController {
     @GetMapping("/{username}")
     public ResponseEntity<FakeUserDto> readFakeUser(@PathVariable("username") String username) {
 
-        System.out.println("======\n [FakeUserController] readFakeUse");
 
         User user = fakeUserRepository.findByUsername(username).orElse(null);
 
@@ -91,7 +88,6 @@ public class FakeUserController {
 
     @GetMapping("/all")
     public ResponseEntity<List<User>> findAll() {
-        System.out.println("======\n [FakeUserController] findAll");
         return ResponseEntity.ok(fakeUserService.findAll());
     }
 

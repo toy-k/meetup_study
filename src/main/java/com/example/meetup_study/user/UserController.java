@@ -23,7 +23,6 @@ public class UserController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id){
-        log.debug("[UserController] findUserById()");
 
         Optional<UserDto> userDto = userService.findByIdReturnDto(id);
         if(userDto.isPresent()){
@@ -36,7 +35,6 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> findMeByToken(HttpServletRequest req){
-        log.debug("[UserController] findMeByToken()");
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -57,7 +55,6 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<UserDto> updateMe(HttpServletRequest req, @RequestBody UserDto userDto){
-        log.debug("[UserController] updateMe()");
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);

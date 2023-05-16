@@ -31,7 +31,6 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<RoomDto> createRoom(@RequestBody RequestRoomDto requestRoomDto, HttpServletRequest req){
-        log.debug("[RoomController] createRoom()");
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -50,7 +49,6 @@ public class RoomController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
-        log.debug("[RoomController] getRoom()");
 
         Optional<Room> roomOpt = roomService.getRoom(id);
         if(roomOpt.isPresent()){
@@ -63,7 +61,6 @@ public class RoomController {
 
     @GetMapping("/list")
     public ResponseEntity<List<RoomDto>> getRoomList(){
-        log.debug("[RoomController] getRoomList()");
 
         List<RoomDto> roomDtos = roomService.getRoomList();
 
@@ -73,7 +70,6 @@ public class RoomController {
 
     @GetMapping("/list/before-meetup-start")
     public ResponseEntity<List<RoomDto>> getRoomListBeforeMeetupStart(){
-        log.debug("[RoomController] getRoomListBeforeMeetupStart()");
 
         List<RoomDto> roomDtos = roomService.getRoomListBeforeMeetupStart();
 
@@ -83,7 +79,6 @@ public class RoomController {
 
     @GetMapping("/list/after-meetup-start")
     public ResponseEntity<List<RoomDto>> getRoomListAfterMeetupStart(){
-        log.debug("[RoomController] getRoomListAfterMeetupStart()");
 
         List<RoomDto> roomDtos = roomService.getRoomListAfterMeetupStart();
 
@@ -93,7 +88,6 @@ public class RoomController {
 
     @PutMapping()
     public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto RoomDto, HttpServletRequest req){
-        log.debug("[RoomController] updateRoom()");
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -115,7 +109,6 @@ public class RoomController {
 
     @DeleteMapping
     public ResponseEntity<RoomDto> deleteRoom(@RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
-        log.debug("[RoomController] deleteRoom()");
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
