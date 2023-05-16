@@ -3,10 +3,14 @@ package com.example.meetup_study.auth.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -99,12 +103,54 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public Optional<String> extractToken(HttpServletRequest req) {
+    public Optional<String> extractAccessToken(HttpServletRequest req) {
         log.debug("[JwtServiceImpl] extractAccessToken()");
+        try{
+            return Optional.ofNullable(req.getHeader(ACCESSTOKENHEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.substring(BEARER.length()));
+        } catch (SecurityException e) {
+            log.info("Invalid JWT signature.");
+            throw new JwtException("잘못된 JWT 시그니처");
+        } catch (MalformedJwtException e) {
+            log.info("Invalid JWT token.");
+            throw new JwtException("유효하지 않은 JWT 토큰");
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+            throw new JwtException("토큰 기한 만료");
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token.");
+            throw new JwtException("지원되지 않는 JWT 토큰");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT token compact of handler are invalid.");
+            throw new JwtException("JWT token compact of handler are invalid.");
+        }
+    }
 
-        return Optional.ofNullable(req.getHeader(ACCESSTOKENHEADER))
-                .filter(token -> token.startsWith(BEARER))
-                .map(token -> token.substring(BEARER.length()));
+    @Override
+    public Optional<String> extractRefreshToken(HttpServletRequest req) {
+        log.debug("[JwtServiceImpl] extractRefreshToken()");
+
+        try {
+            return Optional.ofNullable(req.getHeader(REFRESHTOKENHEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.substring(BEARER.length()));
+        } catch (SecurityException e) {
+            log.info("Invalid JWT signature.");
+            throw new JwtException("잘못된 JWT 시그니처");
+        } catch (MalformedJwtException e) {
+            log.info("Invalid JWT token.");
+            throw new JwtException("유효하지 않은 JWT 토큰");
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+            throw new JwtException("토큰 기한 만료");
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token.");
+            throw new JwtException("지원되지 않는 JWT 토큰");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT token compact of handler are invalid.");
+            throw new JwtException("JWT token compact of handler are invalid.");
+        }
     }
 
     @Override
@@ -157,8 +203,21 @@ public class JwtServiceImpl implements JwtService {
                     .build()
                     .verify(accessToken);
             return true;
-        }catch (Exception e){
-            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        } catch (SecurityException e) {
+            log.error("Invalid JWT signature.");
+            throw new JwtException("잘못된 JWT 시그니처 입니다.");
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token.");
+            throw new JwtException("유효하지 않은 JWT 토큰 입니다.");
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token.");
+            throw new JwtException("토큰 기한 만료 입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token.");
+            throw new JwtException("지원되지 않는 JWT 토큰 입니다.");
+        } catch (IllegalArgumentException e) {
+            log.error("JWT token compact of handler are invalid.");
+            throw new JwtException("유효하지 않은 JWT 토큰 형식입니다.");
         }
     }
 
@@ -171,8 +230,21 @@ public class JwtServiceImpl implements JwtService {
                     .build()
                     .verify(refreshToken);
             return true;
-        }catch (Exception e){
-            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        } catch (SecurityException e) {
+            log.error("Invalid JWT signature.");
+            throw new JwtException("잘못된 JWT 시그니처 입니다.");
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token.");
+            throw new JwtException("유효하지 않은 JWT 토큰 입니다.");
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token.");
+            throw new JwtException("토큰 기한 만료 입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token.");
+            throw new JwtException("지원되지 않는 JWT 토큰 입니다.");
+        } catch (IllegalArgumentException e) {
+            log.error("JWT token compact of handler are invalid.");
+            throw new JwtException("유효하지 않은 JWT 토큰 형식입니다.");
         }
     }
 }

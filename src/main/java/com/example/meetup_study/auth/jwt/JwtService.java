@@ -10,7 +10,8 @@ public interface JwtService {
     String generateRefreshToken(String email, Long userId);
     void setResponseAccessToken(HttpServletResponse res, String accessToken);//acc, ref
     void setResponseRefreshToken(HttpServletResponse res, String refreshTtoken);//acc, ref
-    Optional<String> extractToken(HttpServletRequest req);
+    Optional<String> extractAccessToken(HttpServletRequest req);
+    Optional<String> extractRefreshToken(HttpServletRequest req);
     Optional<String> extractEmail(String token);
     Optional<Long> extractUserId(String token);
     void updateRefreshToken(Long id, String refreshToken);
