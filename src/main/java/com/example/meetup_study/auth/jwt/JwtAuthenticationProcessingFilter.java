@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -31,6 +32,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private String PASS_URL_5 = "/fakeuser";
     private String PASS_URL_6 = "/api/user";
     private String PASS_URL_7 = "/api/room";
+    private String PASS_URL_8 = "/test";
 
     private final String AUTHORIZATION = "Authorization";
     private final String BEARER = "Bearer ";
@@ -53,7 +55,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             reqUri.equals(PASS_URL_4) ||
             reqUri.contains(PASS_URL_5) ||
             (reqUri.contains(PASS_URL_6) && !reqUri.equals(PASS_URL_6 + "/me")) ||
-            (reqUri.contains(PASS_URL_7) && !reqUri.equals(PASS_URL_7))
+            (reqUri.contains(PASS_URL_7) && !reqUri.equals(PASS_URL_7)) ||
+            reqUri.contains(PASS_URL_8)
         ){
             log.debug("[JwtAuthenticationProcessingFilter] pass");
             filterChain.doFilter(request, response);
@@ -108,6 +111,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         String accessToken = jwtService.generateAccessToken(user.getEmail(), user.getId());
 
         req.setAttribute(AUTHORIZATION, BEARER + accessToken);
+
+        jwtService.setResponseAccessToken(res, accessToken);
 
         this.saveAuthentication(user);
     }
