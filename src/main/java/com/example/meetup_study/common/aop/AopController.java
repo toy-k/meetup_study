@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AopController {
 
 //test
+    @Timer
     @GetMapping("/test/1")
-    public void test1(){
+    public void test1() throws InterruptedException {
+        Thread.sleep(1000);
         System.out.println("test1");
     }
 
