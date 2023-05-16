@@ -47,7 +47,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateAccessToken(String email, Long userId) {
-        log.debug("[JwtServiceImpl] generateToken()");
 
         Date now = new Date();
 
@@ -61,7 +60,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateRefreshToken(String email, Long userId) {
-        log.debug("[JwtServiceImpl] generateRefreshToken()");
 
         Date now = new Date();
 
@@ -75,7 +73,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public void setResponseAccessToken(HttpServletResponse res, String accessToken) {
-        log.debug("[JwtServiceImpl] setResponseAccessToken()");
 
         Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
         accessTokenCookie.setHttpOnly(true);
@@ -90,7 +87,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public void setResponseRefreshToken(HttpServletResponse res, String refreshToken){
-        log.debug("[JwtServiceImpl] setResponseRefreshToken()");
 
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, refreshToken);
         refreshTokenCookie.setHttpOnly(true);
@@ -104,7 +100,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Optional<String> extractAccessToken(HttpServletRequest req) {
-        log.debug("[JwtServiceImpl] extractAccessToken()");
         try{
             return Optional.ofNullable(req.getHeader(ACCESSTOKENHEADER))
                     .filter(token -> token.startsWith(BEARER))
@@ -129,7 +124,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Optional<String> extractRefreshToken(HttpServletRequest req) {
-        log.debug("[JwtServiceImpl] extractRefreshToken()");
 
         try {
             return Optional.ofNullable(req.getHeader(REFRESHTOKENHEADER))
@@ -155,7 +149,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Optional<String> extractEmail(String token) {
-        log.debug("[JwtServiceImpl] extractEmail()");
 
         try{
             return Optional.ofNullable(JWT.require(Algorithm.HMAC256(SECRETKEY))
@@ -170,7 +163,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Optional<Long> extractUserId(String token) {
-        log.debug("[JwtServiceImpl] extractUserId()");
 
         try{
             return Optional.ofNullable(JWT.require(Algorithm.HMAC256(SECRETKEY))
@@ -185,7 +177,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public void updateRefreshToken(Long id, String refreshToken) {
-        log.debug("[JwtServiceImpl] updateRefreshToken()");
 
         userRepository.findById(id)
                 .ifPresentOrElse(
@@ -196,7 +187,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isValidAccessToken(String accessToken) {
-        log.debug("[JwtServiceImpl] isValidAccessToken()");
 
         try{
             JWT.require(Algorithm.HMAC256(SECRETKEY))
@@ -223,7 +213,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isValidRefreshToken(String refreshToken) {
-        log.debug("[JwtServiceImpl] isValidRefreshToken()");
 
         try{
             JWT.require(Algorithm.HMAC256(SECRETKEY))

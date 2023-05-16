@@ -23,7 +23,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.debug("[OAuth2AuthenticationSuccessHandler] onAuthenticationSuccess()");
 
         try{
             UserPrincipal customOAuth2User = (UserPrincipal) authentication.getPrincipal();
@@ -35,7 +34,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     }
 
     private void loginSuccess(HttpServletResponse response, UserPrincipal customOAuth2User) {
-        log.debug("[OAuth2AuthenticationSuccessHandler] loginSuccess()");
 
         String accessToken = jwtServiceImpl.generateAccessToken(customOAuth2User.getEmail(), customOAuth2User.getUserId());
 

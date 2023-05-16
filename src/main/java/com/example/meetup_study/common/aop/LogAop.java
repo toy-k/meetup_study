@@ -13,8 +13,9 @@ import java.lang.reflect.Method;
 @Component
 public class LogAop {
 
-//    @Pointcut("execution(* com.example.meetup_study..*(..))")
-    @Pointcut("execution(* com.example.meetup_study..*(..)) && !within(GenericFilter.class)")
+    //com.example.meetup_study.auth 제외
+//    @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt..*(..))")
+    @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt.JwtAuthenticationProcessingFilter.*(..))")
     private void cut(){}
 
     @Before("cut()")
@@ -23,7 +24,7 @@ public class LogAop {
         String methodName = getMethodName(joinPoint);
         String className = getClassName(joinPoint);
 
-        log.info("[{}] {}()", className, methodName);
+        log.debug("aop [{}] {}()", className, methodName);
 
 
 //        Object[] args = joinPoint.getArgs();
@@ -34,17 +35,17 @@ public class LogAop {
 //        }
     }
 
-    @AfterReturning(value = "cut()", returning = "returnObj")
-    public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
-
-        String methodName = getMethodName(joinPoint);
-        String className = getClassName(joinPoint);
-
-        log.info("[{}] {}()", className, methodName);
-
-        log.info("return type = {}", returnObj.getClass().getSimpleName());
-        log.info("return value = {}", returnObj);
-    }
+//    @AfterReturning(value = "cut()", returning = "returnObj")
+//    public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
+//
+//        String methodName = getMethodName(joinPoint);
+//        String className = getClassName(joinPoint);
+//
+//        log.debug("aop [{}] {}()", className, methodName);
+//
+//        log.debug("aop return type = {}", returnObj.getClass().getSimpleName());
+//        log.debug("aop return value = {}", returnObj);
+//    }
 
 //    @AfterThrowing(value = "cut()", throwing = "exception")
 //    public void afterThrowingLog(JoinPoint joinPoint, Exception exception) {

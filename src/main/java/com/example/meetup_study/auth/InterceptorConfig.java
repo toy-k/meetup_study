@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.debug("[InterceptorConfig] addInterceptors()");
 
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/api/room/**")
