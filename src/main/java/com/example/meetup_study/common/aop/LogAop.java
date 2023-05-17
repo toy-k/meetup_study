@@ -51,8 +51,11 @@ public class LogAop {
         String methodName = getMethodName(joinPoint);
         String className = getClassName(joinPoint);
         String executeClass = joinPoint.getTarget().getClass().getSimpleName();
+        String errorMessage = "Error Message: " + exception.getMessage();
+
         String logMsg = "CLASS = [ " + className + " ]  / METHOD = [ " + methodName + "() ]" + " / EXECUTECLASS = [ " + executeClass + " ]";
-        writeLogToFile(logMsg, LogLevel.ERROR);
+
+        writeLogToFile(logMsg, LogLevel.ERROR, errorMessage);
     }
 
 
@@ -75,7 +78,19 @@ public class LogAop {
         return className;
     }
 
+    private void writeLogToFile(String logMessage, LogLevel logLevel, String errorMessage) {
+        String logFolder = LOG_DIRECTORY + LocalDate.now().format(DATE_FORMATTER);
+        createDirectoryIfNotExists(logFolder);
 
+        String logFilePath = logFolder + File.separator + logLevel.name().toLowerCase() + ".log";
+
+        try (FileWriter fileWriter = new FileWriter(logFilePath, true)) {
+            String formattedLogMessage = LocalDateTime.now() + " [" + logLevel.name() + "] " + logMessage + " / [ " +errorMessage + " ]\n" ;
+            fileWriter.write(formattedLogMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void writeLogToFile(String logMessage, LogLevel logLevel) {
         String logFolder = LOG_DIRECTORY + LocalDate.now().format(DATE_FORMATTER);
         createDirectoryIfNotExists(logFolder);
