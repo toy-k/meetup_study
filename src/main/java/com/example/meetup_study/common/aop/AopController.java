@@ -18,7 +18,9 @@ public class AopController {
 
     @GetMapping("/test/2")
     public void test2(){
+
         System.out.println("test2");
+        throw new RuntimeException("test2 exception");
     }
 
     @GetMapping("/test/3")
