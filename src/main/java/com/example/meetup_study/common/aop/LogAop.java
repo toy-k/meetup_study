@@ -23,7 +23,8 @@ public class LogAop {
     private static final String LOG_DIRECTORY = "./log/";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt.JwtAuthenticationProcessingFilter.*(..))")
+//    @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt.JwtAuthenticationProcessingFilter.*(..)) && !execution(* com.example.meetup_study.common.scheduler.EventEmailScheduler.*(..))")
+@Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt.JwtAuthenticationProcessingFilter.*(..))")
     private void cut(){}
 
     @Before("cut()")

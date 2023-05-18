@@ -28,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -58,4 +59,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
         return jwtAuthenticationProcessingFilter;
         }
+
 }
