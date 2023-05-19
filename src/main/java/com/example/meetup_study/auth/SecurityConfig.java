@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -27,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+//    private final AccessDeniedHandler AccessDeniedHandler;
+    private final AuthorizationAccessDeniedHandler accessDeniedHandler; // 수정된 부분
 
 
     @Override
@@ -37,11 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .formLogin().disable()
-                .httpBasic().disable();
-
+                .httpBasic().disable()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(new AuthenticationDeniedEntryPoint());
         http
                 .authorizeRequests()
                 .antMatchers("/api/room", "/api/user/me").access("hasRole('ROLE_USER')")
+                .antMatchers("/api/room/admin").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and() //localhost:8080/login
                     .oauth2Login().userInfoEndpoint().userService(customOauth2UserService)
@@ -56,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 
-        JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+        JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository, new AuthenticationDeniedEntryPoint());
         return jwtAuthenticationProcessingFilter;
         }
 

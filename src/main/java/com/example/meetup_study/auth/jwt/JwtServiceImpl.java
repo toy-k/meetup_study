@@ -2,6 +2,7 @@ package com.example.meetup_study.auth.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -208,6 +209,9 @@ public class JwtServiceImpl implements JwtService {
         } catch (IllegalArgumentException e) {
             log.error("JWT token compact of handler are invalid.");
             throw new JwtException("유효하지 않은 JWT 토큰 형식입니다.");
+        } catch (JWTDecodeException e){
+            log.error("JWT token decode error.");
+            throw new JwtException("JWT 토큰 디코딩 에러입니다.");
         }
     }
 
@@ -234,6 +238,9 @@ public class JwtServiceImpl implements JwtService {
         } catch (IllegalArgumentException e) {
             log.error("JWT token compact of handler are invalid.");
             throw new JwtException("유효하지 않은 JWT 토큰 형식입니다.");
+        } catch (JWTDecodeException e){
+            log.error("JWT token decode error.");
+            throw new JwtException("JWT 토큰 디코딩 에러입니다.");
         }
     }
 }

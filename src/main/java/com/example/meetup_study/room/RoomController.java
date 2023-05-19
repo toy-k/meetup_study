@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,7 +88,7 @@ public class RoomController {
     }
 
     @PutMapping()
-    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto RoomDto, HttpServletRequest req){
+    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto RoomDto, HttpServletRequest req) throws AccessDeniedException {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -99,7 +100,7 @@ public class RoomController {
         Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
 
         if(!userOpt.isPresent() || userOpt.get().getId() != RoomDto.getHostUserId()){
-            throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
+            throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
         Optional<RoomDto> updatedRoomDto = roomService.updateRoom(RoomDto, userOpt.get().getId());
@@ -135,4 +136,11 @@ public class RoomController {
         roomService.deleteAllRooms();
         return ResponseEntity.ok("delete all rooms");
     }
+
+    //admin test
+    @GetMapping("/admin")
+    public String admin(){
+        return "admin";
+    }
+
 }
