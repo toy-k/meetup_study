@@ -20,6 +20,7 @@ public class AuthorizationAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-        handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getLocalizedMessage());
+
     }
 }
