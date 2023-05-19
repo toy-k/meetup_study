@@ -4,12 +4,16 @@ import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -39,10 +43,14 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.debug("[JwtAuthenticationProcessingFilter] doFilterInternal()");
+
+        try{
 
 
         String reqUri = request.getRequestURI();
@@ -80,7 +88,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         if (accessToken == null) {
             if(refreshToken == null) {
-                throw new RuntimeException("엑세스토큰과 리프레쉬토큰 둘 다 없습니다.");
+                throw new AuthenticationServiceException("엑세스토큰과 리프레쉬토큰 둘 다 없습니다.");
             }else{
                 this.generateAccessToken(request, response, refreshToken);
             }
@@ -88,14 +96,20 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             try {
                 this.isValidAccessToken(request);
             } catch (Exception ex) {
-                throw new RuntimeException("유효한 엑세스토큰이 없습니다.");
+                throw new AuthenticationServiceException("유효한 엑세스토큰이 없습니다.");
             }
         }
 
-
-
         filterChain.doFilter(request, response);
-        
+
+
+        }catch (JwtException e){
+            String errorMessage = e.getMessage();
+            AuthenticationException authException = new AuthenticationServiceException(errorMessage);
+            authenticationEntryPoint.commence(request, response, authException);
+
+        }
+
     }
 
     private void generateAccessToken(HttpServletRequest req, HttpServletResponse res, String refreshToken){
@@ -135,7 +149,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         }
 
-        
+
     }
 
     public void saveAuthentication(User user){
