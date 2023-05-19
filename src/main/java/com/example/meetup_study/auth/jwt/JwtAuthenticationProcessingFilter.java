@@ -1,9 +1,11 @@
 package com.example.meetup_study.auth.jwt;
 
+import com.example.meetup_study.auth.AuthorizationAccessDeniedHandler;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,8 +45,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
-    private final AuthenticationEntryPoint authenticationEntryPoint;
-
+//    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AuthorizationAccessDeniedHandler accessDeniedHandler; // Add this line
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -104,10 +106,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 
         }catch (JwtException e){
-            String errorMessage = e.getMessage();
-            AuthenticationException authException = new AuthenticationServiceException(errorMessage);
-            authenticationEntryPoint.commence(request, response, authException);
+//            String errorMessage = e.getMessage();
+//            AuthenticationException authException = new AuthenticationServiceException(errorMessage);
+//            authenticationEntryPoint.commence(request, response, authException);
 
+            accessDeniedHandler.handle(request, response,  new AccessDeniedException(e.getMessage()));
         }
 
     }
