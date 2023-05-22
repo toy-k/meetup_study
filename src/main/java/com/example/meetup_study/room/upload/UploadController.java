@@ -3,6 +3,7 @@ package com.example.meetup_study.room.upload;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.upload.domain.Upload;
+import com.example.meetup_study.room.upload.domain.dto.FileDeleteStatus;
 import com.example.meetup_study.room.upload.domain.dto.RequestUploadDto;
 import com.example.meetup_study.room.upload.domain.dto.UploadDto;
 import lombok.RequiredArgsConstructor;
@@ -22,87 +23,39 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
-@RequestMapping("/test") // /api/upload
+@RequestMapping("/api/upload") // /api/upload
 @RequiredArgsConstructor
 public class UploadController {
 
-    private String UPLOADPATH = "/src/main/resources/upload/";
+    private final UploadService uploadService;
 
     @PostMapping
-    public ResponseEntity<List<RequestUploadDto>> fileUpload(HttpServletRequest req, @RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long roomId) {
 
 
-        List<RequestUploadDto> uploadDtos = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                throw new IllegalArgumentException("파일이 없습니다.");
-            }
-
-            String fileName = file.getOriginalFilename();
-            String filePath = System.getProperty("user.dir") + UPLOADPATH;
-
-            try {
-                // 파일 저장 로직
-                String fullPath = filePath + fileName;
-                File storage = new File(filePath);
-                if (!storage.exists()) {
-                    storage.mkdirs();
-                }
-
-                File newFile = new File(fullPath);
-                if (!newFile.exists()) {
-                    newFile.createNewFile();
-                }
-
-                file.transferTo(newFile);
-
-                // RequestUploadDto 객체 생성
-                RequestUploadDto requestUploadDto = new RequestUploadDto(fileName, fullPath);
-                uploadDtos.add(requestUploadDto);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 업로드 실패", e);
-            }
-        }
+        List<UploadDto> uploadDtos = uploadService.save(files, roomId);
 
         return ResponseEntity.ok(uploadDtos);
     }
-    @GetMapping
-    public byte[] fileDownload(HttpServletRequest req, HttpServletResponse res, @RequestParam("file") String fileName){
-        byte[] down = null;
 
-        try {
-            String filePath = System.getProperty("user.dir") + UPLOADPATH;
-            File file = new File(filePath + fileName);
+    @GetMapping("/download")
+    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, Long roomId) {
 
-            down = FileCopyUtils.copyToByteArray(file);
-
-
-
-            String filename = new String(file.getName().getBytes("UTF-8"), "ISO-8859-1");
-
-            res.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-
-            res.setContentLength(down.length);;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return down;
+        uploadService.downloadZip(res, fileNames, roomId);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName) {
-        String filePath = System.getProperty("user.dir") + UPLOADPATH;
-        File file = new File(filePath + fileName);
+    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName, Long roomId) {
 
-        if (file.exists()) {
-            if (file.delete()) {
+
+        FileDeleteStatus status = uploadService.deleteByName(fileName, roomId);
+
+        if (status != FileDeleteStatus.NOT_FOUND) {
+            if (status == FileDeleteStatus.SUCCESS) {
                 return ResponseEntity.ok("파일 삭제 성공");
             } else {
                 return ResponseEntity.status(500).body("파일 삭제 실패");
