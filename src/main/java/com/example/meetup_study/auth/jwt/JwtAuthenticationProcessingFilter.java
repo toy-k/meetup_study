@@ -39,6 +39,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private String PASS_URL_7 = "/api/room";
     private String PASS_URL_8 = "/test";
 
+    private String PASS_URL_9 = "/api/upload";
     private final String AUTHORIZATION = "Authorization";
     private final String BEARER = "Bearer ";
 
@@ -65,7 +66,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             reqUri.contains(PASS_URL_5) ||
             (reqUri.contains(PASS_URL_6) && !reqUri.equals(PASS_URL_6 + "/me")) ||
             (reqUri.contains(PASS_URL_7) && !reqUri.equals(PASS_URL_7)) ||
-            reqUri.contains(PASS_URL_8)
+            reqUri.contains(PASS_URL_8) ||
+            (!reqUri.equals(PASS_URL_9) && reqUri.contains(PASS_URL_9))
         ){
             log.debug("[JwtAuthenticationProcessingFilter] pass");
             filterChain.doFilter(request, response);

@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new AuthenticationDeniedEntryPoint());
         http
                 .authorizeRequests()
-                .antMatchers("/api/room", "/api/user/me").access("hasRole('ROLE_USER')")
+                .antMatchers("/api/room", "/api/user/me", "/api/upload").access("hasRole('ROLE_USER')")
                 .antMatchers("/api/room/admin").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and() //localhost:8080/login

@@ -27,17 +27,19 @@ public class Upload extends BaseEntity {
     @Column(name = "file_name")
     private String fileName;
 
-    @Transient
-    private MultipartFile file;
-
     @Column(name = "file_path")
     private String filePath;
 
-    @Column(name = "file_type")
-    private String fileType;
-
-    @Column(name = "file_size")
-    private Long fileSize;
+//    @Column(name = "file_type")
+//    private String fileType;
+//
+//    @Column(name = "file_size")
+//    private Long fileSize;
+public Upload(Room room, String fileName, String filePath) {
+    this.room = room;
+    this.fileName = fileName;
+    this.filePath = filePath;
+}
 
 
 
