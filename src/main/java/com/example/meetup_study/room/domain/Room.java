@@ -3,6 +3,7 @@ package com.example.meetup_study.room.domain;
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.joinedUser.JoinedUser;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
+import com.example.meetup_study.room.upload.domain.Upload;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,6 +65,12 @@ public class Room extends BaseEntity {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @Column(name="joined_user_list")
     private List<JoinedUser> joinedUserList = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Column(name="upload_list")
+    private List<Upload> uploadList = new ArrayList<>();
+
 
     //add joinedUser
     public void addJoinedUser(JoinedUser joinedUser) {
