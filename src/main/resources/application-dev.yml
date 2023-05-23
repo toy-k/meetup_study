@@ -1,16 +1,16 @@
-
-spring:
-  datasource:
-    driver-class-name: ${APPLICATION_DEV_DRIVER_CLASS_NAME}
-    url: ${APPLICATION_DEV_URL}
-    username: ${APPLICATION_DEV_USERNAME}
-    password: ${APPLICATION_DEV_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-##logging:
-##  level:
-##    root: DEBUG
-##    org.springframework: DEBUG
-##    org.hibernate: DEBUG
+#
+#spring:
+#  datasource:
+#    driver-class-name: ${APPLICATION_DEV_DRIVER_CLASS_NAME}
+#    url: ${APPLICATION_DEV_URL}
+#    username: ${APPLICATION_DEV_USERNAME}
+#    password: ${APPLICATION_DEV_PASSWORD}
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+###logging:
+###  level:
+###    root: DEBUG
+###    org.springframework: DEBUG
+###    org.hibernate: DEBUG
