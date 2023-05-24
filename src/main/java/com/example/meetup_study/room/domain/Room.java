@@ -4,6 +4,7 @@ import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.joinedUser.JoinedUser;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.upload.domain.Upload;
+import com.example.meetup_study.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +32,11 @@ public class Room extends BaseEntity {
     @Lob
     private String description;
 
+
     //모임 주최자
-    @Column(name = "host_user_id")
-    private Long hostUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private User hostUser;
 
     //모임 모집 마감일
     @Column(name = "join_end_date")
@@ -101,10 +104,9 @@ public class Room extends BaseEntity {
         this.category = category;
     }
 
-    public Room(RequestRoomDto requestRoomDto) {
+    public Room(RequestRoomDto requestRoomDto, User hostUser) {
         this.title = requestRoomDto.getTitle();
         this.description = requestRoomDto.getDescription();
-        this.hostUserId = requestRoomDto.getHostUserId();
         this.joinEndDate = requestRoomDto.getJoinEndDate();
         this.meetupStartDate = requestRoomDto.getMeetupStartDate();
         this.meetupEndDate = requestRoomDto.getMeetupEndDate();
@@ -112,5 +114,6 @@ public class Room extends BaseEntity {
         this.meetupPhotoUrl = requestRoomDto.getMeetupPhotoUrl();
         this.category = requestRoomDto.getCategory();
         this.joinNumber = requestRoomDto.getJoinNumber();
+        this.hostUser = hostUser;
     }
 }

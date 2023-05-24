@@ -30,9 +30,9 @@ public class RoomServiceImpl implements RoomService{
     @Transactional
     @Override
     public Optional<Room> createRoom(RequestRoomDto requestRoomDto, Long userId) {
-        Room room = roomRepository.save(new Room(requestRoomDto));
         Optional<User> userOpt = userRepository.findById(userId);
         if(userOpt.isPresent()){
+            Room room = roomRepository.save(new Room(requestRoomDto, userOpt.get()));
             JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
             room.addJoinedUser(joinedUser);
             return Optional.ofNullable(room);
@@ -79,7 +79,7 @@ public class RoomServiceImpl implements RoomService{
     public Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId) {
         Optional <Room> roomOpt = roomRepository.findById(roomDto.getId());
 
-        if(roomOpt.isPresent() && (roomOpt.get().getHostUserId().equals(userId))) {
+        if(roomOpt.isPresent() && (roomOpt.get().getHostUser().getId().equals(userId))) {
 
             Optional<RoomDto> roomDtoOpt = roomOpt.map(room -> {
                 if (roomDto.getTitle() != null) room.changeTitle(roomDto.getTitle());
@@ -102,7 +102,7 @@ public class RoomServiceImpl implements RoomService{
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
         Optional <Room> room = roomRepository.findById(id);
-        if(room.isPresent() && room.get().getHostUserId().equals(userId)) {
+        if(room.isPresent() && room.get().getHostUser().getId().equals(userId)) {
             roomRepository.delete(room.get());
             Optional<RoomDto> roomDto = room.map(r -> new RoomDto().convertToRoomDto(r));
             return roomDto;
