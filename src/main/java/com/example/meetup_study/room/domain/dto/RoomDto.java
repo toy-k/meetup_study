@@ -2,6 +2,7 @@ package com.example.meetup_study.room.domain.dto;
 
 import com.example.meetup_study.room.domain.Category;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,14 +47,14 @@ public class RoomDto {
     private Category category;
 
     @Positive
-    private Long hostUserId;
+    private User hostUser;
 
     @Min(2)
     @Positive
     private Integer joinNumber;
 
 
-    public RoomDto(Long id, String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, Long hostUserId, Integer joinNumber) {
+    public RoomDto(Long id, String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, User hostUser, Integer joinNumber) {
 
         this.id = id;
         this.title = title;
@@ -64,7 +65,7 @@ public class RoomDto {
         this.meetupLocation = meetupLocation;
         this.meetupPhotoUrl = meetupPhotoUrl;
         this.category = category;
-        this.hostUserId = hostUserId;
+        this.hostUser = hostUser;
         this.joinNumber = joinNumber;
     }
 
@@ -79,7 +80,7 @@ public class RoomDto {
                 room.getMeetupLocation(),
                 room.getMeetupPhotoUrl(),
                 room.getCategory(),
-                room.getHostUserId(),
+                room.getHostUser(),
                 room.getJoinNumber()
         );
     }

@@ -92,12 +92,12 @@ public class FakeUserController {
             meetupPhotoUrl = "meetupPhotoUrl"+i;
             category = Category.values()[i%5];
             hostUserId = user.get().getId();
-            joinNumber = 0;
+            joinNumber = 1;
 
 
             RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, joinEndDate, meetupStartDate, meetupEndDate, meetupLocation, meetupPhotoUrl, category, hostUserId, joinNumber);
 
-            Room room = roomRepository.save(new Room(requestRoomDto));
+            Room room = roomRepository.save(new Room(requestRoomDto, user.get()));
             Optional<User> userOpt = userRepository.findById(user.get().getId());
             if(userOpt.isPresent()){
                 JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
