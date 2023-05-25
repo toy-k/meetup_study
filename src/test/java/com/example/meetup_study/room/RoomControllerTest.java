@@ -86,7 +86,6 @@ class RoomControllerTest {
 
         Long roomId = createdRoomDto.getId();
 
-        //when
         MvcResult mvcResult2 = mockMvc.perform(get("/api/room/id/"+roomId))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -94,7 +93,6 @@ class RoomControllerTest {
         String responseBody2 = mvcResult2.getResponse().getContentAsString();
         RoomDto createdRoomDto2 = objectMapper.readValue(responseBody2, RoomDto.class);
 
-        //then
         assertAll(
                 () -> assertNotNull(createdRoomDto.getId()),
                 () -> assertEquals(requestRoomDto.getTitle(), createdRoomDto2.getTitle()),
@@ -113,7 +111,7 @@ class RoomControllerTest {
     @Test
     void getRoomNotExist(){
         Long roomId = -1L;
-        //when
+
         assertThrows(IllegalArgumentException.class, () ->  {
             roomController.getRoom(roomId);
         });
@@ -128,7 +126,7 @@ class RoomControllerTest {
             roomIds.add(this.roomIds.get(i-1));
         }
 
-        // Get the list of rooms
+
         MvcResult mvcResult2 = mockMvc.perform(get("/api/room/list"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -136,7 +134,7 @@ class RoomControllerTest {
         String responseBody2 = mvcResult2.getResponse().getContentAsString();
         List<RoomDto> roomDtos = objectMapper.readValue(responseBody2, new TypeReference<List<RoomDto>>() {});
 
-        // Verify that all the created rooms are in the list
+
         for (Long roomId : roomIds) {
             boolean found = false;
             for (RoomDto roomDto : roomDtos) {
@@ -158,7 +156,7 @@ class RoomControllerTest {
             if(i%2 != 0) roomIds.add(this.roomIds.get(i-1));
         }
 
-        // Get the list of rooms
+
         MvcResult mvcResult2 = mockMvc.perform(get("/api/room/list/before-meetup-start"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -166,7 +164,7 @@ class RoomControllerTest {
         String responseBody2 = mvcResult2.getResponse().getContentAsString();
         List<RoomDto> roomDtos = objectMapper.readValue(responseBody2, new TypeReference<List<RoomDto>>() {});
 
-        // Verify that all the created rooms are in the list
+
         for (Long roomId : roomIds) {
             boolean found = false;
             for (RoomDto roomDto : roomDtos) {
@@ -189,7 +187,7 @@ class RoomControllerTest {
             if(i%2 == 0) roomIds.add(this.roomIds.get(i-1));
         }
 
-        // Get the list of rooms
+
         MvcResult mvcResult2 = mockMvc.perform(get("/api/room/list/after-meetup-start"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -197,7 +195,7 @@ class RoomControllerTest {
         String responseBody2 = mvcResult2.getResponse().getContentAsString();
         List<RoomDto> roomDtos = objectMapper.readValue(responseBody2, new TypeReference<List<RoomDto>>() {});
 
-        // Verify that all the created rooms are in the list
+
         for (Long roomId : roomIds) {
             boolean found = false;
             for (RoomDto roomDto : roomDtos) {
@@ -215,7 +213,7 @@ class RoomControllerTest {
     @Test
     void updateRoom() throws Exception {
 
-        // update the room
+
         String updatedTitle = "Updated room title";
         String updatedDescription = "Updated room description";
         LocalDateTime updatedJoinEndDate = LocalDateTime.now().plusDays(2);
@@ -241,7 +239,7 @@ class RoomControllerTest {
 
         String updatedRequestBody = objectMapper.writeValueAsString(updatedRoomDto);
 
-        // when
+
         MvcResult updatedMvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/api/room")
                         .header("Authorization", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -252,7 +250,7 @@ class RoomControllerTest {
         String updatedResponseBody = updatedMvcResult.getResponse().getContentAsString();
         RoomDto updatedRoomDtoResponse = objectMapper.readValue(updatedResponseBody, RoomDto.class);
 
-        // then
+
         assertAll("Room fields should match updated values",
                 () -> assertThat(updatedRoomDtoResponse.getTitle()).isEqualTo(updatedTitle),
                 () -> assertThat(updatedRoomDtoResponse.getDescription()).isEqualTo(updatedDescription),
@@ -269,13 +267,11 @@ class RoomControllerTest {
     @DisplayName("deleteRoom")
     @Test
     void deleteRoom() throws Exception {
-        // given
-
 
         RequestDeleteRoomDto requestDeleteRoomDto = new RequestDeleteRoomDto(createdRoomDto.getId());
 
         String requestDeleteBody = objectMapper.writeValueAsString(requestDeleteRoomDto);
-        // when
+
         MvcResult deletedMvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/api/room")
                         .header("Authorization",accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -286,27 +282,24 @@ class RoomControllerTest {
         String deletedResponseBody = deletedMvcResult.getResponse().getContentAsString();
         RoomDto deletedRoomDtoResponse = objectMapper.readValue(deletedResponseBody, RoomDto.class);
 
-        // then
         assertThat(deletedRoomDtoResponse.getId()).isEqualTo(createdRoomDto.getId());
-//        assertThat(deletedRoomDtoResponse.getTitle()).isEqualTo(createdRoomDto.getTitle());
-//        assertThat(deletedRoomDtoResponse.getDescription()).isEqualTo(createdRoomDto.getDescription());
-//        assertThat(deletedRoomDtoResponse.getJoinEndDate()).isEqualTo(createdRoomDto.getJoinEndDate());
-//        assertThat(deletedRoomDtoResponse.getMeetupStartDate()).isEqualTo(createdRoomDto.getMeetupStartDate());
-//        assertThat(deletedRoomDtoResponse.getMeetupEndDate()).isEqualTo(createdRoomDto.getMeetupEndDate());
-//        assertThat(deletedRoomDtoResponse.getMeetupLocation()).isEqualTo(createdRoomDto.getMeetupLocation());
-//        assertThat(deletedRoomDtoResponse.getMeetupPhotoUrl()).isEqualTo(createdRoomDto.getMeetupPhotoUrl());
-//        assertThat(deletedRoomDtoResponse.getCategory()).isEqualTo(createdRoomDto.getCategory());
+        assertThat(deletedRoomDtoResponse.getTitle()).isEqualTo(createdRoomDto.getTitle());
+        assertThat(deletedRoomDtoResponse.getDescription()).isEqualTo(createdRoomDto.getDescription());
+        assertThat(deletedRoomDtoResponse.getJoinEndDate()).isEqualTo(createdRoomDto.getJoinEndDate());
+        assertThat(deletedRoomDtoResponse.getMeetupStartDate()).isEqualTo(createdRoomDto.getMeetupStartDate());
+        assertThat(deletedRoomDtoResponse.getMeetupEndDate()).isEqualTo(createdRoomDto.getMeetupEndDate());
+        assertThat(deletedRoomDtoResponse.getMeetupLocation()).isEqualTo(createdRoomDto.getMeetupLocation());
+        assertThat(deletedRoomDtoResponse.getMeetupPhotoUrl()).isEqualTo(createdRoomDto.getMeetupPhotoUrl());
+        assertThat(deletedRoomDtoResponse.getCategory()).isEqualTo(createdRoomDto.getCategory());
     }
 
 
 
     private void createRoomObject()throws Exception{
-        System.out.println("1===============================");
         ResponseEntity<FakeUserDto> fakeUser = fakeUserController.readFakeUser("fakeuser1");
         FakeUserDto fakeUserDto = fakeUser.getBody();
         String accessToken = "Bearer "+ fakeUserDto.getAccessToken();
 
-        // create a new room
         RequestRoomDto requestRoomDto = new RequestRoomDto(
                 "Room title",
                 "Room description",
@@ -320,11 +313,7 @@ class RoomControllerTest {
                 1
         );
 
-        System.out.println("2===============================");
-
         String requestBody = objectMapper.writeValueAsString(requestRoomDto);
-
-        System.out.println("3===============================");
 
 
         MvcResult mvcResult = mockMvc.perform(post("/api/room")
@@ -334,13 +323,10 @@ class RoomControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println("33===============================");
-
 
         String responseBody = mvcResult.getResponse().getContentAsString();
         RoomDto createdRoomDto = objectMapper.readValue(responseBody, RoomDto.class);
 
-        System.out.println("4===============================");
 
         this.requestRoomDto = requestRoomDto;
         this.createdRoomDto = createdRoomDto;
@@ -348,14 +334,11 @@ class RoomControllerTest {
     }
 
     private void createRoomList() throws Exception{
-        System.out.println("5===============================");
         ResponseEntity<FakeUserDto> fakeUser_1 = fakeUserController.readFakeUser("fakeuser1");
         FakeUserDto fakeUser_1_Dto = fakeUser_1.getBody();
 
         String accessToken = "Bearer "+ fakeUser_1_Dto.getAccessToken();
         List<Long> roomIds = new ArrayList<>();
-
-        System.out.println("6===============================");
 
         for (int i = 1; i < 6; i++) {
 
@@ -388,7 +371,6 @@ class RoomControllerTest {
                 );
             }
 
-            System.out.println("7===============================");
             String requestBody = objectMapper.writeValueAsString(requestRoomDto);
 
             MvcResult mvcResult = mockMvc.perform(post("/api/room")
@@ -398,10 +380,8 @@ class RoomControllerTest {
                     .andExpect(status().isOk())
                     .andReturn();
 
-            System.out.println("8===============================");
             String responseBody = mvcResult.getResponse().getContentAsString();
             RoomDto createdRoomDto = objectMapper.readValue(responseBody, RoomDto.class);
-            System.out.println("9===============================");
             roomIds.add(createdRoomDto.getId());
         }
         this.roomIds = roomIds;
