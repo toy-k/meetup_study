@@ -34,9 +34,8 @@ public class Room extends BaseEntity {
 
 
     //모임 주최자
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
-    private User hostUser;
+    @Column(name = "host_user_id")
+    private Long hostUserId;
 
     //모임 모집 마감일
     @Column(name = "join_end_date")
@@ -104,7 +103,7 @@ public class Room extends BaseEntity {
         this.category = category;
     }
 
-    public Room(RequestRoomDto requestRoomDto, User hostUser) {
+    public Room(RequestRoomDto requestRoomDto) {
         this.title = requestRoomDto.getTitle();
         this.description = requestRoomDto.getDescription();
         this.joinEndDate = requestRoomDto.getJoinEndDate();
@@ -114,6 +113,6 @@ public class Room extends BaseEntity {
         this.meetupPhotoUrl = requestRoomDto.getMeetupPhotoUrl();
         this.category = requestRoomDto.getCategory();
         this.joinNumber = requestRoomDto.getJoinNumber();
-        this.hostUser = hostUser;
+        this.hostUserId = requestRoomDto.getHostUserId();
     }
 }

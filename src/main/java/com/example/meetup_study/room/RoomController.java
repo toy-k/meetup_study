@@ -41,7 +41,7 @@ public class RoomController {
             throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
-        Optional<Room> createdRoom = roomService.createRoom(requestRoomDto, userOpt.get().getId());
+        Optional<Room> createdRoom = roomService.createRoom(requestRoomDto);
 
         Optional<RoomDto> createdRoomDto = createdRoom.map(r -> new RoomDto().convertToRoomDto(r));
 
@@ -99,7 +99,7 @@ public class RoomController {
 
         Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != RoomDto.getHostUser().getId()){
+        if(!userOpt.isPresent() || userOpt.get().getId() != RoomDto.getHostUserId()){
             throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
@@ -122,7 +122,7 @@ public class RoomController {
 
         Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
 
-        if(!userOpt.isPresent() || !roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUser().getId()){
+        if(!userOpt.isPresent() || !roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserId()){
             throw new IllegalArgumentException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
         }
 

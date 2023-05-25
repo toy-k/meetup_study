@@ -58,10 +58,6 @@ public class User extends BaseEntity {
     @Column(name="joined_user_list")
     private List<JoinedUser> joinedUserList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL)
-    @Column(name="host_room_list")
-    private List<Room> hostRoomList = new ArrayList<>();
-
 
     User(Long id, String username, String imageUrl, String email, String description) {
         this.id = id;
