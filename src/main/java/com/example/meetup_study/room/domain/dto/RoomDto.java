@@ -47,14 +47,14 @@ public class RoomDto {
     private Category category;
 
     @Positive
-    private User hostUser;
+    private Long hostUserId;
 
     @Min(2)
     @Positive
     private Integer joinNumber;
 
 
-    public RoomDto(Long id, String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, User hostUser, Integer joinNumber) {
+    public RoomDto(Long id, String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, Long hostUserId, Integer joinNumber) {
 
         this.id = id;
         this.title = title;
@@ -65,7 +65,7 @@ public class RoomDto {
         this.meetupLocation = meetupLocation;
         this.meetupPhotoUrl = meetupPhotoUrl;
         this.category = category;
-        this.hostUser = hostUser;
+        this.hostUserId = hostUserId;
         this.joinNumber = joinNumber;
     }
 
@@ -80,7 +80,7 @@ public class RoomDto {
                 room.getMeetupLocation(),
                 room.getMeetupPhotoUrl(),
                 room.getCategory(),
-                room.getHostUser(),
+                room.getHostUserId(),
                 room.getJoinNumber()
         );
     }

@@ -2,10 +2,13 @@ package com.example.meetup_study.room.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class RequestDeleteRoomDto {
 
