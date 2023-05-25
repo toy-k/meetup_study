@@ -30,6 +30,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${jwt.accessToken.expiration}")
     private Long ACCESSTOKENEXPIRATION;
+
     @Value("${jwt.accessToken.header}")
     private String ACCESSTOKENHEADER;
 
