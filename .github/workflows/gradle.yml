@@ -28,7 +28,15 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: print test msg
+      run: echo test msg!
+      
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper 
+#     - name: Download Gradle Wrapper
+#       run: ./gradlew wrapper
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    
