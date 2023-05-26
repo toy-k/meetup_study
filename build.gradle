@@ -18,10 +18,6 @@ configurations {
     }
 }
 
-bootJar {
-    mainClass = 'com.example.meetup_study.MeetupStudyApplication'
-}
-
 repositories {
     mavenCentral()
 }
@@ -67,6 +63,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+
 test{
     finalizedBy 'jacocoTestReport'
 }
@@ -78,9 +75,9 @@ jacoco {
 
 jacocoTestReport {
     reports {
-//        html.enabled false
-//        csv.enabled false
-//        xml.enabled false
+        html.enabled false
+        csv.enabled false
+        xml.enabled false
     }
     finalizedBy 'jacocoTestCoverageVerification'
 }
