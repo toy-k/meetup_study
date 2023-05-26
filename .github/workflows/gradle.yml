@@ -75,7 +75,7 @@ jobs:
         MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
 
     - name: Generate Gradle Wrapper
-      run: gradle wrapper
+      run: gradle wrapper 
     - name: Download Gradle Wrapper
       run: ./gradlew wrapper
     - name: Grant execute permission for gradlew
