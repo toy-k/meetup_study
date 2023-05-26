@@ -33,25 +33,25 @@ jobs:
       
     - name : set env
       run: |
-        echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_PASSWORD=$APPLICATION_DEV_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_URL=$APPLICATION_DEV_URL" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_USERNAME=$APPLICATION_DEV_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DRIVER_CLASS_NAME=$APPLICATION_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_PASSWORD=$APPLICATION_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_URL=$APPLICATION_URL" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_USERNAME=$APPLICATION_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_ACCESSTOKEN_EXPIRATION=$JWT_ACCESSTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_ACCESSTOKEN_HEADER=$JWT_ACCESSTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_REFRESHTOKEN_EXPIRATION=$JWT_REFRESHTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_REFRESHTOKEN_HEADER=$JWT_REFRESHTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_HOST=$MAIL_HOST" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
+        echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_DEV_PASSWORD=$APPLICATION_DEV_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_DEV_URL=$APPLICATION_DEV_URL" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_DEV_USERNAME=$APPLICATION_DEV_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_DRIVER_CLASS_NAME=$APPLICATION_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_PASSWORD=$APPLICATION_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_URL=$APPLICATION_URL" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "APPLICATION_USERNAME=$APPLICATION_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "JWT_ACCESSTOKEN_EXPIRATION=$JWT_ACCESSTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "JWT_ACCESSTOKEN_HEADER=$JWT_ACCESSTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "JWT_REFRESHTOKEN_EXPIRATION=$JWT_REFRESHTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "JWT_REFRESHTOKEN_HEADER=$JWT_REFRESHTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "MAIL_HOST=$MAIL_HOST" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
+        echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
 
       env:
         APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
