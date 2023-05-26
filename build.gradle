@@ -78,7 +78,7 @@ jacoco {
 
 jacocoTestReport {
     reports {
-        html.enabled false
+//        html.enabled false
         csv.enabled false
         xml.enabled false
     }
