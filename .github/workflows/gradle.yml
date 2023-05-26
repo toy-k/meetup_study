@@ -27,6 +27,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
+        distribution: release
 
     - name : set env
       run: \
@@ -76,5 +77,3 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-      with:
-        distribution: release
