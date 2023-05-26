@@ -32,8 +32,8 @@ jobs:
       run: echo test msg!
       
     - name : set env
-      run: \
-        echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env \
+      run: |
+        echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env |
         echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME"
       env:
         APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
