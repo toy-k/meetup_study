@@ -74,6 +74,8 @@ jobs:
         MAIL_PORT: ${{secrets.MAIL_PORT}}
         MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
 
+    - name: Download Gradle Wrapper
+      run: ./gradlew wrapper
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
