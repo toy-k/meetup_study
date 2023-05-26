@@ -28,6 +28,7 @@ jobs:
       with:
         java-version: 17
         distribution: 'adopt'
+        cache: gradle
     - name: print test msg
       run: echo test msg!
       
@@ -75,9 +76,9 @@ jobs:
         MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
 
     - name: Download Gradle Wrapper
-      run: gradle wrapper
+      run: ./gradlew wrapper
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-
+    
