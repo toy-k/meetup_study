@@ -79,8 +79,8 @@ jacoco {
 jacocoTestReport {
     reports {
 //        html.enabled false
-        csv.enabled false
-        xml.enabled false
+//        csv.enabled false
+//        xml.enabled false
     }
     finalizedBy 'jacocoTestCoverageVerification'
 }
