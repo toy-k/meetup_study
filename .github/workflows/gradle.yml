@@ -27,6 +27,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
+
     - name : set env
       run: \
         echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env \
@@ -75,3 +76,5 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+      with:
+        distribution: release
