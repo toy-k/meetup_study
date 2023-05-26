@@ -18,6 +18,10 @@ configurations {
     }
 }
 
+bootJar {
+    mainClass = 'com.example.meetup_study.MeetupStudyApplication' 
+}
+
 repositories {
     mavenCentral()
 }
