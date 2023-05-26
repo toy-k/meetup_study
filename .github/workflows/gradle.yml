@@ -23,11 +23,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-        java-version: 17
-        distribution: 'adopt'
+        java-version: '11'
+        distribution: 'temurin'
     - name: print test msg
       run: echo test msg!
       
@@ -74,8 +74,13 @@ jobs:
         MAIL_PORT: ${{secrets.MAIL_PORT}}
         MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
 
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper 
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+
+#     - name: Generate Gradle Wrapper
+#       run: gradle wrapper 
 #     - name: Download Gradle Wrapper
 #       run: ./gradlew wrapper
     - name: Grant execute permission for gradlew
