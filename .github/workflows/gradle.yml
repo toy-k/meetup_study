@@ -22,64 +22,61 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17
-        distribution: 'adopt'
-    - name: print test msg
-      run: echo test msg!
-      
-    - name : set env
-      run: |
-        echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_PASSWORD=$APPLICATION_DEV_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_URL=$APPLICATION_DEV_URL" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DEV_USERNAME=$APPLICATION_DEV_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_DRIVER_CLASS_NAME=$APPLICATION_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_PASSWORD=$APPLICATION_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_URL=$APPLICATION_URL" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "APPLICATION_USERNAME=$APPLICATION_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_ACCESSTOKEN_EXPIRATION=$JWT_ACCESSTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_ACCESSTOKEN_HEADER=$JWT_ACCESSTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_REFRESHTOKEN_EXPIRATION=$JWT_REFRESHTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_REFRESHTOKEN_HEADER=$JWT_REFRESHTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_HOST=$MAIL_HOST" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/test.env
-        echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/test.env
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: print test msg
+        run: echo test msg!
 
-      env:
-        APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
-        APPLICATION_DEV_PASSWORD: ${{secrets.APPLICATION_DEV_PASSWORD}}
-        APPLICATION_DEV_URL: ${{secrets.APPLICATION_DEV_URL}}
-        APPLICATION_DEV_USERNAME: ${{secrets.APPLICATION_DEV_USERNAME}}
-        APPLICATION_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DRIVER_CLASS_NAME}}
-        APPLICATION_PASSWORD: ${{secrets.APPLICATION_PASSWORD}}
-        APPLICATION_URL: ${{secrets.APPLICATION_URL}}
-        APPLICATION_USERNAME: ${{secrets.APPLICATION_USERNAME}}
-        GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
-        GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
-        JWT_ACCESSTOKEN_EXPIRATION: ${{secrets.JWT_ACCESSTOKEN_EXPIRATION}}
-        JWT_ACCESSTOKEN_HEADER: ${{secrets.JWT_ACCESSTOKEN_HEADER}}
-        JWT_REFRESHTOKEN_EXPIRATION: ${{secrets.JWT_REFRESHTOKEN_EXPIRATION}}
-        JWT_REFRESHTOKEN_HEADER: ${{secrets.JWT_REFRESHTOKEN_HEADER}}
-        JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
-        MAIL_HOST: ${{secrets.MAIL_HOST}}
-        MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
-        MAIL_PORT: ${{secrets.MAIL_PORT}}
-        MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+      - name : set env
+        run: |
+          echo "APPLICATION_DEV_DRIVER_CLASS_NAME=$APPLICATION_DEV_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_DEV_PASSWORD=$APPLICATION_DEV_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_DEV_URL=$APPLICATION_DEV_URL" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_DEV_USERNAME=$APPLICATION_DEV_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_DRIVER_CLASS_NAME=$APPLICATION_DRIVER_CLASS_NAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_PASSWORD=$APPLICATION_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_URL=$APPLICATION_URL" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "APPLICATION_USERNAME=$APPLICATION_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "JWT_ACCESSTOKEN_EXPIRATION=$JWT_ACCESSTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "JWT_ACCESSTOKEN_HEADER=$JWT_ACCESSTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "JWT_REFRESHTOKEN_EXPIRATION=$JWT_REFRESHTOKEN_EXPIRATION" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "JWT_REFRESHTOKEN_HEADER=$JWT_REFRESHTOKEN_HEADER" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "MAIL_HOST=$MAIL_HOST" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
+          echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
 
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper 
-    - name: Download Gradle Wrapper
-      run: ./gradlew wrapper
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
-    
+        env:
+          APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
+          APPLICATION_DEV_PASSWORD: ${{secrets.APPLICATION_DEV_PASSWORD}}
+          APPLICATION_DEV_URL: ${{secrets.APPLICATION_DEV_URL}}
+          APPLICATION_DEV_USERNAME: ${{secrets.APPLICATION_DEV_USERNAME}}
+          APPLICATION_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DRIVER_CLASS_NAME}}
+          APPLICATION_PASSWORD: ${{secrets.APPLICATION_PASSWORD}}
+          APPLICATION_URL: ${{secrets.APPLICATION_URL}}
+          APPLICATION_USERNAME: ${{secrets.APPLICATION_USERNAME}}
+          GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+          GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+          JWT_ACCESSTOKEN_EXPIRATION: ${{secrets.JWT_ACCESSTOKEN_EXPIRATION}}
+          JWT_ACCESSTOKEN_HEADER: ${{secrets.JWT_ACCESSTOKEN_HEADER}}
+          JWT_REFRESHTOKEN_EXPIRATION: ${{secrets.JWT_REFRESHTOKEN_EXPIRATION}}
+          JWT_REFRESHTOKEN_HEADER: ${{secrets.JWT_REFRESHTOKEN_HEADER}}
+          JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+          MAIL_HOST: ${{secrets.MAIL_HOST}}
+          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+          MAIL_PORT: ${{secrets.MAIL_PORT}}
+          MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build --info
