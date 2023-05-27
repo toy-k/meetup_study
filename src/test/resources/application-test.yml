@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          required: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+  accessToken:
+    expiration: ${JWT_ACCESSTOKEN_EXPIRATION}
+    header: ${JWT_ACCESSTOKEN_HEADER}
+  refreshToken:
+    expiration: ${JWT_REFRESHTOKEN_EXPIRATION}
+    header: ${JWT_REFRESHTOKEN_HEADER}
+  access:
+    token:
+      expired: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTY4MzI3MTI4NCwidXNlcklkIjo1NjcsImVtYWlsIjoiZmFrZXVzZXIxQGZha2UuY29tIn0._QJRP9HVHXtQ9t7vOxOgtbElu8NQZfo9V88cMWH-2dwQaOugfw2yXgPo8CUpiyLLbaze1qrPHqPEQItf_a-dMQ
+logging:
+  level:
+    root: info
+    com.example: debug
+    com.example.meetup_study: debug
+#    root: DEBUG
+#    org.springframework: DEBUG
+#    org.hibernate: DEBUG
