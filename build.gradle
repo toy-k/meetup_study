@@ -48,7 +48,7 @@ dependencies {
 
 tasks.named('test') {
     doFirst {
-        def testEnvPath = 'src/test/resources/.env'
+        def testEnvPath = 'src/main/resources/.env'
         if (Files.exists(Paths.get(testEnvPath))) {
             Properties props = new Properties()
             props.load(new FileInputStream(testEnvPath))
