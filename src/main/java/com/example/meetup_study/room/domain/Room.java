@@ -63,6 +63,9 @@ public class Room extends BaseEntity {
     @Column(name = "join_number")
     private Integer joinNumber;
 
+    @Column(name = "view_count")
+    private Long viewCount;
+
     //지양, 테스트 때문
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @Column(name="joined_user_list")
@@ -103,6 +106,10 @@ public class Room extends BaseEntity {
         this.category = category;
     }
 
+    public void changeViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
     public Room(RequestRoomDto requestRoomDto) {
         this.title = requestRoomDto.getTitle();
         this.description = requestRoomDto.getDescription();
@@ -114,5 +121,6 @@ public class Room extends BaseEntity {
         this.category = requestRoomDto.getCategory();
         this.joinNumber = requestRoomDto.getJoinNumber();
         this.hostUserId = requestRoomDto.getHostUserId();
+        this.viewCount = requestRoomDto.getViewCount();
     }
 }

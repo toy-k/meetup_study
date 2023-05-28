@@ -234,7 +234,8 @@ class RoomControllerTest {
                 updatedMeetupPhotoUrl,
                 updatedCategory,
                 createdRoomDto.getHostUserId(),
-                createdRoomDto.getJoinNumber()
+                createdRoomDto.getJoinNumber(),
+                createdRoomDto.getViewCount()
         );
 
         String updatedRequestBody = objectMapper.writeValueAsString(updatedRoomDto);
@@ -310,7 +311,8 @@ class RoomControllerTest {
                 "https://example.com/photo.jpg",
                 Category.CAFE,
                 fakeUserDto.getId(),
-                1
+                1,
+                1L
         );
 
         String requestBody = objectMapper.writeValueAsString(requestRoomDto);
@@ -354,7 +356,8 @@ class RoomControllerTest {
                         "https://example.com/photo" + i + ".jpg",
                         Category.CAFE,
                         1L,
-                        1
+                        1,
+                        1L
                 );
             }else{
                 requestRoomDto = new RequestRoomDto(
@@ -367,7 +370,8 @@ class RoomControllerTest {
                         "https://example.com/photo" + i + ".jpg",
                         Category.CAFE,
                         1L,
-                        1
+                        1,
+                        1L
                 );
             }
 

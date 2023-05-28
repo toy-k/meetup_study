@@ -4,6 +4,7 @@ import com.example.meetup_study.room.domain.Category;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -46,10 +47,13 @@ public class RequestRoomDto {
     @Positive
     private Integer joinNumber;
 
+    @Positive
+    private Long viewCount;
+
 
 
     //생성자
-    public RequestRoomDto(String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, Long hostUserId, Integer joinNumber) {
+    public RequestRoomDto(String title, String description, LocalDateTime joinEndDate, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, String meetupLocation, String meetupPhotoUrl, Category category, Long hostUserId, Integer joinNumber, Long viewCount) {
         this.title = title;
         this.description = description;
         this.joinEndDate = joinEndDate;
@@ -60,5 +64,6 @@ public class RequestRoomDto {
         this.category = category;
         this.hostUserId = hostUserId;
         this.joinNumber = joinNumber;
+        this.viewCount = viewCount;
     }
 }

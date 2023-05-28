@@ -9,6 +9,7 @@ import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,6 +27,8 @@ public class RoomServiceImpl implements RoomService{
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+
 
     @Transactional
     @Override
@@ -42,8 +45,16 @@ public class RoomServiceImpl implements RoomService{
 
     }
 
+    @Transactional
     @Override
     public Optional<Room> getRoom(Long id) {
+        Optional<Room> roomOpt = roomRepository.findById(id);
+        if(roomOpt.isPresent()) {
+            Room room = roomOpt.get();
+            Long viewCount = this.incrementViewCount(id);
+            room.changeViewCount(viewCount);
+        }
+
         return roomRepository.findById(id);
     }
 
@@ -116,4 +127,9 @@ public class RoomServiceImpl implements RoomService{
         roomRepository.deleteAll();
     }
 
+    private Long incrementViewCount(Long roomId) {
+        String key = "room:" + roomId + ":viewCount";
+        Long count = redisTemplate.opsForValue().increment(key);
+        return count.longValue();
+    }
 }

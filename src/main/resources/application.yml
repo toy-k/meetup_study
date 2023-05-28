@@ -17,6 +17,12 @@ spring:
             scope:
               - email
               - profile
+  cache:
+    type: redis
+    redis:
+        host: 127.0.0.1
+        port: 6379
+
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
