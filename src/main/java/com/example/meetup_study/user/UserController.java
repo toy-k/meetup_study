@@ -2,6 +2,7 @@ package com.example.meetup_study.user;
 
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.user.domain.dto.UserDto;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class UserController {
 
     private String ACCESSTOKEN = "AccessToken";
 
+    @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회")
     @GetMapping("/id/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id){
 
