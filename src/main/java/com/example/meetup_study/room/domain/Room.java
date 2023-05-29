@@ -1,17 +1,14 @@
 package com.example.meetup_study.room.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
-import com.example.meetup_study.joinedUser.JoinedUser;
+import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.upload.domain.Upload;
-import com.example.meetup_study.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

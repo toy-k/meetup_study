@@ -1,4 +1,4 @@
-package com.example.meetup_study.joinedUser;
+package com.example.meetup_study.room.upload.domain.dto;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.room.domain.Room;

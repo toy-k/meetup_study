@@ -1,6 +1,6 @@
 package com.example.meetup_study.room;
 
-import com.example.meetup_study.joinedUser.JoinedUser;
+import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
