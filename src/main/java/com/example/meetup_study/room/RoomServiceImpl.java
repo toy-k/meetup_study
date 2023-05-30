@@ -65,7 +65,7 @@ public class RoomServiceImpl implements RoomService{
             room.changeViewCount(viewCount);
         }
 
-        return roomRepository.findById(id);
+        return roomOpt;
     }
 
     @Override
