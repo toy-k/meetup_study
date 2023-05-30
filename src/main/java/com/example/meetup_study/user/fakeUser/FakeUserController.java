@@ -1,6 +1,8 @@
 package com.example.meetup_study.user.fakeUser;
 
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.image.userImage.domain.UserImage;
+import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.user.domain.ProviderType;
 import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
@@ -20,6 +22,7 @@ public class FakeUserController {
     private final FakeUserServiceImpl fakeUserService;
     private final FakeRepository fakeUserRepository;
     private final JwtService jwtService;
+    private final UserImageRepository userImageRepository;
 
     @GetMapping
     public String getFakeUser() {
@@ -41,10 +44,12 @@ public class FakeUserController {
             email = "fakeuser"+i+"@fake.com";
             description = "fakeuser"+i+"description";
 
+            UserImage userImage = new UserImage(imageUrl);
 
-            User user = new User(username, imageUrl, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
+            User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
 
             fakeUserService.createFakeUser(user);
+            userImageRepository.save(userImage);
 
 
         };
@@ -81,7 +86,7 @@ public class FakeUserController {
 
         fakeUserService.updateRefreshToken(user, refreshToken);
 
-        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getImageUrl(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
+        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getPath(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
 
 
         return ResponseEntity.ok(fakeUserDto);

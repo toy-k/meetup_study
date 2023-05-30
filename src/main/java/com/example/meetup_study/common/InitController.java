@@ -3,6 +3,8 @@ package com.example.meetup_study.common;
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.image.userImage.domain.UserImage;
+import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
@@ -33,6 +35,7 @@ public class InitController {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
+    private final UserImageRepository userImageRepository;
 
 
     @PostMapping
@@ -51,10 +54,14 @@ public class InitController {
             email = "jeonghwanlee1"+i+"@gmail.com";
             description = "fakeuser"+i+"description";
 
+            UserImage userImage = new UserImage(imageUrl);
 
-            User user = new User(username, imageUrl, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
+
+            User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
 
             fakeUserService.createFakeUser(user);
+            userImageRepository.save(userImage);
+
         };
 
 

@@ -3,6 +3,7 @@ package com.example.meetup_study.user.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.review.domain.Review;
 import lombok.AccessLevel;
@@ -32,8 +33,9 @@ public class User extends BaseEntity {
 
     private String password;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_image_id")
+    private UserImage userImage;
 
     @Column(unique = true)
     private String email;
@@ -68,17 +70,17 @@ public class User extends BaseEntity {
     private List<Review> reviewList = new ArrayList<>();
 
 
-    User(Long id, String username, String imageUrl, String email, String description) {
+    User(Long id, String username, UserImage userImage, String email, String description) {
         this.id = id;
         this.username = username;
-        this.imageUrl = imageUrl;
+        this.userImage = userImage;
         this.email = email;
         this.description = description;
     }
 
-    public User(String username, String imageUrl, String email, String description, RoleType roleType, ProviderType providerType, String providerId) {
+    public User(String username, UserImage userImage, String email, String description, RoleType roleType, ProviderType providerType, String providerId) {
         this.username = username;
-        this.imageUrl = imageUrl;
+        this.userImage = userImage;
         this.email = email;
         this.description = description;
         this.roleType = roleType;
@@ -95,8 +97,8 @@ public class User extends BaseEntity {
         this.username = username;
     }
 
-    public void changeImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void changeUserImage(UserImage userImage) {
+        this.userImage = userImage;
     }
 
     public void changeDescription(String description) {

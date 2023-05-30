@@ -43,7 +43,7 @@ public class FakeUserDto {
         return new FakeUserDto(
                 user.getId(),
                 user.getUsername(),
-                user.getImageUrl(),
+                user.getUserImage().getPath(),
                 user.getEmail(),
                 user.getDescription()
         );
