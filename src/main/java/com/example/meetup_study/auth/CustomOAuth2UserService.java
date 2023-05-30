@@ -1,5 +1,8 @@
 package com.example.meetup_study.auth;
 
+import com.example.meetup_study.image.userImage.UserImageService;
+import com.example.meetup_study.image.userImage.domain.UserImage;
+import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.user.domain.ProviderType;
 import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private final UserImageRepository userImageRepository;
 
     @Transactional
     @Override
@@ -58,28 +62,39 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return UserPrincipal.create(userInDb, user.getAttributes());
     }
 
-    private User createUser(CustomOauth2UserInfo customOauth2UserInfo, ProviderType providerType) {
+    @Transactional
+    public User createUser(CustomOauth2UserInfo customOauth2UserInfo, ProviderType providerType) {
+
+
+        UserImage userImage = new UserImage(customOauth2UserInfo.getImageUrl());
 
         User user = new User(
                 customOauth2UserInfo.getName(),
-                customOauth2UserInfo.getImageUrl(),
+                userImage,
                 customOauth2UserInfo.getEmail(),
                 providerType.toString(),
                 RoleType.USER,
                 providerType,
                 customOauth2UserInfo.getId()
         );
+        userImageRepository.save(userImage);
         return userRepository.saveAndFlush(user);
     }
 
-    private void updateUser(User user, CustomOauth2UserInfo customOauth2UserInfo) {
+    @Transactional
+    public void updateUser(User user, CustomOauth2UserInfo customOauth2UserInfo) {
 
         if(customOauth2UserInfo.getName() != null && !user.getUsername().equals(customOauth2UserInfo.getName())){
             user.changeUsername(customOauth2UserInfo.getName());
         }
 
-        if(customOauth2UserInfo.getImageUrl() != null && !user.getImageUrl().equals((customOauth2UserInfo.getImageUrl()))){
-            user.changeImageUrl(customOauth2UserInfo.getImageUrl());
+        if(customOauth2UserInfo.getImageUrl() != null && !user.getUserImage().getPath().equals((customOauth2UserInfo.getImageUrl()))){
+
+            UserImage userImage = new UserImage(customOauth2UserInfo.getImageUrl());
+
+            user.changeUserImage(userImage);
+            userImageRepository.save(userImage);
+
         }
     }
 }
