@@ -1,4 +1,4 @@
-package com.example.meetup_study.room.upload.domain.dto;
+package com.example.meetup_study.hostUser.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.room.domain.Room;
@@ -9,11 +9,11 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-public class JoinedUser extends BaseEntity {
+public class HostUser extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "joined_user_id")
+    @Column(name = "host_user_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,10 +24,10 @@ public class JoinedUser extends BaseEntity {
     @JoinColumn(name = "users_id")
     private User user;
 
-    public JoinedUser() {
+    public HostUser() {
 
     }
-    public JoinedUser(User user, Room room) {
+    public HostUser(User user, Room room) {
         this.room = room;
         this.user = user;
     }
