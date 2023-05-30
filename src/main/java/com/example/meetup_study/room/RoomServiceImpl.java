@@ -1,6 +1,9 @@
 package com.example.meetup_study.room;
 
-import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
+import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.Category.domain.CategoryRepository;
+import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
@@ -28,16 +31,23 @@ public class RoomServiceImpl implements RoomService{
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
-
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     @Override
     public Optional<Room> createRoom(RequestRoomDto requestRoomDto) {
         Optional<User> userOpt = userRepository.findById(requestRoomDto.getHostUserId());
+        Optional<Category> categoryOpt = categoryRepository.findByName(requestRoomDto.getCategory());
+
+        if(!categoryOpt.isPresent()){
+            throw new IllegalArgumentException("category가 없습니다.");
+        }
         if(userOpt.isPresent()){
-            Room room = roomRepository.save(new Room(requestRoomDto));
+            Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get()));
             JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
             room.addJoinedUser(joinedUser);
+            HostUser hostUser = new HostUser(userOpt.get(), room);
+            room.addHostUser(hostUser);
             return Optional.ofNullable(room);
         }else{
             throw new IllegalArgumentException("User가 없습니다.");
@@ -90,16 +100,15 @@ public class RoomServiceImpl implements RoomService{
     public Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId) {
         Optional <Room> roomOpt = roomRepository.findById(roomDto.getId());
 
-        if(roomOpt.isPresent() && (roomOpt.get().getHostUserId().equals(userId))) {
+        if(roomOpt.isPresent() && (roomOpt.get().getHostUserList().get(0).getId().equals(userId))) {
 
             Optional<RoomDto> roomDtoOpt = roomOpt.map(room -> {
                 if (roomDto.getTitle() != null) room.changeTitle(roomDto.getTitle());
                 if (roomDto.getDescription() != null) room.changeDescription(roomDto.getDescription());
-                if (roomDto.getJoinEndDate() != null) room.changeJoinEndDate(roomDto.getJoinEndDate());
                 if (roomDto.getMeetupStartDate() != null) room.changeMeetupStartDate(roomDto.getMeetupStartDate());
                 if (roomDto.getMeetupEndDate() != null) room.changeMeetupEndDate(roomDto.getMeetupEndDate());
-                if (roomDto.getMeetupLocation() != null) room.changeMeetupLocation(roomDto.getMeetupLocation());
-                if (roomDto.getMeetupPhotoUrl() != null) room.changeMeetupPhotoUrl(roomDto.getMeetupPhotoUrl());
+                if (roomDto.getLocation() != null) room.changeMeetupLocation(roomDto.getLocation());
+                if (roomDto.getMeetupPhotoPath() != null) room.changeMeetupPhotoPath(roomDto.getMeetupPhotoPath());
                 if (roomDto.getCategory() != null) room.changeCategory(roomDto.getCategory());
                 return new RoomDto().convertToRoomDto(room);
             });
@@ -113,7 +122,7 @@ public class RoomServiceImpl implements RoomService{
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
         Optional <Room> room = roomRepository.findById(id);
-        if(room.isPresent() && room.get().getHostUserId().equals(userId)) {
+        if(room.isPresent() && room.get().getHostUserList().get(0).getId().equals(userId)) {
             roomRepository.delete(room.get());
             Optional<RoomDto> roomDto = room.map(r -> new RoomDto().convertToRoomDto(r));
             return roomDto;

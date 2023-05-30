@@ -1,7 +1,11 @@
 package com.example.meetup_study.room.domain;
 
+import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.Category.domain.CategoryEnum;
 import com.example.meetup_study.common.domain.BaseEntity;
-import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
+import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.upload.domain.Upload;
 import lombok.AccessLevel;
@@ -29,14 +33,13 @@ public class Room extends BaseEntity {
     @Lob
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    //모임 주최자
-    @Column(name = "host_user_id")
-    private Long hostUserId;
-
-    //모임 모집 마감일
-    @Column(name = "join_end_date")
-    private LocalDateTime joinEndDate;
+    //모임 장소
+    @Column(name = "location")
+    private String location;
 
     //모임 미팅 시작 시간
     @Column(name = "meetup_start_date")
@@ -46,46 +49,79 @@ public class Room extends BaseEntity {
     @Column(name = "meetup_end_date")
     private LocalDateTime meetupEndDate;
 
-    //모임 장소
-    @Column(name = "meetup_location")
-    private String meetupLocation;
+    //모임 최대 인원
+    @Column(name = "max_join_number")
+    private Integer maxJoinNumber;
 
-    //모임 프로필사진
-    @Column(name = "meetup_photo_url")
-    private String meetupPhotoUrl;
+    @Column(name = "current_join_number")
+    private Integer currentJoinNumber;
 
+    @Column(name = "price")
+    private Long price;
+
+    @Column(name = "room_status")
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private RoomStatus roomStatus;//WAITING, PROCEEDING, FINISHED, CANCELED
 
-    @Column(name = "join_number")
-    private Integer joinNumber;
+    @Column(name = "room_type")
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType; //Online, Offline
 
     @Column(name = "view_count")
     private Long viewCount;
 
-    //지양, 테스트 때문
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    @Column(name="joined_user_list")
-    private List<JoinedUser> joinedUserList = new ArrayList<>();
+    //모임 프로필사진
+    @Column(name = "meetup_photo_path")
+    private String meetupPhotoPath;
 
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     @Column(name="upload_list")
     private List<Upload> uploadList = new ArrayList<>();
 
+    //지양, 테스트 때문
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Column(name="joined_user_list")
+    private List<JoinedUser> joinedUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Column(name="host_user_list")
+    private List<HostUser> hostUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Column(name="review_list")
+    private List<Review> reviewList = new ArrayList<>();
+
+
+    ////////////////////////////////////////////
+
+//    //모임 주최자
+//    @Column(name = "host_user_id")
+//    private Long hostUserId;
+
+
+
+    //add upload
+    public void addUpload(Upload upload) {
+        this.uploadList.add(upload);
+    }
 
     //add joinedUser
     public void addJoinedUser(JoinedUser joinedUser) {
         this.joinedUserList.add(joinedUser);
     }
+
+    //add hostUser
+    public void addHostUser(HostUser hostUser) {
+        this.hostUserList.add(hostUser);
+    }
+
+
     public void changeTitle(String title) {
         this.title = title;
     }
     public void changeDescription(String description) {
         this.description = description;
-    }
-    public void changeJoinEndDate(LocalDateTime joinEndDate) {
-        this.joinEndDate = joinEndDate;
     }
     public void changeMeetupStartDate(LocalDateTime meetupStartDate) {
         this.meetupStartDate = meetupStartDate;
@@ -94,30 +130,54 @@ public class Room extends BaseEntity {
         this.meetupEndDate = meetupEndDate;
     }
     public void changeMeetupLocation(String meetupLocation) {
-        this.meetupLocation = meetupLocation;
+        this.location = meetupLocation;
     }
-    public void changeMeetupPhotoUrl(String meetupPhotoUrl) {
-        this.meetupPhotoUrl = meetupPhotoUrl;
+    public void changeMeetupPhotoPath(String meetupPhotoPath) {
+        this.meetupPhotoPath = meetupPhotoPath;
     }
-    public void changeCategory(Category category) {
+    public void changeCategory(CategoryEnum categoryEnum) {
+        Category category = new Category(categoryEnum);
         this.category = category;
+    }
+    public void changeMaxJoinNumber(Integer maxJoinNumber) {
+        this.maxJoinNumber = maxJoinNumber;
+    }
+
+    public void changeCurrentJoinNumber(Integer currentJoinNumber) {
+        this.currentJoinNumber = currentJoinNumber;
+    }
+
+    public void changePrice(Long price) {
+        this.price = price;
+    }
+
+    public void changeRoomStatus(RoomStatus roomStatus) {
+        this.roomStatus = roomStatus;
+    }
+
+    public void changeRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 
     public void changeViewCount(Long viewCount) {
         this.viewCount = viewCount;
     }
 
-    public Room(RequestRoomDto requestRoomDto) {
+    public Room(RequestRoomDto requestRoomDto, Category category) {
         this.title = requestRoomDto.getTitle();
         this.description = requestRoomDto.getDescription();
-        this.joinEndDate = requestRoomDto.getJoinEndDate();
+        this.category = category;
+        this.location = requestRoomDto.getLocation();
         this.meetupStartDate = requestRoomDto.getMeetupStartDate();
         this.meetupEndDate = requestRoomDto.getMeetupEndDate();
-        this.meetupLocation = requestRoomDto.getMeetupLocation();
-        this.meetupPhotoUrl = requestRoomDto.getMeetupPhotoUrl();
-        this.category = requestRoomDto.getCategory();
-        this.joinNumber = requestRoomDto.getJoinNumber();
-        this.hostUserId = requestRoomDto.getHostUserId();
+        this.maxJoinNumber = requestRoomDto.getMaxJoinNumber();
+        this.currentJoinNumber = requestRoomDto.getCurrentJoinNumber();
+        this.price = requestRoomDto.getPrice();
+        this.roomStatus = requestRoomDto.getRoomStatus();
+        this.roomType = requestRoomDto.getRoomType();
         this.viewCount = requestRoomDto.getViewCount();
+        this.meetupPhotoPath = requestRoomDto.getMeetupPhotoPath();
+
+//        this.hostUserId = requestRoomDto.getHostUserId();
     }
 }

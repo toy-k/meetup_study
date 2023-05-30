@@ -1,13 +1,16 @@
 package com.example.meetup_study.common;
 
-import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
-import com.example.meetup_study.room.domain.Category;
+import com.example.meetup_study.Category.CategoryService;
+import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.room.domain.RoomStatus;
+import com.example.meetup_study.room.domain.RoomType;
+import com.example.meetup_study.user.domain.*;
+import com.example.meetup_study.Category.domain.CategoryEnum;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
-import com.example.meetup_study.user.domain.ProviderType;
-import com.example.meetup_study.user.domain.RoleType;
-import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.FakeRepository;
 import com.example.meetup_study.user.fakeUser.FakeUserServiceImpl;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -28,9 +32,12 @@ public class InitController {
     private final FakeRepository fakeUserRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final CategoryService categoryService;
+
 
     @PostMapping
-    @PostConstruct
+    @PostConstruct //스프링 컨테이너 생성 전에 초기화돼서 joinedUser, HoustUser 생성안함
+    @Transactional
     public String createDummy(){
 
         String username;
@@ -50,18 +57,35 @@ public class InitController {
             fakeUserService.createFakeUser(user);
         };
 
+
+
+
+        //category
+
+        for (CategoryEnum cate : CategoryEnum.values()) {
+            categoryService.createCategory(cate);
+        }
+
+
+
+
+
         //room
         String title;
         String desc;
-        LocalDateTime joinEndDate;
         LocalDateTime meetupStartDate;
         LocalDateTime meetupEndDate;
         String meetupLocation;
-        String meetupPhotoUrl;
-        Category category;
+        String meetupPhotoPath;
+        CategoryEnum category;
         Long hostUserId;
-        Integer joinNumber;
+        Integer currentJoinNumber;
         Long viewCount;
+        Category categorys;
+        Integer maxJoinNumber;
+        Long price;
+        RoomStatus roomStatus;
+        RoomType roomType;
 
         Optional<User> user = fakeUserRepository.findByUsername("fakeuser5");
 
@@ -71,30 +95,34 @@ public class InitController {
             title = "title"+i;
             desc = "desc"+i;
             if(i%2==0){
-                joinEndDate = LocalDateTime.now().plusDays(1);
                 meetupStartDate = LocalDateTime.now().plusDays(2);
                 meetupEndDate = LocalDateTime.now().plusDays(3);
             }else {
-                joinEndDate = LocalDateTime.now().minusDays(5);
                 meetupStartDate = LocalDateTime.now().minusDays(4);
                 meetupEndDate = LocalDateTime.now().minusDays(3);
             }
             meetupLocation = "meetupLocation"+i;
-            meetupPhotoUrl = "meetupPhotoUrl"+i;
-            category = Category.values()[i%5];
+            meetupPhotoPath = "meetupPhotoPath"+i;
+            category = CategoryEnum.values()[i%5];
             hostUserId = user.get().getId();
-            joinNumber = 1;
+            currentJoinNumber = 1;
             viewCount =1L;
+            categorys = categoryService.getCategory(category).get();
+            maxJoinNumber = 10;
+            price = 10000L;
+            roomStatus = RoomStatus.WAITING;
+            roomType = RoomType.ONLINE;
 
+            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount,meetupPhotoPath, hostUserId);
 
-
-            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, joinEndDate, meetupStartDate, meetupEndDate, meetupLocation, meetupPhotoUrl, category, hostUserId, joinNumber, viewCount);
-
-            Room room = roomRepository.save(new Room(requestRoomDto));
             Optional<User> userOpt = userRepository.findById(user.get().getId());
             if(userOpt.isPresent()){
+                Room room = roomRepository.save(new Room(requestRoomDto, categorys));
                 JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
+
                 room.addJoinedUser(joinedUser);
+                HostUser hostUser = new HostUser(userOpt.get(), room);
+                room.addHostUser(hostUser);
             }else{
                 throw new IllegalArgumentException("User가 없습니다.");
             }

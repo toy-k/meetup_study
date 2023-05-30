@@ -61,8 +61,7 @@ public class EventEmailScheduler {
                         "\n Meetup Event : " + room.get().getTitle()
                         + " \n MeetupStartDate : " + room.get().getMeetupStartDate()
                         + " \n MeetupEndDate : " + room.get().getMeetupEndDate()
-                        + " \n JoinEndData : " + room.get().getJoinEndDate()
-                        + " \n MeetupLocation : " + room.get().getMeetupLocation()
+                        + " \n location : " + room.get().getLocation()
                         + " \n MeetupCategory : " + room.get().getCategory()
                 );
                 javaMailSender.send(simpleMailMessage);

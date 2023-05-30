@@ -1,6 +1,6 @@
-package com.example.meetup_study.room.domain;
+package com.example.meetup_study.Category.domain;
 
-public enum Category {
+public enum CategoryEnum {
     STUDY, TRAVEL, CODING, FOOD, GAME, CAFE, ALCHOLE, ACTIVITY, CULTURE, SPORTS, ETC
 
 }

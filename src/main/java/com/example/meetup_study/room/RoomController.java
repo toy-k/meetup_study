@@ -123,7 +123,7 @@ public class RoomController {
 
         Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
 
-        if(!userOpt.isPresent() || !roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserId()){
+        if(!userOpt.isPresent() || !roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getId()){
             throw new IllegalArgumentException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
         }
 

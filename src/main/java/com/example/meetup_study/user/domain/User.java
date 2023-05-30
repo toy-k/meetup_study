@@ -2,7 +2,9 @@ package com.example.meetup_study.user.domain;
 
 
 import com.example.meetup_study.common.domain.BaseEntity;
-import com.example.meetup_study.room.upload.domain.dto.JoinedUser;
+import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.review.domain.Review;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,6 +58,14 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Column(name="joined_user_list")
     private List<JoinedUser> joinedUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column(name="host_user_list")
+    private List<HostUser> hostUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column(name="review_list")
+    private List<Review> reviewList = new ArrayList<>();
 
 
     User(Long id, String username, String imageUrl, String email, String description) {
