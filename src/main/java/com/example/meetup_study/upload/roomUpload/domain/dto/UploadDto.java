@@ -1,15 +1,10 @@
-package com.example.meetup_study.room.upload.domain.dto;
+package com.example.meetup_study.upload.roomUpload.domain.dto;
 
-import com.example.meetup_study.room.domain.Room;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Getter
 @NoArgsConstructor

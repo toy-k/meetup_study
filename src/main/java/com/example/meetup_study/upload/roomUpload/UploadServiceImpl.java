@@ -1,14 +1,12 @@
-package com.example.meetup_study.room.upload;
+package com.example.meetup_study.upload.roomUpload;
 
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
-import com.example.meetup_study.room.upload.domain.Upload;
-import com.example.meetup_study.room.upload.domain.dto.FileDeleteStatus;
-import com.example.meetup_study.room.upload.domain.dto.RequestUploadDto;
-import com.example.meetup_study.room.upload.domain.dto.UploadDto;
-import com.example.meetup_study.room.upload.domain.repository.UploadRepository;
+import com.example.meetup_study.upload.roomUpload.domain.Upload;
+import com.example.meetup_study.upload.FileDeleteStatus;
+import com.example.meetup_study.upload.roomUpload.domain.dto.UploadDto;
+import com.example.meetup_study.upload.roomUpload.domain.repository.UploadRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +26,7 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class UploadServiceImpl implements UploadService{
 
-    private String UPLOADPATH = "/src/main/resources/upload/";
+    private String UPLOADPATH = "/src/main/resources/upload/room/";
     private String ZIPFILENAME = "files.zip";
 
     private final UploadRepository uploadRepository;
@@ -58,14 +56,10 @@ public class UploadServiceImpl implements UploadService{
                 File storage = new File(filePath);
                 if (!storage.exists()) {
                     storage.mkdirs();
+                    storage.createNewFile();
                 }
 
-                File newFile = new File(fullPath);
-                if (!newFile.exists()) {
-                    newFile.createNewFile();
-                }
-
-                file.transferTo(newFile);
+                file.transferTo(storage);
 
 
                 UploadDto uploadDto = new UploadDto(fileName, fullPath);

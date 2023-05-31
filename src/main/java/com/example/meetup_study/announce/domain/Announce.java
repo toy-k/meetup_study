@@ -2,8 +2,7 @@ package com.example.meetup_study.announce.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
-import com.example.meetup_study.image.userImage.domain.UserImage;
-import com.example.meetup_study.room.upload.domain.Upload;
+import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,10 +29,9 @@ public class Announce extends BaseEntity{
     @Lob
     private String description;
 
-    //announce upload 로 수정
-//    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-//    @Column(name="announce_upload_list")
-//    private List<Upload> announceUploadList = new ArrayList<>();
+    @OneToMany(mappedBy = "announce", cascade = CascadeType.ALL)
+    @Column(name="announce_upload_list")
+    private List<AnnounceUpload> announceUploadList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -44,9 +42,9 @@ public class Announce extends BaseEntity{
     private AnnounceImage announceImage;
 
 
-    //    public void addUpload(Upload upload) {
-//        this.announceUploadList.add(upload);
-//    }
+    public void addUpload(AnnounceUpload announceUpload) {
+        this.announceUploadList.add(announceUpload);
+    }
     public void changeTitle(String title) {
     this.title = title;
 }
