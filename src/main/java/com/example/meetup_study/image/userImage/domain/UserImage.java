@@ -19,11 +19,24 @@ public class UserImage extends BaseEntity {
     @Column()
     private String path;
 
+    @Lob
+    @Column(name = "profile")
+    private byte[] profile;
+
+
     public UserImage(String path){
         this.path = path;
     }
 
+    public UserImage(byte[] profile){
+        this.profile = profile;
+    }
+
     public void changePath(String path) {
         this.path = path;
+    }
+
+    public void changeProfile(byte[] profile) {
+        this.profile = profile;
     }
 }
