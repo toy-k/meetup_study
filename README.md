@@ -37,3 +37,6 @@
 
 리팩토링 
 -> DB 구조 변경 및 테이블 추가 -> dto, 컨트롤러, 서비스 일일히 다바꿔야하는데 복잡
+
+![image](https://github.com/toy-k/meetup_study/assets/88143547/5c620932-8bb1-4c4e-a58d-37413b798494)
+
