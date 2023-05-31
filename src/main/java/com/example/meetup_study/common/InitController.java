@@ -3,6 +3,7 @@ package com.example.meetup_study.common;
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
@@ -93,6 +94,7 @@ public class InitController {
         Long price;
         RoomStatus roomStatus;
         RoomType roomType;
+        RoomImage roomImage;
 
         Optional<User> user = fakeUserRepository.findByUsername("fakeuser5");
 
@@ -119,12 +121,14 @@ public class InitController {
             price = 10000L;
             roomStatus = RoomStatus.WAITING;
             roomType = RoomType.ONLINE;
+            roomImage = new RoomImage(meetupPhotoPath);
 
-            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount,meetupPhotoPath, hostUserId);
+            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount,meetupPhotoPath, hostUserId, meetupPhotoPath);
 
             Optional<User> userOpt = userRepository.findById(user.get().getId());
             if(userOpt.isPresent()){
-                Room room = roomRepository.save(new Room(requestRoomDto, categorys));
+
+                Room room = roomRepository.save(new Room(requestRoomDto, categorys, roomImage));
                 JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
 
                 room.addJoinedUser(joinedUser);

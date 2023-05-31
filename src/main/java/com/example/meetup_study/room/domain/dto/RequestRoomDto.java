@@ -59,6 +59,7 @@ public class RequestRoomDto {
 
     ///////////////////////////////
 
+    private String imagePath;
 
     @Positive
     private Long hostUserId;
@@ -66,7 +67,7 @@ public class RequestRoomDto {
 
 
     //생성자
-    public RequestRoomDto(String title, String description, CategoryEnum category, String location, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, Integer maxJoinNumber, Integer currentJoinNumber, Long price, RoomStatus roomStatus,RoomType roomType, Long viewCount,String meetupPhotoPath, Long hostUserId) {
+    public RequestRoomDto(String title, String description, CategoryEnum category, String location, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, Integer maxJoinNumber, Integer currentJoinNumber, Long price, RoomStatus roomStatus,RoomType roomType, Long viewCount,String meetupPhotoPath, Long hostUserId, String imagePath) {
         this.title = title;
         this.description = description;
         this.category = category;
@@ -82,5 +83,6 @@ public class RequestRoomDto {
         this.meetupPhotoPath = meetupPhotoPath;
 
         this.hostUserId = hostUserId;
+        this.imagePath = imagePath;
     }
 }

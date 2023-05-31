@@ -1,6 +1,6 @@
-package com.example.meetup_study.image.userImage.domain;
+package com.example.meetup_study.image.announceImage.domain;
 
-import com.example.meetup_study.common.domain.BaseEntity;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,17 +9,16 @@ import javax.persistence.*;
 @Entity
 @Getter
 @RequiredArgsConstructor
-public class UserImage extends BaseEntity {
-
+public class AnnounceImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_image_id")
+    @Column(name = "announce_image_id")
     private Long id;
 
     @Column()
     private String path;
 
-    public UserImage(String path){
+    public AnnounceImage(String path){
         this.path = path;
     }
 

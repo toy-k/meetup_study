@@ -1,6 +1,8 @@
 package com.example.meetup_study.announce.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
+import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
+import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.room.upload.domain.Upload;
 import com.example.meetup_study.user.domain.User;
 import lombok.AccessLevel;
@@ -37,7 +39,12 @@ public class Announce extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-//    public void addUpload(Upload upload) {
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "announce_image_id")
+    private AnnounceImage announceImage;
+
+
+    //    public void addUpload(Upload upload) {
 //        this.announceUploadList.add(upload);
 //    }
     public void changeTitle(String title) {
@@ -47,10 +54,15 @@ public class Announce extends BaseEntity{
         this.description = description;
     }
 
-    public Announce(String title, String description, User user) {
+    public void changeAnnounceImage(AnnounceImage announceImage) {
+        this.announceImage = announceImage;
+    }
+
+    public Announce(String title, String description, User user, AnnounceImage announceImage) {
         this.title = title;
         this.description = description;
         this.user = user;
+        this.announceImage = announceImage;
     }
 
 }
