@@ -3,6 +3,8 @@ package com.example.meetup_study.room.domain;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryEnum;
 import com.example.meetup_study.common.domain.BaseEntity;
+import com.example.meetup_study.image.roomImage.domain.RoomImage;
+import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
@@ -73,6 +75,11 @@ public class Room extends BaseEntity {
     //모임 프로필사진
     @Column(name = "meetup_photo_path")
     private String meetupPhotoPath;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_image_id")
+    private RoomImage roomImage;
+
 
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
@@ -163,7 +170,11 @@ public class Room extends BaseEntity {
         this.viewCount = viewCount;
     }
 
-    public Room(RequestRoomDto requestRoomDto, Category category) {
+    public void changeRoomImage(RoomImage roomImage) {
+        this.roomImage = roomImage;
+    }
+
+    public Room(RequestRoomDto requestRoomDto, Category category,RoomImage roomImage) {
         this.title = requestRoomDto.getTitle();
         this.description = requestRoomDto.getDescription();
         this.category = category;
@@ -177,6 +188,8 @@ public class Room extends BaseEntity {
         this.roomType = requestRoomDto.getRoomType();
         this.viewCount = requestRoomDto.getViewCount();
         this.meetupPhotoPath = requestRoomDto.getMeetupPhotoPath();
+
+        this.roomImage = roomImage;
 
 //        this.hostUserId = requestRoomDto.getHostUserId();
     }

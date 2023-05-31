@@ -3,6 +3,7 @@ package com.example.meetup_study.room;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryRepository;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
@@ -43,7 +44,10 @@ public class RoomServiceImpl implements RoomService{
             throw new IllegalArgumentException("category가 없습니다.");
         }
         if(userOpt.isPresent()){
-            Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get()));
+
+            RoomImage roomImage = new RoomImage(requestRoomDto.getImagePath());
+
+            Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get(), roomImage));
             JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
             room.addJoinedUser(joinedUser);
             HostUser hostUser = new HostUser(userOpt.get(), room);

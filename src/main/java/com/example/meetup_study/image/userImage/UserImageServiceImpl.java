@@ -31,16 +31,39 @@ public class UserImageServiceImpl implements UserImageService {
 
     @Override
     public Optional<UserImage> getUserImage(Long userId) {
-        return Optional.empty();
+        Optional<User> userOpt = userService.findById(userId);
+        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+
+
+        return Optional.ofNullable(userOpt.get().getUserImage());
     }
 
     @Override
     public Optional<UserImage> updateUserImage(String path, Long userId) {
-        return Optional.empty();
+        Optional<User> userOpt = userService.findById(userId);
+        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+
+        UserImage userImage = userOpt.get().getUserImage();
+
+        userImage.changePath(path);
+
+        return Optional.of(userImageRepository.save(userImage));
+
     }
 
     @Override
     public Optional<UserImage> deleteUserImage(Long userId) {
-        return Optional.empty();
+
+        Optional<User> userOpt = userService.findById(userId);
+        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+
+        UserImage userImage = userOpt.get().getUserImage();
+
+        userOpt.get().changeUserImage(null);
+
+        userImageRepository.delete(userImage);
+
+        return Optional.of(userImage);
+
     }
 }

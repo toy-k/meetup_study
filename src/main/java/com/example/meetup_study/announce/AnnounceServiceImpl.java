@@ -4,6 +4,7 @@ import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
+import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
@@ -28,7 +29,10 @@ public class AnnounceServiceImpl implements AnnounceService {
         Optional<User> userOpt = userRepository.findById(requestAnnounceDto.getUserId());
 
         if(userOpt.isPresent()){
-            Announce announce = announceRepository.save(new Announce(requestAnnounceDto.getTitle(), requestAnnounceDto.getDescription(), userOpt.get()));
+
+            AnnounceImage announceImage = new AnnounceImage(requestAnnounceDto.getImagePath());
+
+            Announce announce = announceRepository.save(new Announce(requestAnnounceDto.getTitle(), requestAnnounceDto.getDescription(), userOpt.get(), announceImage));
 
             userOpt.get().addAnnounce(announce);
 
