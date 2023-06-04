@@ -55,26 +55,27 @@ public class Room extends BaseEntity {
     private Integer maxJoinNumber;
 
     @Column(name = "current_join_number")
-    private Integer currentJoinNumber;
+    private Integer currentJoinNumber = 1;
 
     @Column(name = "price")
     private Long price;
 
     @Column(name = "room_status")
     @Enumerated(EnumType.STRING)
-    private RoomStatus roomStatus;//WAITING, PROCEEDING, FINISHED, CANCELED
+    private RoomStatus roomStatus = RoomStatus.WAITING;//WAITING, PROCEEDING, FINISHED, CANCELED
 
     @Column(name = "room_type")
     @Enumerated(EnumType.STRING)
     private RoomType roomType; //Online, Offline
 
     @Column(name = "view_count")
-    private Long viewCount;
+    private Long viewCount = 1L;
 
     //모임 프로필사진
     @Column(name = "meetup_photo_path")
     private String meetupPhotoPath;
 
+    //다른 테이블처럼 byte 형태로 수정.
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_image_id")
     private RoomImage roomImage;

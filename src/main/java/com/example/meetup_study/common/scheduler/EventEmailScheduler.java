@@ -88,8 +88,8 @@ public class EventEmailScheduler {
 
         while (count < 1L) {
             Random random = new Random();
-
-            List<RoomDto> roomDtos = roomService.getRoomListAfterMeetupStart();
+            //page를 랜덤으로 가져오도록 수정 필요
+            List<RoomDto> roomDtos = roomService.getRoomListAfterMeetupStart(1,10);
             Long roomCnt = Long.valueOf(roomDtos.size());
 
 
