@@ -12,11 +12,11 @@ public interface RoomService {
 
     Optional<Room> getRoom(Long id);
 
-    List<RoomDto> getRoomList();
+    List<RoomDto> getRoomList(Integer page, Integer size);
 
-    List<RoomDto> getRoomListBeforeMeetupStart();
+    List<RoomDto> getRoomListBeforeMeetupStart(Integer page, Integer size);
 
-    List<RoomDto> getRoomListAfterMeetupStart();
+    List<RoomDto> getRoomListAfterMeetupStart(Integer page, Integer size);
 
     Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId);
 

@@ -1,5 +1,7 @@
 package com.example.meetup_study.room;
 
+import com.example.meetup_study.Category.CategoryService;
+import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
@@ -26,6 +28,7 @@ public class RoomController {
     private final RoomService roomService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
 
     private String ACCESSTOKEN = "AccessToken";
@@ -36,11 +39,26 @@ public class RoomController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != requestRoomDto.getHostUserId()){
+        if(!userIdOpt.isPresent()){
+            throw new IllegalArgumentException("유저가 없습니다.");
+        }
+
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
+
+        if(!userOpt.isPresent() || (userOpt.get().getId() != requestRoomDto.getHostUserId())){
             throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
+
+        if(requestRoomDto.getMeetupEndDate().isBefore(requestRoomDto.getMeetupStartDate())){
+            throw new IllegalArgumentException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+        }
+
+        if(requestRoomDto.getPrice() < 0){
+            throw new IllegalArgumentException("가격이 0보다 작습니다.");
+        }
+
 
         Optional<Room> createdRoom = roomService.createRoom(requestRoomDto);
 
@@ -53,58 +71,83 @@ public class RoomController {
     public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
 
         Optional<Room> roomOpt = roomService.getRoom(id);
-        if(roomOpt.isPresent()){
-            RoomDto roomDtoOpt = new RoomDto().convertToRoomDto(roomOpt.get());
-            return ResponseEntity.ok(roomDtoOpt);
-        }else{
-            throw new IllegalArgumentException("방이 없습니다.");
-        }
+        RoomDto roomDtoOpt = new RoomDto().convertToRoomDto(roomOpt.get());
+        return ResponseEntity.ok(roomDtoOpt);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<RoomDto>> getRoomList(){
+    public ResponseEntity<List<RoomDto>> getRoomList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
 
-        List<RoomDto> roomDtos = roomService.getRoomList();
+        if(page < 1 || size < 1){
+            page = 1;
+            size = 10;
+        }
+
+        List<RoomDto> roomDtos = roomService.getRoomList(page, size);
 
         return ResponseEntity.ok(roomDtos);
 
     }
 
     @GetMapping("/list/before-meetup-start")
-    public ResponseEntity<List<RoomDto>> getRoomListBeforeMeetupStart(){
+    public ResponseEntity<List<RoomDto>> getRoomListBeforeMeetupStart(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
+        if(page < 1 || size < 1){
+            page = 1;
+            size = 10;
+        }
 
-        List<RoomDto> roomDtos = roomService.getRoomListBeforeMeetupStart();
+
+        List<RoomDto> roomDtos = roomService.getRoomListBeforeMeetupStart(page, size);
 
         return ResponseEntity.ok(roomDtos);
 
     }
 
     @GetMapping("/list/after-meetup-start")
-    public ResponseEntity<List<RoomDto>> getRoomListAfterMeetupStart(){
+    public ResponseEntity<List<RoomDto>> getRoomListAfterMeetupStart(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
+        if(page < 1 || size < 1){
+            page = 1;
+            size = 10;
+        }
 
-        List<RoomDto> roomDtos = roomService.getRoomListAfterMeetupStart();
+        List<RoomDto> roomDtos = roomService.getRoomListAfterMeetupStart(page, size);
 
         return ResponseEntity.ok(roomDtos);
 
     }
 
     @PutMapping()
-    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto RoomDto, HttpServletRequest req) throws AccessDeniedException {
+    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
+
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
         if(!userId.isPresent()){
             throw new IllegalArgumentException("토큰에 유저가 없습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<User> userOpt = userService.findById(userId.get());
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != RoomDto.getHostUserId()){
+        if(!userOpt.isPresent() || userOpt.get().getId() != roomDto.getHostUserId()){
             throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
-        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(RoomDto, userOpt.get().getId());
+        if(roomDto.getMeetupEndDate().isBefore(roomDto.getMeetupStartDate())){
+            throw new IllegalArgumentException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+        }
+
+        Optional<Category> categoryOpt = categoryService.getCategory(roomDto.getCategory());
+        if(!categoryOpt.isPresent()){
+            throw new IllegalArgumentException("카테고리가 없습니다.");
+        }
+
+        if(roomDto.getPrice() < 0){
+            throw new IllegalArgumentException("가격이 0보다 작습니다.");
+        }
+
+
+        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userOpt.get().getId());
 
         return ResponseEntity.ok(updatedRoomDto.get());
     }
@@ -115,11 +158,12 @@ public class RoomController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
+
         if(!userId.isPresent()){
             throw new IllegalArgumentException("토큰에 유저가 없습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<User> userOpt = userService.findById(userId.get());
 
         Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
 
