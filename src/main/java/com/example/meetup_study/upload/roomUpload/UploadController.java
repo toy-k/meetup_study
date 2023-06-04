@@ -1,5 +1,7 @@
 package com.example.meetup_study.upload.roomUpload;
 
+import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.roomUpload.domain.dto.UploadDto;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.*;
 public class UploadController {
 
     private final UploadService uploadService;
+    private final RoomService roomService;
 
     @PostMapping
     public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long roomId) {
@@ -24,6 +27,20 @@ public class UploadController {
         List<UploadDto> uploadDtos = uploadService.save(files, roomId);
 
         return ResponseEntity.ok(uploadDtos);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<UploadDto> findFiles(Long roomId) {
+
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        if (roomOpt.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 스터디룸입니다.");
+        }
+
+        Optional<UploadDto> uploadDtoOpt = uploadService.findByRoomId(roomId);
+
+        return ResponseEntity.ok(uploadDtoOpt.get());
     }
 
     @GetMapping("/download")

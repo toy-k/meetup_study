@@ -12,7 +12,7 @@ public interface AnnounceService {
 
     Optional<Announce> getAnnounce(Long announceId);
 
-    List<AnnounceDto> getAnnounceList();
+    List<AnnounceDto> getAnnounceList(Integer page, Integer size);
 
     Optional<AnnounceDto> updateAnnounce(AnnounceDto announceDto, Long userId);
 
