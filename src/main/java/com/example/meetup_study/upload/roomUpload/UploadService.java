@@ -6,9 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 
 public interface UploadService {
     List<UploadDto> save(List<MultipartFile> files, Long roomId);
+    Optional<UploadDto> findByRoomId(Long roomId);
     void downloadZip(HttpServletResponse res, List<String> fileNames, Long roomId);
     FileDeleteStatus deleteByName(String fileName, Long roomId);
 

@@ -47,6 +47,9 @@ public class UploadServiceImpl implements UploadService{
                 throw new IllegalArgumentException("파일이 없습니다.");
             }
 
+            if (file.getSize() > 10 * 1024 * 1024) {
+                throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
+            }
 
             String fileName = roomId + "-" + file.getOriginalFilename();
             String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + roomOpt.get().getId() + "/";
@@ -79,6 +82,19 @@ public class UploadServiceImpl implements UploadService{
     }
 
     @Override
+    public Optional<UploadDto> findByRoomId(Long roomId) {
+
+        Optional<Upload> uploadOpt = uploadRepository.findByRoomId(roomId);
+        if(!uploadOpt.isPresent()){
+            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+        }
+
+        UploadDto uploadDto = new UploadDto(uploadOpt.get().getFileName(), uploadOpt.get().getFilePath());
+
+        return Optional.of(uploadDto);
+    }
+
+    @Override
     public void downloadZip(HttpServletResponse res, List<String> fileNames, Long roomId) {
 
         String zipFileName = ZIPFILENAME;
@@ -95,6 +111,12 @@ public class UploadServiceImpl implements UploadService{
             ZipOutputStream zipOut = new ZipOutputStream(res.getOutputStream());
 
             for (String fileName : fileNames) {
+
+                Optional<Upload> uploadOpt = uploadRepository.findByFileName(fileName);
+                if(!uploadOpt.isPresent()){
+                    throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+                }
+
                 File file = new File(filePath +  roomId + "-" + fileName);
                 FileInputStream fis = new FileInputStream(file);
 
@@ -124,6 +146,11 @@ public class UploadServiceImpl implements UploadService{
         Optional<Room> roomOpt = roomRepository.findById(roomId);
         if(!roomOpt.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 방입니다.");
+        }
+
+        Optional<Upload> uploadOpt = uploadRepository.findByFileName(fileName);
+        if(!uploadOpt.isPresent()){
+            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
         }
 
         String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + roomOpt.get().getId() + "/";

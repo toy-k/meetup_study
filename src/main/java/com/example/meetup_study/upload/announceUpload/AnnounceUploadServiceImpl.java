@@ -47,6 +47,10 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
                 throw new IllegalArgumentException("파일이 없습니다.");
             }
 
+            if (file.getSize() > 10 * 1024 * 1024) {
+                throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
+            }
+
             String fileName = announceId + "-" + file.getOriginalFilename();
             String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + announceOpt.get().getId() + "/";
 
@@ -79,6 +83,21 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
     }
 
     @Override
+    public Optional<AnnounceUploadDto> findByAnnounceId(Long announceId) {
+
+
+        Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByAnnounceId(announceId);
+
+        if(!announceUploadOpt.isPresent()){
+            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+        }
+
+        AnnounceUploadDto announceUploadDto = new AnnounceUploadDto(announceUploadOpt.get().getFileName(), announceUploadOpt.get().getFilePath());
+
+        return Optional.ofNullable(announceUploadDto);
+    }
+
+    @Override
     public void downloadZip(HttpServletResponse res, List<String> fileNames, Long announceId) {
 
         String zipFileName = ZIPFILENAME;
@@ -95,7 +114,13 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
             ZipOutputStream zipOut = new ZipOutputStream(res.getOutputStream());
 
             for (String fileName : fileNames) {
-                File file = new File(filePath +  announceId + "-" + fileName);
+
+                Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByFileName(fileName);
+                if(!announceUploadOpt.isPresent()){
+                    throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+                }
+
+                File file = new File(filePath + announceId + "-" + fileName);
                 FileInputStream fis = new FileInputStream(file);
 
                 ZipEntry zipEntry = new ZipEntry( announceId + "-" + fileName);
@@ -125,6 +150,12 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
         if(!announceOpt.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 방입니다.");
         }
+
+        Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByFileName(fileName);
+        if(!announceUploadOpt.isPresent()){
+            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+        }
+
 
         String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + announceOpt.get().getId() + "/";
         File file = new File(filePath +  announceId + "-" + fileName);

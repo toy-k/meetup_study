@@ -41,6 +41,9 @@ public class Announce extends BaseEntity{
     @JoinColumn(name = "announce_image_id")
     private AnnounceImage announceImage;
 
+    @Column(name = "view_count")
+    private Long viewCount = 1L;
+
 
     public void addUpload(AnnounceUpload announceUpload) {
         this.announceUploadList.add(announceUpload);
@@ -54,6 +57,10 @@ public class Announce extends BaseEntity{
 
     public void changeAnnounceImage(AnnounceImage announceImage) {
         this.announceImage = announceImage;
+    }
+
+    public void changeViewCount(Long viewCount) {
+        this.viewCount = viewCount;
     }
 
     public Announce(String title, String description, User user, AnnounceImage announceImage) {

@@ -35,7 +35,12 @@ public class AnnounceController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
+        if (!userIdOpt.isPresent()) {
+            throw new IllegalArgumentException("유저Id가 없습니다.");
+        }
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
 
         if(!userOpt.isPresent() || userOpt.get().getId() != requestAnnounceDto.getUserId()){
             throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
@@ -62,9 +67,14 @@ public class AnnounceController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<AnnounceDto>> getAnnounceList(){
+    public ResponseEntity<List<AnnounceDto>> getAnnounceList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
 
-        List<AnnounceDto> announceDtos = announceService.getAnnounceList();
+        if(page < 1 || size < 1){
+            page = 1;
+            size = 10;
+        }
+
+        List<AnnounceDto> announceDtos = announceService.getAnnounceList(page, size);
 
         return ResponseEntity.ok(announceDtos);
     }
@@ -75,12 +85,13 @@ public class AnnounceController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<Long> userId = jwtService.extractUserId(accessToken);
-        if(!userId.isPresent()){
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
+        if(!userIdOpt.isPresent()){
             throw new IllegalArgumentException("토큰에 유저가 없습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
 
         if(!userOpt.isPresent() || userOpt.get().getId() != AnnounceDto.getUserId()){
             throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
@@ -96,12 +107,12 @@ public class AnnounceController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<Long> userId = jwtService.extractUserId(accessToken);
-        if(!userId.isPresent()){
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+        if(!userIdOpt.isPresent()){
             throw new IllegalArgumentException("토큰에 유저가 없습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
 
         Optional<Announce> announceOpt = announceService.getAnnounce(id);
 

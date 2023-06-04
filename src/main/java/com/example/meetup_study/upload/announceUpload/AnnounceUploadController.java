@@ -1,5 +1,7 @@
 package com.example.meetup_study.upload.announceUpload;
 
+import com.example.meetup_study.announce.AnnounceService;
+import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.upload.announceUpload.domain.dto.AnnounceUploadDto;
@@ -10,31 +12,46 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/announceUpload")
 @RequiredArgsConstructor
 public class AnnounceUploadController {
     private final AnnounceUploadService announceUploadService;
+    private final AnnounceService announceService;
 
     @PostMapping
-    public ResponseEntity<List<AnnounceUploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long roomId) {
+    public ResponseEntity<List<AnnounceUploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long announceId) {
 
-        List<AnnounceUploadDto> announceUploadDtos = announceUploadService.save(files, roomId);
+        List<AnnounceUploadDto> announceUploadDtos = announceUploadService.save(files, announceId);
 
         return ResponseEntity.ok(announceUploadDtos);
     }
 
-    @GetMapping("/download")
-    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, Long roomId) {
+    @GetMapping
+    public ResponseEntity<AnnounceUploadDto> findFiles(Long announceId) {
 
-        announceUploadService.downloadZip(res, fileNames, roomId);
+        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
+        if (announceOpt.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 공지사항입니다.");
+        }
+
+        Optional<AnnounceUploadDto> announceUploadDtoOpt = announceUploadService.findByAnnounceId(announceId);
+
+        return ResponseEntity.ok(announceUploadDtoOpt.get());
+    }
+
+    @GetMapping("/download")
+    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, Long announceId) {
+
+        announceUploadService.downloadZip(res, fileNames, announceId);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName, Long roomId) {
+    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName, Long announceId) {
 
-        FileDeleteStatus status = announceUploadService.deleteByName(fileName, roomId);
+        FileDeleteStatus status = announceUploadService.deleteByName(fileName, announceId);
 
         if (status != FileDeleteStatus.NOT_FOUND) {
             if (status == FileDeleteStatus.SUCCESS) {
