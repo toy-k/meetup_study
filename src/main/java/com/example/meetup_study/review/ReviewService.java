@@ -15,4 +15,6 @@ public interface ReviewService {
     findByUserId(Long userId);
 
     Optional<Review> deleteReview(Long reviewId, Long UserId);
+
+    Optional<Review> findById(Long reviewId);
 }

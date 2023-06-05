@@ -6,6 +6,8 @@ import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
+import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class ReviewController {
     private final JwtService jwtService;
     private final UserService userService;
     private final JoinedUserService joinedUserService;
+    private final RoomService roomService;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -34,7 +37,19 @@ public class ReviewController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
+        if(!userIdOpt.isPresent()){
+            throw new IllegalArgumentException("유저가 없습니다.");
+        }
+
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
+
+        Optional<Room> roomOpt = roomService.getRoom(requestReviewDto.getRoomId());
+
+        if (!roomOpt.isPresent()) {
+            throw new IllegalArgumentException("방이 없습니다.");
+        }
 
         Optional<JoinedUser> joinedUserOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userOpt.get().getId(), requestReviewDto.getRoomId());
 
@@ -52,6 +67,13 @@ public class ReviewController {
     @GetMapping("/roomId")
     public ResponseEntity<List<ReviewDto>> getReview(Long roomId){
 
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+
+        if (!roomOpt.isPresent()) {
+            throw new IllegalArgumentException("방이 없습니다.");
+        }
+
+
         List<Review> reviewList = reviewService.findByRoomId(roomId);
 
         List<ReviewDto> reviewDtoList = new ArrayList<>();
@@ -65,6 +87,11 @@ public class ReviewController {
 
     @GetMapping("/userId")
     public ResponseEntity<List<ReviewDto>> getReviewByUserId(Long userId){
+
+        Optional<User> userOpt = userService.findById(userId);
+        if (!userOpt.isPresent()) {
+            throw new IllegalArgumentException("유저가 없습니다.");
+        }
 
         List<Review> reviewList = reviewService.findByUserId(userId);
 
@@ -82,11 +109,27 @@ public class ReviewController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<User> userOpt = userService.findById(jwtService.extractUserId(accessToken).get());
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
+        if(!userIdOpt.isPresent()){
+            throw new IllegalArgumentException("유저가 없습니다.");
+        }
+
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
 
         if(!userOpt.isPresent()){
             throw new IllegalArgumentException("이 유저는 없거나, 방에 참여하지 않았습니다.");
         }
+
+        Optional<Review> reviewOpt = reviewService.findById(reviewId);
+
+        Long roomId = reviewOpt.get().getRoom().getId();
+
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        if (!roomOpt.isPresent()) {
+            throw new IllegalArgumentException("방이 없습니다.");
+        }
+
 
         Optional<Review> review = reviewService.deleteReview(reviewId, userOpt.get().getId());
 
