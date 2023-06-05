@@ -3,10 +3,13 @@ package com.example.meetup_study.hostReview;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.RequestHostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
+import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
+import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,19 +48,23 @@ public class HostReviewServiceImpl implements HostReviewService{
             return hostReviews;
 
         }else{
-            throw new IllegalArgumentException("Room이 없습니다.");
+            throw new RoomNotFoundException();
         }
     }
 
     @Override
     public Optional<HostReview> deleteHostReview(Long hostReviewId, Long userId) {
         Optional<HostReview> hostReviewOpt = hostReviewRepository.findById(hostReviewId);
-        if(hostReviewOpt.isPresent() && hostReviewOpt.get().getUser().getId().equals(userId)){
-            hostReviewRepository.deleteById(hostReviewId);
-            return hostReviewOpt;
-        }else{
-            throw new IllegalArgumentException("HostReview가 없거나, 해당 User가 작성한 HostReview가 아닙니다.");
+
+        if(!hostReviewOpt.isPresent()){
+            throw new HostReviewNotFoundException();
         }
 
+        if(!hostReviewOpt.get().getUser().getId().equals(userId)){
+            throw new HostReviewInvalidRequestException();
+        }
+
+        hostReviewRepository.deleteById(hostReviewId);
+        return hostReviewOpt;
     }
 }

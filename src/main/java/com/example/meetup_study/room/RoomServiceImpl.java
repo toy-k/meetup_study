@@ -3,6 +3,7 @@ package com.example.meetup_study.room;
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryRepository;
+import com.example.meetup_study.Category.exception.CategoryNotFoundException;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
@@ -10,6 +11,8 @@ import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomInvalidRequestException;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +47,7 @@ public class RoomServiceImpl implements RoomService{
         Optional<Category> categoryOpt = categoryService.getCategory(requestRoomDto.getCategory());
 
         if(!categoryOpt.isPresent()){
-            throw new IllegalArgumentException("category가 없습니다.");
+            throw new CategoryNotFoundException();
         }
 
          RoomImage roomImage = new RoomImage(requestRoomDto.getImagePath());
@@ -68,7 +71,7 @@ public class RoomServiceImpl implements RoomService{
             Long viewCount = this.incrementViewCount(id);
             room.changeViewCount(viewCount);
         }else{
-            throw new IllegalArgumentException("방이 없습니다.");
+            throw new RoomNotFoundException();
         }
 
         return roomOpt;
@@ -134,7 +137,7 @@ public class RoomServiceImpl implements RoomService{
 
             return roomDtoOpt;
         }else{
-            throw new IllegalArgumentException("해당 방이 존재하지 않거나, 방장이 아닙니다.") ;
+            throw new RoomInvalidRequestException("해당 방이 존재하지 않거나, 방장이 아닙니다.") ;
         }
     }
 

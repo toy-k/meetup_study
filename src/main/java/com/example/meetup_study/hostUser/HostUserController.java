@@ -4,8 +4,10 @@ import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.dto.HostUserDto;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,12 +38,12 @@ public class HostUserController {
     public ResponseEntity<HostUserDto> getHostUser(Long userId, Long roomId) {
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
-            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+            throw new RoomNotFoundException();
         }
 
         Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(userId, roomId);

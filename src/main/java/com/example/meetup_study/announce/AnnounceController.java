@@ -3,12 +3,16 @@ package com.example.meetup_study.announce;
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
+import com.example.meetup_study.announce.exception.AnnounceInvalidRequestException;
+import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +41,18 @@ public class AnnounceController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if (!userIdOpt.isPresent()) {
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+        if(!userIdOpt.isPresent()){
+            throw new AccessTokenInvalidRequestException();
         }
+
         Optional<User> userOpt = userService.findById(userIdOpt.get());
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != requestAnnounceDto.getUserId()){
-            throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        if(userOpt.get().getId() != requestAnnounceDto.getUserId()){
+            throw new AnnounceInvalidRequestException();
         }
 
         Optional<Announce> createdAnnounce = announceService.createAnnounce(requestAnnounceDto);
@@ -62,7 +71,7 @@ public class AnnounceController {
             AnnounceDto announceDtoOpt = new AnnounceDto().convertToAnnounceDto(announceOpt.get());
             return ResponseEntity.ok(announceDtoOpt);
         }else{
-            throw new IllegalArgumentException("방이 없습니다.");
+            throw new AnnounceNotFoundException();
         }
     }
 
@@ -88,13 +97,17 @@ public class AnnounceController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if(!userIdOpt.isPresent()){
-            throw new IllegalArgumentException("토큰에 유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userIdOpt.get());
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != AnnounceDto.getUserId()){
-            throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        if(userOpt.get().getId() != AnnounceDto.getUserId()){
+            throw new AnnounceInvalidRequestException();
         }
 
         Optional<AnnounceDto> updatedAnnounceDto = announceService.updateAnnounce(AnnounceDto, userOpt.get().getId());
@@ -109,15 +122,22 @@ public class AnnounceController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
         if(!userIdOpt.isPresent()){
-            throw new IllegalArgumentException("토큰에 유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userIdOpt.get());
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
 
         Optional<Announce> announceOpt = announceService.getAnnounce(id);
 
-        if(!userOpt.isPresent() || !announceOpt.isPresent() ||userOpt.get().getId() != announceOpt.get().getUser().getId()){
-            throw new IllegalArgumentException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
+        if(!announceOpt.isPresent() ){
+            throw new AnnounceNotFoundException();
+        }
+
+        if(userOpt.get().getId() != announceOpt.get().getUser().getId()){
+            throw new AnnounceInvalidRequestException();
         }
 
         Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(id, userOpt.get().getId());

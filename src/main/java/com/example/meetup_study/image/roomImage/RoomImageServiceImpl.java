@@ -4,6 +4,7 @@ import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.image.roomImage.domain.repository.RoomImageRepository;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class RoomImageServiceImpl implements RoomImageService{
     @Override
     public Optional<RoomImage> createRoomImage(String path, Long roomId) {
         Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 방입니다.");
+        if(!roomOpt.isPresent()) throw new RoomNotFoundException();
 
         RoomImage roomImage = new RoomImage(path);
         roomOpt.get().changeRoomImage(roomImage);
@@ -30,7 +31,7 @@ public class RoomImageServiceImpl implements RoomImageService{
     @Override
     public Optional<RoomImage> getRoomImage(Long roomId) {
         Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 방입니다.");
+        if(!roomOpt.isPresent()) throw new RoomNotFoundException();
 
         return Optional.ofNullable(roomOpt.get().getRoomImage());
     }
@@ -38,7 +39,7 @@ public class RoomImageServiceImpl implements RoomImageService{
     @Override
     public Optional<RoomImage> updateRoomImage(String path, Long roomId) {
         Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 방입니다.");
+        if(!roomOpt.isPresent()) throw new RoomNotFoundException();
 
         RoomImage roomImage = roomOpt.get().getRoomImage();
 
@@ -50,7 +51,7 @@ public class RoomImageServiceImpl implements RoomImageService{
     @Override
     public Optional<RoomImage> deleteRoomImage(Long roomId) {
         Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 방입니다.");
+        if(!roomOpt.isPresent()) throw new RoomNotFoundException();
 
         RoomImage roomImage = roomOpt.get().getRoomImage();
 

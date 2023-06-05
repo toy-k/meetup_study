@@ -1,7 +1,9 @@
 package com.example.meetup_study.user;
 
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.user.domain.dto.UserDto;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class UserController {
             return ResponseEntity.ok(userDto.get());
         }
         else {
-            throw new IllegalArgumentException("유저가 없습니다.");
+            throw new UserNotFoundException();
         }
     }
 
@@ -48,10 +50,10 @@ public class UserController {
                 return ResponseEntity.ok(userDto.get());
             }
             else {
-                throw new IllegalArgumentException("유저가 없습니다.");
+                throw new UserNotFoundException();
             }
         }else{
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
     }
 
@@ -65,10 +67,10 @@ public class UserController {
             if (updatedUserDto.isPresent()) {
                 return ResponseEntity.ok(updatedUserDto.get());
             } else {
-                throw new IllegalArgumentException("유저가 없습니다.");
+                throw new UserNotFoundException();
             }
         }else {
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
     }
 

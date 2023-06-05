@@ -6,6 +6,10 @@ import com.example.meetup_study.image.userImage.domain.repository.UserImageRepos
 import com.example.meetup_study.user.domain.ProviderType;
 import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserForbiddenException;
+import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import com.example.meetup_study.user.fakeUser.exception.UserUnauthenticationedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -96,5 +100,16 @@ public class FakeUserController {
     public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok(fakeUserService.findAll());
     }
+
+
+    @GetMapping("/exception/{id}")
+    public String exception(@PathVariable("id") Long id) {
+        if(id == 1) throw new UserNotFoundException();
+        else if (id == 2) throw new UserInvalidRequestException();
+        else if (id == 3) throw new UserForbiddenException();
+        else if (id == 4) throw new UserUnauthenticationedException();
+        else return "exception";
+    }
+
 
 }

@@ -4,6 +4,7 @@ import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class EventEmailScheduler {
 
                 Optional<Room> room = roomRepository.findById(roomId);
                 if(!room.isPresent()){
-                    throw new IllegalArgumentException("이벤트 알림 룸이 존재하지 않습니다");
+                    throw new RoomNotFoundException();
                 }
 
                 List<User> users = userRepository.findAll();

@@ -17,6 +17,7 @@ import com.example.meetup_study.room.domain.repository.RoomRepository;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.FakeRepository;
 import com.example.meetup_study.user.fakeUser.FakeUserServiceImpl;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,7 +136,7 @@ public class InitController {
                 HostUser hostUser = new HostUser(userOpt.get(), room);
                 room.addHostUser(hostUser);
             }else{
-                throw new IllegalArgumentException("User가 없습니다.");
+                throw new UserNotFoundException();
             }
         }
         return "createdummy";

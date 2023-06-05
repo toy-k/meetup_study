@@ -2,8 +2,10 @@ package com.example.meetup_study.admin;
 
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
+import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
+import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
@@ -36,7 +38,7 @@ public class AdminServiceImpl implements AdminService{
             reviewRepository.deleteById(reviewId);
             return review;
         }else{
-            throw new IllegalArgumentException("Review가 없습니다.");
+            throw new ReviewNotFoundException();
         }
     }
 
@@ -48,7 +50,7 @@ public class AdminServiceImpl implements AdminService{
             hostReviewRepository.deleteById(hostReviewId);
             return hostReviewOpt;
         }else{
-            throw new IllegalArgumentException("HostReview가 없습니다.");
+            throw new HostReviewNotFoundException();
         }
 
     }

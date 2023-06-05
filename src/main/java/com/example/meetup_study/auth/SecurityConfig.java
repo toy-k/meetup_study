@@ -58,6 +58,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterAfter(jwtAuthenticationProcessingFilter(), LogoutFilter.class);
+
+        http
+                .addFilterBefore(
+                new ExceptionHandlerFilter(),
+                LogoutFilter.class
+        );//exception -> loginfilter
+
     }
 
     @Bean

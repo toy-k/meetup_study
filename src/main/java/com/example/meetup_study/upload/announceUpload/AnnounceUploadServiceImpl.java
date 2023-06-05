@@ -2,10 +2,13 @@ package com.example.meetup_study.upload.announceUpload;
 
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
+import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.upload.announceUpload.domain.dto.AnnounceUploadDto;
 import com.example.meetup_study.upload.announceUpload.domain.repository.AnnounceUploadRepository;
+import com.example.meetup_study.upload.exception.UploadInvalidRequestException;
+import com.example.meetup_study.upload.exception.UploadNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,16 +42,16 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 공지사항입니다.");
+            throw new AnnounceNotFoundException();
         }
 
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
-                throw new IllegalArgumentException("파일이 없습니다.");
+                throw new UploadNotFoundException();
             }
 
             if (file.getSize() > 10 * 1024 * 1024) {
-                throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
+                throw new UploadInvalidRequestException("파일 크기는 10MB를 초과할 수 없습니다.");
             }
 
             String fileName = announceId + "-" + file.getOriginalFilename();
@@ -71,7 +74,7 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
 
             } catch (IOException e) {
-                throw new RuntimeException("파일 업로드 실패", e);
+                throw new UploadInvalidRequestException("파일 업로드 실패");
             }
 
         }
@@ -89,7 +92,7 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
         Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByAnnounceId(announceId);
 
         if(!announceUploadOpt.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+            throw new UploadNotFoundException();
         }
 
         AnnounceUploadDto announceUploadDto = new AnnounceUploadDto(announceUploadOpt.get().getFileName(), announceUploadOpt.get().getFilePath());
@@ -103,7 +106,7 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
         String zipFileName = ZIPFILENAME;
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 방입니다.");
+            throw new AnnounceNotFoundException();
         }
 
         try {
@@ -117,13 +120,13 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
                 Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByFileName(fileName);
                 if(!announceUploadOpt.isPresent()){
-                    throw new IllegalArgumentException("존재하지 않는 파일입니다. (DB)");
+                    throw new UploadInvalidRequestException("존재하지 않는 파일입니다. (DB)");
                 }
 
                 File file = new File(filePath + announceId + "-" + fileName);
 
                 if (!file.exists()) {
-                   throw new IllegalArgumentException("존재하지 않는 파일입니다. (STORAGE)");
+                   throw new UploadInvalidRequestException("존재하지 않는 파일입니다. (STORAGE)");
                 }
 
                 FileInputStream fis = new FileInputStream(file);
@@ -153,12 +156,12 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 방입니다.");
+            throw new AnnounceNotFoundException();
         }
 
         Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByFileName(fileName);
         if(!announceUploadOpt.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+            throw new UploadNotFoundException();
         }
 
 

@@ -2,13 +2,16 @@ package com.example.meetup_study.room;
 
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
+import com.example.meetup_study.room.exception.RoomInvalidRequestException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,21 +45,25 @@ public class RoomController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if(!userIdOpt.isPresent()){
-            throw new IllegalArgumentException("유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userIdOpt.get());
 
-        if(!userOpt.isPresent() || (userOpt.get().getId() != requestRoomDto.getHostUserId())){
-            throw new IllegalArgumentException("이 유저는 없거나, 방을 만들지 않았습니다.");
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        if(userOpt.get().getId() != requestRoomDto.getHostUserId()){
+            throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
         if(requestRoomDto.getMeetupEndDate().isBefore(requestRoomDto.getMeetupStartDate())){
-            throw new IllegalArgumentException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
         }
 
         if(requestRoomDto.getPrice() < 0){
-            throw new IllegalArgumentException("가격이 0보다 작습니다.");
+            throw new RoomInvalidRequestException("가격이 0보다 작습니다.");
         }
 
 
@@ -124,26 +131,30 @@ public class RoomController {
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
         if(!userId.isPresent()){
-            throw new IllegalArgumentException("토큰에 유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userId.get());
 
-        if(!userOpt.isPresent() || userOpt.get().getId() != roomDto.getHostUserId()){
-            throw new AccessDeniedException("이 유저는 없거나, 방을 만들지 않았습니다.");
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        if(userOpt.get().getId() != roomDto.getHostUserId()){
+            throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
         if(roomDto.getMeetupEndDate().isBefore(roomDto.getMeetupStartDate())){
-            throw new IllegalArgumentException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
         }
 
         Optional<Category> categoryOpt = categoryService.getCategory(roomDto.getCategory());
         if(!categoryOpt.isPresent()){
-            throw new IllegalArgumentException("카테고리가 없습니다.");
+            throw new RoomInvalidRequestException("카테고리가 없습니다.");
         }
 
         if(roomDto.getPrice() < 0){
-            throw new IllegalArgumentException("가격이 0보다 작습니다.");
+            throw new RoomInvalidRequestException("가격이 0보다 작습니다.");
         }
 
 
@@ -160,15 +171,19 @@ public class RoomController {
         Optional<Long> userId = jwtService.extractUserId(accessToken);
 
         if(!userId.isPresent()){
-            throw new IllegalArgumentException("토큰에 유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userId.get());
 
         Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
 
-        if(!userOpt.isPresent() || !roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getId()){
-            throw new IllegalArgumentException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        if(!roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getId()){
+            throw new RoomInvalidRequestException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
         }
 
         Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userOpt.get().getId());
@@ -180,12 +195,6 @@ public class RoomController {
     private ResponseEntity<String> deleteAllRooms(){
         roomService.deleteAllRooms();
         return ResponseEntity.ok("delete all rooms");
-    }
-
-    //admin test
-    @GetMapping("/admin")
-    public String admin(){
-        return "admin";
     }
 
 }
