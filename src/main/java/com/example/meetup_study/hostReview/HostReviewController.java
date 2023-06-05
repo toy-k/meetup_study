@@ -1,19 +1,28 @@
 package com.example.meetup_study.hostReview;
 
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestHostReviewDto;
+import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
+import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.hostUser.HostUserService;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.hostUser.exception.HostUserInvalidRequestException;
+import com.example.meetup_study.hostUser.exception.HostUserNotFoundException;
 import com.example.meetup_study.joinedUser.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.review.ReviewService;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,37 +55,44 @@ public class HostReviewController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if(!userIdOpt.isPresent()){
-            throw new IllegalArgumentException("유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userIdOpt.get());
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
+
 
         Optional<Room> roomOpt = roomService.getRoom(requestHostReviewDto.getRoomId());
-
-        if (!roomOpt.isPresent()) {
-            throw new IllegalArgumentException("방이 없습니다.");
+        if(!roomOpt.isPresent()){
+            throw new RoomNotFoundException();
         }
 
         Optional<JoinedUser> joinedUserOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userOpt.get().getId(), requestHostReviewDto.getRoomId());
 
-        if(!userOpt.isPresent() || !joinedUserOpt.isPresent()){
-            throw new IllegalArgumentException("이 유저는 없거나, 방에 참여하지 않았습니다.");
+        if(!joinedUserOpt.isPresent()){
+            throw new JoinedUserNotFoundException();
         }
 
         Optional<Review> reviewOpt = reviewService.findById(requestHostReviewDto.getReviewId());
         if (!reviewOpt.isPresent()) {
-            throw new IllegalArgumentException("리뷰가 없습니다.");
+            throw new ReviewNotFoundException();
         }
 
         Optional<HostUser> hostUserOpt = hostUserService.getHostUserById(requestHostReviewDto.getRoomId());
-        if (!hostUserOpt.isPresent() || hostUserOpt.get().getUser().getId() != userOpt.get().getId()) {
-            throw new IllegalArgumentException("방장이 아닙니다");
+        if (!hostUserOpt.isPresent()) {
+            throw new HostUserNotFoundException();
+        }
+
+        if (hostUserOpt.get().getUser().getId() != userOpt.get().getId()) {
+            throw new HostUserInvalidRequestException();
         }
 
         Optional<HostReview> hostReviewOpt = hostReviewService.createHostReview(requestHostReviewDto, userOpt.get().getId());
 
         if(!hostReviewOpt.isPresent()){
-            throw new IllegalArgumentException("리뷰를 생성하지 못했습니다.");
+            throw new HostReviewInvalidRequestException();
         }
 
         Optional<HostReviewDto> hostReviewDtoOpt = hostReviewOpt.map(r-> new HostReviewDto().convertToHostReviewDto(r));
@@ -91,7 +107,7 @@ public class HostReviewController {
         Optional<Room> roomOpt = roomService.getRoom(roomId);
 
         if (!roomOpt.isPresent()) {
-            throw new IllegalArgumentException("방이 없습니다.");
+            throw new RoomNotFoundException();
         }
 
         List<HostReview> hostReviewList = hostReviewService.findByRoomId(roomId);
@@ -113,15 +129,18 @@ public class HostReviewController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if(!userIdOpt.isPresent()){
-            throw new IllegalArgumentException("유저가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<User> userOpt = userService.findById(userIdOpt.get());
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
 
         Optional<HostReview> hostReviewOpt = hostReviewService.deleteHostReview(hostReviewId, userOpt.get().getId());
 
         if(!hostReviewOpt.isPresent()){
-            throw new IllegalArgumentException("리뷰를 삭제하지 못했습니다.");
+            throw new HostReviewInvalidRequestException();
         }
 
         return ResponseEntity.ok(hostReviewOpt.get());

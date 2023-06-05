@@ -1,11 +1,14 @@
 package com.example.meetup_study.image.userImage;
 
+import com.example.meetup_study.image.exception.ImageInvalidRequestException;
+import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.upload.roomUpload.domain.dto.UploadDto;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +34,7 @@ public class UserImageServiceImpl implements UserImageService {
     @Transactional
     public Optional<UserImage> createUserImage(String path, Long userId) {
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         UserImage userImage = new UserImage(path);
         userOpt.get().changeUserImage(userImage);
@@ -42,7 +45,7 @@ public class UserImageServiceImpl implements UserImageService {
     @Override
     public Optional<UserImage> updateUserImage(String path, Long userId) {
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         UserImage userImage = userOpt.get().getUserImage();
 
@@ -55,7 +58,7 @@ public class UserImageServiceImpl implements UserImageService {
     @Override
     public Optional<UserImage> getUserImage(Long userId) {
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
 
         return Optional.ofNullable(userOpt.get().getUserImage());
@@ -65,7 +68,7 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImage> deleteUserImage(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         UserImage userImage = userOpt.get().getUserImage();
 
@@ -84,10 +87,10 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> uploadUserImage(MultipartFile file, Long userId) throws Exception {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 없습니다.");
+            throw new ImageNotFoundException();
         }
 
         try{
@@ -102,7 +105,7 @@ public class UserImageServiceImpl implements UserImageService {
 
             return Optional.of(userImageDtoOpt);
         }catch (IOException e){
-            throw new IllegalArgumentException("파일 압축 및 업로드 실패했습니다.");
+            throw new ImageInvalidRequestException();
         }
     }
 
@@ -110,10 +113,10 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 없습니다.");
+            throw new ImageNotFoundException();
         }
 
         try{
@@ -129,7 +132,7 @@ public class UserImageServiceImpl implements UserImageService {
 
             return Optional.of(userImageDtoOpt);
         }catch (IOException e){
-            throw new IllegalArgumentException("파일 압축 및 업로드 실패했습니다.");
+            throw new ImageInvalidRequestException();
         }
 
     }
@@ -138,7 +141,7 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> getUserImagee(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         UserImage userImage = userOpt.get().getUserImage();
 
@@ -152,8 +155,7 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> deleteUserImagee(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-
+        if(!userOpt.isPresent()) throw new UserNotFoundException();
         UserImage userImage = userOpt.get().getUserImage();
 
         userOpt.get().changeUserImage(null);

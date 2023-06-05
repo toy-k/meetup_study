@@ -4,6 +4,8 @@ import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
+import com.example.meetup_study.announce.exception.AnnounceInvalidRequestException;
+import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.domain.User;
@@ -70,39 +72,43 @@ public class AnnounceServiceImpl implements AnnounceService {
     @Override
     public Optional<AnnounceDto> updateAnnounce(AnnounceDto announceDto, Long userId) {
 
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (!userOpt.isPresent()) {throw new IllegalArgumentException("존재하지 않는 유저입니다.");}
-
         Optional<Announce> announceOpt = announceRepository.findById(announceDto.getId());
-        if(announceOpt.isPresent() && (announceOpt.get().getUser().getId().equals(userId))) {
 
-            Optional<AnnounceDto> announceDtoOpt = announceOpt.map(announce->{
-                if(announceDto.getTitle() != null) announce.changeTitle(announceDto.getTitle());
-                if(announceDto.getDescription() != null) announce.changeDescription(announceDto.getDescription());
-                return new AnnounceDto().convertToAnnounceDto(announce);
-            });
-
-            return announceDtoOpt;
-        }else{
-            throw new IllegalArgumentException("존재하지 않는 게시글이거나, 권한이 없습니다.");
+        if(!announceOpt.isPresent()){
+            throw new AnnounceNotFoundException();
         }
+
+        if (!announceOpt.get().getUser().getId().equals(userId)) {
+            throw new AnnounceInvalidRequestException();
+        }
+
+        Optional<AnnounceDto> announceDtoOpt = announceOpt.map(announce->{
+            if(announceDto.getTitle() != null) announce.changeTitle(announceDto.getTitle());
+            if(announceDto.getDescription() != null) announce.changeDescription(announceDto.getDescription());
+            return new AnnounceDto().convertToAnnounceDto(announce);
+        });
+
+        return announceDtoOpt;
 
     }
 
     @Override
     public Optional<AnnounceDto> deleteAnnounce(Long announceId, Long userId) {
 
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (!userOpt.isPresent()) {throw new IllegalArgumentException("존재하지 않는 유저입니다.");}
 
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(announceOpt.isPresent() && (announceOpt.get().getUser().getId().equals(userId))) {
-            announceRepository.deleteById(announceId);
-            Optional<AnnounceDto> announceDto = announceOpt.map(r -> new AnnounceDto().convertToAnnounceDto(r));
-            return announceDto;
-        }else{
-            throw new IllegalArgumentException("존재하지 않는 게시글이거나, 권한이 없습니다.");
+
+        if(!announceOpt.isPresent()){
+            throw new AnnounceNotFoundException();
         }
+
+        if (!announceOpt.get().getUser().getId().equals(userId)) {
+            throw new AnnounceInvalidRequestException();
+        }
+        announceRepository.deleteById(announceId);
+        Optional<AnnounceDto> announceDto = announceOpt.map(r -> new AnnounceDto().convertToAnnounceDto(r));
+
+        return announceDto;
     }
 
     private Long incrementViewCount(Long announceId){

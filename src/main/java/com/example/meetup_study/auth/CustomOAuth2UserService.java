@@ -1,5 +1,6 @@
 package com.example.meetup_study.auth;
 
+import com.example.meetup_study.auth.exception.OAuth2InvalidRequestException;
 import com.example.meetup_study.image.userImage.UserImageService;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
@@ -7,6 +8,7 @@ import com.example.meetup_study.user.domain.ProviderType;
 import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -52,7 +54,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(userOpt.isPresent()){
             userInDb = userOpt.get();
             if(userInDb.getProviderType() != providerType){
-                throw new IllegalArgumentException("이미 가입된 이메일이 존재합니다.");
+                throw new OAuth2InvalidRequestException();
             }
             updateUser(userInDb, customOauth2UserInfo);
         }else{

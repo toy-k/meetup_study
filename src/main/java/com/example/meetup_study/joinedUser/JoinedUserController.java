@@ -2,12 +2,15 @@ package com.example.meetup_study.joinedUser;
 
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
+import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +40,7 @@ public class JoinedUserController {
             return ResponseEntity.ok(joinedUserDto);
 
         }else{
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new JoinedUserNotFoundException();
         }
 
 
@@ -48,12 +51,12 @@ public class JoinedUserController {
     public ResponseEntity<JoinedUserDto> getJoinedUser(Long userId, Long roomId) {
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
-            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+            throw new RoomNotFoundException();
         }
 
         Optional<JoinedUser> joinedUseropt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, roomId);
@@ -63,7 +66,7 @@ public class JoinedUserController {
             return ResponseEntity.ok(joinedUserDto);
 
         } else {
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new JoinedUserNotFoundException();
         }
     }
 
@@ -72,7 +75,7 @@ public class JoinedUserController {
 
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
         List<JoinedUser> joinedUseropt =  joinedUserService.getJoinedUserByUserId(userId);
@@ -93,7 +96,7 @@ public class JoinedUserController {
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
-            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+            throw new RoomNotFoundException();
         }
 
         List<JoinedUser> joinedUseropt = joinedUserService.getJoinedUserByRoomId(roomId);

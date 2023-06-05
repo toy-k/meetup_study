@@ -1,6 +1,8 @@
 package com.example.meetup_study.auth;
 
+import com.example.meetup_study.auth.exception.OAuth2InvalidRequestException;
 import com.example.meetup_study.user.domain.ProviderType;
+import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -13,7 +15,7 @@ public class OAuth2UserInfoOptimizer {
             case GOOGLE:
                 return new GoogleOauth2UserInfo(attributes);
             default:
-                throw new IllegalArgumentException("지원하지 않는 소셜 로그인Provider 입니다.");
+                throw new OAuth2InvalidRequestException();
         }
     }
 }

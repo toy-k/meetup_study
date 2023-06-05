@@ -3,6 +3,7 @@ package com.example.meetup_study.hostUser;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.repository.HostUserRepository;
 import com.example.meetup_study.hostUser.domain.HostUser;
+import com.example.meetup_study.hostUser.exception.HostUserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class HostUserServiceImpl implements HostUserService {
     public Optional<HostUser> getHostUserById(Long id) {
         Optional<HostUser> hostUser = hostUserRepository.findById(id);
         if (!hostUser.isPresent()) {
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new HostUserNotFoundException();
         }
         return hostUser;
 
@@ -29,7 +30,7 @@ public class HostUserServiceImpl implements HostUserService {
     public Optional<HostUser> getHostUserByUserIdAndRoomId(Long userId, Long roomId) {
         Optional<HostUser> hostUser = hostUserRepository.findByUserIdAndRoomId(userId, roomId);
         if (!hostUser.isPresent()) {
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new HostUserNotFoundException();
         }
         return hostUser;
 

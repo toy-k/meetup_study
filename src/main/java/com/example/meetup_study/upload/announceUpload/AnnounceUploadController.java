@@ -2,6 +2,7 @@ package com.example.meetup_study.upload.announceUpload;
 
 import com.example.meetup_study.announce.AnnounceService;
 import com.example.meetup_study.announce.domain.Announce;
+import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.upload.announceUpload.domain.dto.AnnounceUploadDto;
@@ -34,7 +35,7 @@ public class AnnounceUploadController {
 
         Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
         if (announceOpt.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 공지사항입니다.");
+            throw new AnnounceNotFoundException();
         }
 
         Optional<AnnounceUploadDto> announceUploadDtoOpt = announceUploadService.findByAnnounceId(announceId);

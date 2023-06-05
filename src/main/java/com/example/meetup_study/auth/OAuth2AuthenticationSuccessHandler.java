@@ -1,5 +1,6 @@
 package com.example.meetup_study.auth;
 
+import com.example.meetup_study.auth.exception.OAuth2SuccessInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             loginSuccess(response, customOAuth2User);
             response.sendRedirect("/");
         }catch (Exception e){
-             throw new RuntimeException(e);
+             throw new OAuth2SuccessInvalidRequestException();
         }
     }
 

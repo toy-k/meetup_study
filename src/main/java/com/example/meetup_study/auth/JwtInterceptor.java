@@ -1,5 +1,6 @@
 package com.example.meetup_study.auth;
 
+import com.example.meetup_study.auth.exception.TokenNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -31,7 +32,7 @@ public class JwtInterceptor implements HandlerInterceptor{
         }else if(tokenInAttr != null && !tokenInAttr.equals("null")) {
             accessToken = tokenInAttr.split(" ")[1];
         } else {
-            throw new Exception("토큰이 존재하지 않습니다.");
+            throw new TokenNotFoundException();
         }
 
         request.setAttribute(ACCESSTOKEN, accessToken);

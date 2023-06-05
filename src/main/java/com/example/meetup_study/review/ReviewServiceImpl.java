@@ -3,10 +3,14 @@ package com.example.meetup_study.review;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
+import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
+import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService{
             return reviews;
 
         }else{
-            throw new IllegalArgumentException("Room이 없습니다.");
+            throw new RoomNotFoundException();
         }
     }
 
@@ -42,7 +46,7 @@ public class ReviewServiceImpl implements ReviewService{
             List<Review> reviews = reviewRepository.findByUserId(userId);
             return reviews;
         } else {
-            throw new IllegalArgumentException("User가 없습니다.");
+            throw new UserNotFoundException();
         }
     }
 
@@ -50,23 +54,33 @@ public class ReviewServiceImpl implements ReviewService{
     public Optional<Review> createReview(RequestReviewDto requestReviewDto, Long userId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Room> room = roomRepository.findById(requestReviewDto.getRoomId());
-        if(user.isPresent() && room.isPresent()){
-            Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
-            return Optional.ofNullable(review);
-        }else{
-            throw new IllegalArgumentException("User 또는 Room이 없습니다.");
+
+        if(!user.isPresent()){
+            throw new UserNotFoundException();
         }
+        if(!room.isPresent()){
+            throw new RoomNotFoundException();
+        }
+
+        Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
+
+        return Optional.ofNullable(review);
     }
 
     @Override
     public Optional<Review> deleteReview(Long reviewId, Long UserId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
-        if(review.isPresent() && review.get().getUser().getId().equals(UserId)){
-            reviewRepository.deleteById(reviewId);
-            return review;
-        }else{
-            throw new IllegalArgumentException("Review가 없거나 남의 리뷰 삭제할 수 없습니다.");
+
+        if(!review.isPresent()){
+            throw new ReviewNotFoundException();
         }
+
+        if(!review.get().getUser().getId().equals(UserId)){
+            throw new ReviewInvalidRequestException("남의 리뷰 삭제할 수 없습니다.");
+        }
+
+        reviewRepository.deleteById(reviewId);
+        return review;
     }
 
     @Override
@@ -75,7 +89,7 @@ public class ReviewServiceImpl implements ReviewService{
         if(review.isPresent()){
             return review;
         }else{
-            throw new IllegalArgumentException("Review가 없습니다.");
+            throw new ReviewNotFoundException();
         }
     }
 }

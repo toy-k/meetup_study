@@ -1,6 +1,9 @@
 package com.example.meetup_study.image.userImage;
 
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.image.exception.ImageInvalidRequestException;
+import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +32,16 @@ public class UserImageController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if (!userIdOpt.isPresent()) {
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("이미지가 없습니다.");
+            throw new ImageNotFoundException();
         }
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.uploadUserImage(file, userIdOpt.get());
 
-        if(!userImageDtoOpt.isPresent()) throw new IllegalArgumentException("이미지 업로드에 실패했습니다.");
+        if(!userImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
 
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
@@ -51,16 +54,16 @@ public class UserImageController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if (!userIdOpt.isPresent()) {
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("이미지가 없습니다.");
+            throw new ImageNotFoundException();
         }
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.updateUserImagee(file, userIdOpt.get());
 
-        if(!userImageDtoOpt.isPresent()) throw new IllegalArgumentException("이미지 업로드에 실패했습니다.");
+        if(!userImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
 
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
@@ -70,7 +73,7 @@ public class UserImageController {
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.getUserImagee(userId);
 
-        if(!userImageDtoOpt.isPresent()) throw new IllegalArgumentException("이미지 불러오기 실패했습니다.");
+        if(!userImageDtoOpt.isPresent()) throw new ImageNotFoundException();
 
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
@@ -82,12 +85,12 @@ public class UserImageController {
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         if (!userIdOpt.isPresent()) {
-            throw new IllegalArgumentException("유저Id가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.deleteUserImagee(userIdOpt.get());
 
-        if(!userImageDtoOpt.isPresent()) throw new IllegalArgumentException("이미지 삭제 실패했습니다.");
+        if(!userImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
 
         return ResponseEntity.ok(userImageDtoOpt.get());
     }

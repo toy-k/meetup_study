@@ -1,8 +1,11 @@
 package com.example.meetup_study.auth.jwt;
 
 import com.example.meetup_study.auth.AuthorizationAccessDeniedHandler;
+import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
+import com.example.meetup_study.auth.exception.TokenNotFoundException;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -51,15 +54,14 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
-//    private final AuthenticationEntryPoint authenticationEntryPoint;
-    private final AuthorizationAccessDeniedHandler accessDeniedHandler; // Add this line
+
+    private final AuthorizationAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.debug("[JwtAuthenticationProcessingFilter] doFilterInternal()");
 
         try{
-
 
         String reqUri = request.getRequestURI();
         log.debug("[JwtAuthenticationProcessingFilter] reqUri: {}", reqUri);
@@ -102,7 +104,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         if (accessToken == null) {
             if(refreshToken == null) {
-                throw new AuthenticationServiceException("엑세스토큰과 리프레쉬토큰 둘 다 없습니다.");
+                throw new TokenNotFoundException();
             }else{
                 this.generateAccessToken(request, response, refreshToken);
             }
@@ -110,18 +112,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             try {
                 this.isValidAccessToken(request);
             } catch (Exception ex) {
-                throw new AuthenticationServiceException("유효한 엑세스토큰이 없습니다.");
+                throw new AccessTokenInvalidRequestException();
             }
         }
 
         filterChain.doFilter(request, response);
 
-
         }catch (JwtException e){
-//            String errorMessage = e.getMessage();
-//            AuthenticationException authException = new AuthenticationServiceException(errorMessage);
-//            authenticationEntryPoint.commence(request, response, authException);
-
             accessDeniedHandler.handle(request, response,  new AccessDeniedException(e.getMessage()));
         }
 
@@ -132,9 +129,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         Optional<Long> userId = jwtService.extractUserId(refreshToken);
         if(!userId.isPresent()){
-            throw new RuntimeException("유저 아이디가 없습니다.");
+            throw new AccessTokenInvalidRequestException();
         }
-        User user = userRepository.findById(userId.get()).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+        User user = userRepository.findById(userId.get()).orElseThrow(() -> new UserNotFoundException());
 
         String accessToken = jwtService.generateAccessToken(user.getEmail(), user.getId());
 

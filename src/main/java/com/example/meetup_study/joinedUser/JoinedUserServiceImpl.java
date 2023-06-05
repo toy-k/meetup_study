@@ -2,13 +2,17 @@ package com.example.meetup_study.joinedUser;
 
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.domain.repository.JoinedUserRepository;
+import com.example.meetup_study.joinedUser.exception.JoinedUserInvalidRequestException;
+import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +32,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public Optional<JoinedUser> getJoinedUserById(Long id) {
         Optional<JoinedUser> joinedUser = joinedUserRepository.findById(id);
         if(!joinedUser.isPresent()){
-            throw new IllegalArgumentException("해당 JoinedUser가 존재하지 않습니다.");
+             throw new JoinedUserNotFoundException();
         }
         return joinedUser;
     }
@@ -37,7 +41,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public Optional<JoinedUser> getJoinedUserByUserIdAndRoomId(Long userId, Long roomId) {
         Optional<JoinedUser> joinedUser = joinedUserRepository.findByUserIdAndRoomId(userId, roomId);
         if(!joinedUser.isPresent()){
-            throw new IllegalArgumentException("해당 JoinedUser가 존재하지 않습니다.");
+             throw new JoinedUserNotFoundException();
         }
         return joinedUser;
     }
@@ -46,7 +50,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public List<JoinedUser> getJoinedUserByUserId(Long userId) {
         List<JoinedUser> joinedUsers = joinedUserRepository.findByUserId(userId);
         if(joinedUsers.isEmpty()){
-            throw new IllegalArgumentException("해당 JoinedUser가 존재하지 않습니다.");
+             throw new JoinedUserNotFoundException();
         }
         return joinedUsers;
     }
@@ -54,7 +58,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public List<JoinedUser> getJoinedUserByRoomId(Long roomId) {
         List<JoinedUser> joinedUsers = joinedUserRepository.findByRoomId(roomId);
         if(joinedUsers.isEmpty()){
-            throw new IllegalArgumentException("해당 JoinedUser가 존재하지 않습니다.");
+             throw new JoinedUserNotFoundException();
         }
         return joinedUsers;
     }
@@ -66,12 +70,12 @@ public class JoinedUserServiceImpl implements JoinedUserService{
 
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
-            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+            throw new RoomNotFoundException();
         }
 
         Room room = roomOpt.get();
@@ -81,9 +85,8 @@ public class JoinedUserServiceImpl implements JoinedUserService{
         room.getJoinedUserList().add(joinedUser);
         JoinedUser joinedUserOpt = joinedUserRepository.save(joinedUser);
 
-
         if(room.getCurrentJoinNumber() == room.getMaxJoinNumber()){
-            throw new IllegalArgumentException("방이 꽉 찼습니다.");
+            throw new JoinedUserInvalidRequestException("방이 꽉 찼습니다.");
         }
 
         room.changeCurrentJoinNumber(room.getCurrentJoinNumber() + 1);
@@ -104,19 +107,19 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public Optional<JoinedUser> leaveRoom(Long userId, Long roomId){
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
-            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+            throw new RoomNotFoundException();
         }
 
         Room room = roomOpt.get();
 
         Optional<JoinedUser> joinedUserOpt = joinedUserRepository.findByUserIdAndRoomId(userId, roomId);
         if(!joinedUserOpt.isPresent()){
-            throw new IllegalArgumentException("해당 유저가 방에 존재하지 않습니다.");
+            throw new JoinedUserInvalidRequestException("해당 유저가 방에 존재하지 않습니다.");
         }
 
         //제거
