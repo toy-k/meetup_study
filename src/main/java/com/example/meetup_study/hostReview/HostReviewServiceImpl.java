@@ -12,6 +12,7 @@ import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,11 +29,24 @@ public class HostReviewServiceImpl implements HostReviewService{
         Optional<User> userOpt = userRepository.findById(userId);
         Optional<Room> roomOpt = roomRepository.findById(requestHostReviewDto.getRoomId());
         Optional<Review> reviewOpt = reviewRepository.findById(requestHostReviewDto.getReviewId());
-        if(!userOpt.isPresent() || !roomOpt.isPresent() || !reviewOpt.isPresent()){
-            throw new IllegalArgumentException("User 또는 Room 또는 Review가 없습니다.");
-        }
+
         HostReview hostReview = hostReviewRepository.save(new HostReview(userOpt.get(), roomOpt.get(), requestHostReviewDto.getContent(), requestHostReviewDto.getReviewId()));
+
         return Optional.ofNullable(hostReview);
+    }
+
+    @Override
+    public List<HostReview> findByRoomId(Long roomId) {
+        Optional<Room> room = roomRepository.findById(roomId);
+        if(room.isPresent()) {
+
+            List<HostReview> hostReviews = hostReviewRepository.findByRoomId(roomId);
+
+            return hostReviews;
+
+        }else{
+            throw new IllegalArgumentException("Room이 없습니다.");
+        }
     }
 
     @Override

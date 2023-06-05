@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController("/api/review")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/review")
 public class ReviewController {
 
     private final ReviewService reviewService;
