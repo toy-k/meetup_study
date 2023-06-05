@@ -119,7 +119,7 @@ public class InitController {
             categorys = categoryService.getCategory(category).get();
             maxJoinNumber = 10;
             price = 10000L;
-            roomStatus = RoomStatus.WAITING;
+            roomStatus = RoomStatus.OPEN;
             roomType = RoomType.ONLINE;
             roomImage = new RoomImage(meetupPhotoPath);
 

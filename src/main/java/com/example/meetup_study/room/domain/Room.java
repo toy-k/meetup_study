@@ -62,7 +62,7 @@ public class Room extends BaseEntity {
 
     @Column(name = "room_status")
     @Enumerated(EnumType.STRING)
-    private RoomStatus roomStatus = RoomStatus.WAITING;//WAITING, PROCEEDING, FINISHED, CANCELED
+    private RoomStatus roomStatus = RoomStatus.OPEN;//OPEN, FULL, CLOSE
 
     @Column(name = "room_type")
     @Enumerated(EnumType.STRING)

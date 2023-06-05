@@ -117,10 +117,15 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
                 Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByFileName(fileName);
                 if(!announceUploadOpt.isPresent()){
-                    throw new IllegalArgumentException("존재하지 않는 파일입니다.");
+                    throw new IllegalArgumentException("존재하지 않는 파일입니다. (DB)");
                 }
 
                 File file = new File(filePath + announceId + "-" + fileName);
+
+                if (!file.exists()) {
+                   throw new IllegalArgumentException("존재하지 않는 파일입니다. (STORAGE)");
+                }
+
                 FileInputStream fis = new FileInputStream(file);
 
                 ZipEntry zipEntry = new ZipEntry( announceId + "-" + fileName);

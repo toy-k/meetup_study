@@ -68,4 +68,14 @@ public class ReviewServiceImpl implements ReviewService{
             throw new IllegalArgumentException("Review가 없거나 남의 리뷰 삭제할 수 없습니다.");
         }
     }
+
+    @Override
+    public Optional<Review> findById(Long reviewId) {
+        Optional<Review> review = reviewRepository.findById(reviewId);
+        if(review.isPresent()){
+            return review;
+        }else{
+            throw new IllegalArgumentException("Review가 없습니다.");
+        }
+    }
 }

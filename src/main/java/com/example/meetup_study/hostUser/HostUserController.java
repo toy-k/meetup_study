@@ -2,6 +2,10 @@ package com.example.meetup_study.hostUser;
 
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.dto.HostUserDto;
+import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,34 +20,36 @@ import java.util.Optional;
 public class HostUserController {
 
     private final HostUserService hostUserService;
+    private final UserService userService;
+    private final RoomService roomService;
 
     @GetMapping("/id")
     public ResponseEntity<HostUserDto> getHostUser(Long id){
         Optional<HostUser> hostUseropt =  hostUserService.getHostUserById(id);
 
-        if(hostUseropt.isPresent()){
-            HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
-            return ResponseEntity.ok(hostUserDto);
+        HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
 
-        }else{
-            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
-        }
-
-
-
+        return ResponseEntity.ok(hostUserDto);
     }
 
     @GetMapping("ids")
     public ResponseEntity<HostUserDto> getHostUser(Long userId, Long roomId) {
-        Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(userId, roomId);
-
-        if (hostUseropt.isPresent()) {
-            HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
-            return ResponseEntity.ok(hostUserDto);
-
-        } else {
+        Optional<User> userOpt = userService.findById(userId);
+        if(!userOpt.isPresent()){
             throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
         }
+
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        if(!roomOpt.isPresent()){
+            throw new IllegalArgumentException("해당 방이 존재하지 않습니다.");
+        }
+
+        Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(userId, roomId);
+
+        HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
+
+        return ResponseEntity.ok(hostUserDto);
+
     }
 
 }

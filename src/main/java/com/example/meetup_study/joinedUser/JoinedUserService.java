@@ -13,4 +13,8 @@ public interface JoinedUserService {
     List<JoinedUser> getJoinedUserByRoomId(Long roomId);
 
     List<JoinedUser> getJoinedUserByUserId(Long userId);
+
+    Optional<JoinedUser> joinRoom(Long userId, Long roomId);
+
+    Optional<JoinedUser> leaveRoom(Long userId, Long roomId);
 }

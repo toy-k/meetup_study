@@ -118,6 +118,11 @@ public class UploadServiceImpl implements UploadService{
                 }
 
                 File file = new File(filePath +  roomId + "-" + fileName);
+
+                if (!file.exists()) {
+                    throw new IllegalArgumentException("존재하지 않는 파일입니다. (STORAGE)");
+                }
+
                 FileInputStream fis = new FileInputStream(file);
 
                 ZipEntry zipEntry = new ZipEntry( roomId + "-" + fileName);
