@@ -49,6 +49,27 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 }
 
+//processResources {
+//    filesMatching('**/application-dev.yml') {
+//        expand([
+//                APPLICATION_DRIVER_CLASS_NAME: System.getenv('APPLICATION_DRIVER_CLASS_NAME'),
+//                APPLICATION_URL              : System.getenv('APPLICATION_URL'),
+//                APPLICATION_USERNAME         : System.getenv('APPLICATION_USERNAME'),
+//                GOOGLE_CLIENT_ID             : System.getenv('GOOGLE_CLIENT_ID'),
+//                GOOGLE_CLIENT_SECRET         : System.getenv('GOOGLE_CLIENT_SECRET'),
+//                JWT_SECRET_KEY               : System.getenv('JWT_SECRET_KEY'),
+//                JWT_ACCESSTOKEN_EXPIRATION   : System.getenv('JWT_ACCESSTOKEN_EXPIRATION'),
+//                JWT_ACCESSTOKEN_HEADER       : System.getenv('JWT_ACCESSTOKEN_HEADER'),
+//                JWT_REFRESHTOKEN_EXPIRATION  : System.getenv('JWT_REFRESHTOKEN_EXPIRATION'),
+//                JWT_REFRESHTOKEN_HEADER      : System.getenv('JWT_REFRESHTOKEN_HEADER'),
+//                MAIL_USERNAME                : System.getenv('MAIL_USERNAME'),
+//                MAIL_PASSWORD                : System.getenv('MAIL_PASSWORD'),
+//                MAIL_HOST                    : System.getenv('MAIL_HOST'),
+//                MAIL_PORT                    : System.getenv('MAIL_PORT')
+//        ])
+//    }
+//}
+
 tasks.named('test') {
     doFirst {
         def testEnvPath = 'src/main/resources/.env'

@@ -22,10 +22,11 @@ public class GlobalControllerAdvice {
     private static final String INVALID_REQUEST_EXCEPTION_MESSAGE_FORMAT = "잘못된 입력입니다: [%s]";
     private static final String INVALID_REQUEST_DELIMITER = ", ";
 
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception e){
         log.error("UnhandleException has been throw : " , e);
-        return new ResponseEntity<>(new ErrorResponse("예상치 못한 에러가 발생했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse("예상치 못한 에러가 발생했습니다."+e), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler

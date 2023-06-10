@@ -9,8 +9,10 @@ import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.exception.RoomInvalidRequestException;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +41,7 @@ public class RoomController {
 
 
     @PostMapping
-    public ResponseEntity<RoomDto> createRoom(@RequestBody RequestRoomDto requestRoomDto, HttpServletRequest req){
+    public ResponseEntity<RoomDto> createRoom(@Valid @RequestBody RequestRoomDto requestRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -66,10 +69,11 @@ public class RoomController {
             throw new RoomInvalidRequestException("가격이 0보다 작습니다.");
         }
 
+        requestRoomDto.setCurrentJoinNumber(1);
+        requestRoomDto.setViewCount(1L);
 
-        Optional<Room> createdRoom = roomService.createRoom(requestRoomDto);
 
-        Optional<RoomDto> createdRoomDto = createdRoom.map(r -> new RoomDto().convertToRoomDto(r));
+        Optional<RoomDto> createdRoomDto = roomService.createRoom(requestRoomDto);
 
         return ResponseEntity.ok(createdRoomDto.get());
     }
@@ -85,7 +89,7 @@ public class RoomController {
     @GetMapping("/list")
     public ResponseEntity<List<RoomDto>> getRoomList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
 
-        if(page < 1 || size < 1){
+        if(page < 1 || size != 10){
             page = 1;
             size = 10;
         }
@@ -96,9 +100,9 @@ public class RoomController {
 
     }
 
-    @GetMapping("/list/before-meetup-start")
+    @GetMapping("/list/after-meetup-start")
     public ResponseEntity<List<RoomDto>> getRoomListBeforeMeetupStart(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
-        if(page < 1 || size < 1){
+        if(page < 1 || size != 10){
             page = 1;
             size = 10;
         }
@@ -110,9 +114,9 @@ public class RoomController {
 
     }
 
-    @GetMapping("/list/after-meetup-start")
+    @GetMapping("/list/before-meetup-start")
     public ResponseEntity<List<RoomDto>> getRoomListAfterMeetupStart(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
-        if(page < 1 || size < 1){
+        if(page < 1 || size != 10){
             page = 1;
             size = 10;
         }
@@ -124,7 +128,7 @@ public class RoomController {
     }
 
     @PutMapping()
-    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
+    public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -181,9 +185,11 @@ public class RoomController {
         if(!userOpt.isPresent()){
             throw new UserNotFoundException();
         }
-
-        if(!roomOpt.isPresent() ||userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getId()){
-            throw new RoomInvalidRequestException("이 유저는 없거나, 방이 없거나, 방을 만들지 않았습니다.");
+        if(!roomOpt.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+        if(userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getUser().getId()) {
+            throw new UserInvalidRequestException("이 유저는  방을 만들지 않았습니다.");
         }
 
         Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userOpt.get().getId());

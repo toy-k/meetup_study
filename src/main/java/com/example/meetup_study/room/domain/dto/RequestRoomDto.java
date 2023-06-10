@@ -5,14 +5,13 @@ import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class RequestRoomDto {
 
@@ -22,7 +21,7 @@ public class RequestRoomDto {
     @NotBlank(message = "description은 필수 입력 값입니다.")
     private String description;
 
-    @NotBlank(message = "category은 필수 입력 값입니다.")
+    @NotNull(message = "category은 필수 입력 값입니다.")
     private CategoryEnum category;
 
     @NotNull(message = "location은 필수 입력 값입니다.")
@@ -36,6 +35,7 @@ public class RequestRoomDto {
 
     @Min(1)
     @Positive
+    @NotNull(message = "maxJoinNumber은 필수 입력 값입니다.")
     private Integer maxJoinNumber;
 
     @Min(1)
@@ -45,10 +45,10 @@ public class RequestRoomDto {
     @Positive
     private Long price;
 
-    @NotBlank(message = "roomStatus은 필수 입력 값입니다.")
+    @NotNull(message = "roomStatus은 필수 입력 값입니다.")
     private RoomStatus roomStatus;
 
-    @NotBlank(message = "roomType은 필수 입력 값입니다.")
+    @NotNull(message = "roomType은 필수 입력 값입니다.")
     private RoomType roomType; //Online, Offline
 
     private String meetupPhotoPath;

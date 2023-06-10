@@ -15,6 +15,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/api/room/**")
+                .addPathPatterns("/api/joinedUser")
+                .addPathPatterns("/api/review")
                 .addPathPatterns("/api/user/me") // user/me put, get
                 .excludePathPatterns("/api/room/id/**")
                 .excludePathPatterns("/api/room/list")

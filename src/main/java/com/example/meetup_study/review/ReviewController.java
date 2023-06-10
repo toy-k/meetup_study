@@ -6,8 +6,11 @@ import com.example.meetup_study.joinedUser.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
+import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
+import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +43,7 @@ public class ReviewController {
 
     //joineduser로 조건확인, 룸 상태확인(end)
     @PostMapping
-    public ResponseEntity<ReviewDto> createReview(@RequestBody RequestReviewDto requestReviewDto, HttpServletRequest req){
+    public ResponseEntity<ReviewDto> createReview(@Valid @RequestBody RequestReviewDto requestReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -59,10 +64,24 @@ public class ReviewController {
             throw new RoomNotFoundException();
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isBefore(roomOpt.get().getMeetupEndDate())){
+            throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
+        }
+
+
         Optional<JoinedUser> joinedUserOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userOpt.get().getId(), requestReviewDto.getRoomId());
 
         if(!joinedUserOpt.isPresent()){
             throw new JoinedUserNotFoundException();
+        }
+
+
+
+        Optional<Review> reviewOpt = reviewService.findByUserIdAndRoomId(userOpt.get().getId(), requestReviewDto.getRoomId());
+
+        if(reviewOpt.isPresent()){
+            throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
         }
 
         Optional<Review> createdReview = reviewService.createReview(requestReviewDto, userOpt.get().getId());
@@ -72,8 +91,8 @@ public class ReviewController {
         return ResponseEntity.ok(createdReviewDto.get());
     }
 
-    @GetMapping("/roomId")
-    public ResponseEntity<List<ReviewDto>> getReview(Long roomId){
+    @GetMapping("/roomId/{roomId}")
+    public ResponseEntity<List<ReviewDto>> getReview(@PathVariable Long roomId){
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
 
@@ -93,8 +112,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewDtoList);
     }
 
-    @GetMapping("/userId")
-    public ResponseEntity<List<ReviewDto>> getReviewByUserId(Long userId){
+    @GetMapping("/userId/{userId}")
+    public ResponseEntity<List<ReviewDto>> getReviewByUserId(@PathVariable Long userId){
 
         Optional<User> userOpt = userService.findById(userId);
         if (!userOpt.isPresent()) {
@@ -113,7 +132,7 @@ public class ReviewController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Review> deleteReview(Long reviewId, HttpServletRequest req){
+    public ResponseEntity<Review> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -129,7 +148,10 @@ public class ReviewController {
             throw new UserNotFoundException();
         }
 
-        Optional<Review> reviewOpt = reviewService.findById(reviewId);
+        Optional<Review> reviewOpt = reviewService.findById(requestDeleteReviewDto.getReviewId());
+        if(!reviewOpt.isPresent()){
+            throw new ReviewNotFoundException();
+        }
 
         Long roomId = reviewOpt.get().getRoom().getId();
 
@@ -139,7 +161,7 @@ public class ReviewController {
         }
 
 
-        Optional<Review> review = reviewService.deleteReview(reviewId, userOpt.get().getId());
+        Optional<Review> review = reviewService.deleteReview(requestDeleteReviewDto.getReviewId(), userOpt.get().getId());
 
         return ResponseEntity.ok(review.get());
     }

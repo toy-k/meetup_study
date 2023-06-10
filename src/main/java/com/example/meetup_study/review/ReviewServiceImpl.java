@@ -55,13 +55,6 @@ public class ReviewServiceImpl implements ReviewService{
         Optional<User> user = userRepository.findById(userId);
         Optional<Room> room = roomRepository.findById(requestReviewDto.getRoomId());
 
-        if(!user.isPresent()){
-            throw new UserNotFoundException();
-        }
-        if(!room.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
         Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
         return Optional.ofNullable(review);
@@ -70,10 +63,6 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public Optional<Review> deleteReview(Long reviewId, Long UserId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
-
-        if(!review.isPresent()){
-            throw new ReviewNotFoundException();
-        }
 
         if(!review.get().getUser().getId().equals(UserId)){
             throw new ReviewInvalidRequestException("남의 리뷰 삭제할 수 없습니다.");
@@ -91,5 +80,11 @@ public class ReviewServiceImpl implements ReviewService{
         }else{
             throw new ReviewNotFoundException();
         }
+    }
+
+    @Override
+    public Optional<Review> findByUserIdAndRoomId(Long userId, Long roomId) {
+        Optional<Review> review = reviewRepository.findByUserIdAndRoomId(userId, roomId);
+        return review;
     }
 }

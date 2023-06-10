@@ -2,6 +2,7 @@ package com.example.meetup_study.room.domain.dto;
 
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,7 +23,7 @@ import java.time.LocalDateTime;
 public class RoomDto {
 
     @Positive
-    @NotBlank(message = "id는 필수 입력 값입니다.")
+    @NotNull(message = "id는 필수 입력 값입니다.")
     private Long id;
 
     @NotBlank(message = "title은 필수 입력 값입니다.")
@@ -30,7 +32,7 @@ public class RoomDto {
     @NotBlank(message = "description은 필수 입력 값입니다.")
     private String description;
 
-    @NotBlank(message = "category은 필수 입력 값입니다.")
+    @NotNull(message = "category은 필수 입력 값입니다.")
     private CategoryEnum category;
 
     @NotNull(message = "location은 필수 입력 값입니다.")
@@ -53,10 +55,10 @@ public class RoomDto {
     @Positive
     private Long price;
 
-    @NotBlank(message = "roomStatus은 필수 입력 값입니다.")
+    @NotNull(message = "roomStatus은 필수 입력 값입니다.")
     private RoomStatus roomStatus;
 
-    @NotBlank(message = "roomType은 필수 입력 값입니다.")
+    @NotNull(message = "roomType은 필수 입력 값입니다.")
     private RoomType roomType; //Online, Offline
 
     private String meetupPhotoPath;
@@ -110,12 +112,23 @@ public class RoomDto {
                 room.getViewCount(),
                 room.getMeetupPhotoPath(),
 
-                room.getHostUserList().get(0).getId()
+                convertToHostUserId(room)
+//                room.getHostUserList().get(0).getId()
         );
     }
 
-    public CategoryEnum convertToCategoryEnum(Category category) {
+    private CategoryEnum convertToCategoryEnum(Category category) {
         return category.getName();
+    }
+
+    private Long convertToHostUserId(Room room) {
+
+        List<HostUser> hostUserList = room.getHostUserList();
+
+        Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
+
+
+        return hostUserId;
     }
 }
 
