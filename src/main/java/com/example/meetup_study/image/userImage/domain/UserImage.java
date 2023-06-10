@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name="user_image")
 @Getter
 @RequiredArgsConstructor
+//@Table(name = "user_images")
 public class UserImage extends BaseEntity {
 
     @Id

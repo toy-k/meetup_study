@@ -12,6 +12,7 @@ import com.example.meetup_study.upload.roomUpload.domain.Upload;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class Room extends BaseEntity {
 
     @Lob
     private String description;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -142,8 +144,7 @@ public class Room extends BaseEntity {
     public void changeMeetupPhotoPath(String meetupPhotoPath) {
         this.meetupPhotoPath = meetupPhotoPath;
     }
-    public void changeCategory(CategoryEnum categoryEnum) {
-        Category category = new Category(categoryEnum);
+    public void changeCategory(Category category) {
         this.category = category;
     }
     public void changeMaxJoinNumber(Integer maxJoinNumber) {

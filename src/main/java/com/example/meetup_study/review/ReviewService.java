@@ -11,10 +11,11 @@ public interface ReviewService {
 
     List<Review> findByRoomId(Long roomId);
 
-    List<Review>
-    findByUserId(Long userId);
+    List<Review> findByUserId(Long userId);
 
     Optional<Review> deleteReview(Long reviewId, Long UserId);
 
     Optional<Review> findById(Long reviewId);
+
+    Optional<Review> findByUserIdAndRoomId(Long userId, Long roomId);
 }

@@ -6,4 +6,8 @@ public class UserInvalidRequestException extends InvalidRequestException {
     public UserInvalidRequestException() {
         super("유효하지 않은 유저 요청입니다.");
     }
+    public UserInvalidRequestException(String msg) {
+        super("유효하지 않은 유저 요청입니다. "+msg);
+    }
+
 }

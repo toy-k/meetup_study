@@ -2,6 +2,7 @@ package com.example.meetup_study.Category.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.room.domain.Room;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class Category extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CategoryEnum name;
     //STUDY, TRAVEL, CODING, FOOD, GAME, CAFE, ALCHOLE, ACTIVITY, CULTURE, SPORTS, ETC
+
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @Column(name="room_list")

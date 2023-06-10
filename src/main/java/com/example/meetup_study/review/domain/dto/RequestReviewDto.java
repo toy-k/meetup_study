@@ -16,9 +16,9 @@ public class RequestReviewDto {
     @NotNull(message = "user_id는 null이 될 수 없습니다.")
     private Long roomId;
 
-    @Positive
     @Min(1)
     @Max(5)
+    @NotNull(message = "rating은 null이 될 수 없습니다.")
     private Integer rating;
 
     @Lob

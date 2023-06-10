@@ -1,16 +1,95 @@
-#
 #spring:
+#  profiles:
+#    active: common
+#  batch:
+#    job:
+#      enabled: true
+#      names: ${job.name:NONE}
+#    jdbc:
+#      initialize-schema: always
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: ${GOOGLE_CLIENT_ID}
+#            client-secret: ${GOOGLE_CLIENT_SECRET}
+#            scope:
+#              - email
+#              - profile
+#  cache:
+#    type: redis
+#    redis:
+#      host: 127.0.0.1
+#      port: 6379
+#
+#  mail:
+#    host: ${MAIL_HOST}
+#    port: ${MAIL_PORT}
+#    username: ${MAIL_USERNAME}
+#    password: ${MAIL_PASSWORD}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          required: true
+#  servlet:
+#    multipart:
+#      enabled: true
+#      max-file-size: 10MB
+#      max-request-size: 10MB
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
+#
+#springdoc:
+#  swagger-ui:
+#    base-url: http://localhost:8080/swagger-ui/index.html
+#
+#jwt:
+#  secretKey: ${JWT_SECRET_KEY}
+#  accessToken:
+#    expiration: ${JWT_ACCESSTOKEN_EXPIRATION}
+#    header: ${JWT_ACCESSTOKEN_HEADER}
+#  refreshToken:
+#    expiration: ${JWT_REFRESHTOKEN_EXPIRATION}
+#    header: ${JWT_REFRESHTOKEN_HEADER}
+#
+#logging:
+#  level:
+#    root: info
+#    com.example: debug
+#    com.example.meetup_study: debug
+##    root: DEBUG
+##    org.springframework: DEBUG
+##    org.hibernate: DEBUG
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
 #  datasource:
-#    driver-class-name: ${APPLICATION_DEV_DRIVER_CLASS_NAME}
-#    url: ${APPLICATION_DEV_URL}
-#    username: ${APPLICATION_DEV_USERNAME}
-#    password: ${APPLICATION_DEV_PASSWORD}
+#    driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
+#    url: ${APPLICATION_URL}
+#    username: ${APPLICATION_USERNAME}
+#    password:
 #  jpa:
 #    hibernate:
 #      ddl-auto: create
 #    show-sql: true
-###logging:
-###  level:
-###    root: DEBUG
-###    org.springframework: DEBUG
-###    org.hibernate: DEBUG
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: prod
+#  datasource:
+#    driverClassName: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true

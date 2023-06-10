@@ -15,9 +15,13 @@ public class ReviewDto {
     @NotBlank(message = "id는 필수 입력 값입니다.")
     private Long id;
 
+    @NotNull(message = "userId는 null이 될 수 없습니다.")
+    private Long userId;
 
-    @NotNull(message = "user_id는 null이 될 수 없습니다.")
+    @NotNull(message = "roomId는 null이 될 수 없습니다.")
     private Long roomId;
+
+
 
     @Positive
     @Min(1)
@@ -27,14 +31,15 @@ public class ReviewDto {
     @Lob
     private String content;
 
-    public ReviewDto(Long id, Long roomId, Integer rating, String content) {
+    public ReviewDto(Long id, Long userId,Long roomId, Integer rating, String content) {
         this.id = id;
+        this.userId = userId;
         this.roomId = roomId;
         this.rating = rating;
         this.content = content;
     }
 
     public ReviewDto convertToReviewDto(Review review) {
-        return new ReviewDto(review.getId(), review.getRoom().getId(), review.getRating(), review.getContent());
+        return new ReviewDto(review.getId(), review.getUser().getId(),review.getRoom().getId(), review.getRating(), review.getContent());
     }
 }
