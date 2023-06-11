@@ -16,14 +16,15 @@ public class RoomImage extends BaseEntity {
     @Column(name = "room_image_id")
     private Long id;
 
-    @Column()
-    private String path;
+    @Column(name = "profile")
+    private byte[] profile;
 
-    public RoomImage(String path){
-        this.path = path;
+    public RoomImage(byte[] profile){
+        this.profile = profile;
     }
 
-    public void changePath(String path) {
-        this.path = path;
+    public void changeProfile(byte[] profile) {
+        this.profile = profile;
     }
+
 }

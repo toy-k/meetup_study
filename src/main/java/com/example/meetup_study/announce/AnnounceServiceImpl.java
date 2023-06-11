@@ -36,7 +36,7 @@ public class AnnounceServiceImpl implements AnnounceService {
         Optional<User> userOpt = userRepository.findById(requestAnnounceDto.getUserId());
 
 
-        AnnounceImage announceImage = new AnnounceImage(requestAnnounceDto.getImagePath());
+        AnnounceImage announceImage = new AnnounceImage();
 
         Announce announce = announceRepository.save(new Announce(requestAnnounceDto.getTitle(), requestAnnounceDto.getDescription(), userOpt.get(), announceImage));
 

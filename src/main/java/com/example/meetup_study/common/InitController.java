@@ -122,7 +122,7 @@ public class InitController {
             price = 10000L;
             roomStatus = RoomStatus.OPEN;
             roomType = RoomType.ONLINE;
-            roomImage = new RoomImage(meetupPhotoPath);
+            roomImage = new RoomImage();
 
             RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount,meetupPhotoPath, hostUserId, meetupPhotoPath);
 
