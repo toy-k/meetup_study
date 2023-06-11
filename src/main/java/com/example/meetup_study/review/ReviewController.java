@@ -78,15 +78,14 @@ public class ReviewController {
 
 
 
-        Optional<Review> reviewOpt = reviewService.findByUserIdAndRoomId(userOpt.get().getId(), requestReviewDto.getRoomId());
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findByUserIdAndRoomId(userOpt.get().getId(), requestReviewDto.getRoomId());
 
-        if(reviewOpt.isPresent()){
+        if(reviewDtoOpt.isPresent()){
             throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
         }
 
-        Optional<Review> createdReview = reviewService.createReview(requestReviewDto, userOpt.get().getId());
+        Optional<ReviewDto> createdReviewDto = reviewService.createReview(requestReviewDto, userOpt.get().getId());
 
-        Optional<ReviewDto> createdReviewDto = createdReview.map(r -> new ReviewDto().convertToReviewDto(r));
 
         return ResponseEntity.ok(createdReviewDto.get());
     }
@@ -101,13 +100,7 @@ public class ReviewController {
         }
 
 
-        List<Review> reviewList = reviewService.findByRoomId(roomId);
-
-        List<ReviewDto> reviewDtoList = new ArrayList<>();
-
-        for(Review review : reviewList){
-            reviewDtoList.add(new ReviewDto().convertToReviewDto(review));
-        }
+        List<ReviewDto> reviewDtoList = reviewService.findByRoomId(roomId);
 
         return ResponseEntity.ok(reviewDtoList);
     }
@@ -120,19 +113,13 @@ public class ReviewController {
             throw new UserNotFoundException();
         }
 
-        List<Review> reviewList = reviewService.findByUserId(userId);
-
-        List<ReviewDto> reviewDtoList = new ArrayList<>();
-
-        for(Review review : reviewList){
-            reviewDtoList.add(new ReviewDto().convertToReviewDto(review));
-        }
+        List<ReviewDto> reviewDtoList = reviewService.findByUserId(userId);
 
         return ResponseEntity.ok(reviewDtoList);
     }
 
     @DeleteMapping
-    public ResponseEntity<Review> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
+    public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -148,12 +135,12 @@ public class ReviewController {
             throw new UserNotFoundException();
         }
 
-        Optional<Review> reviewOpt = reviewService.findById(requestDeleteReviewDto.getReviewId());
-        if(!reviewOpt.isPresent()){
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(requestDeleteReviewDto.getReviewId());
+        if(!reviewDtoOpt.isPresent()){
             throw new ReviewNotFoundException();
         }
 
-        Long roomId = reviewOpt.get().getRoom().getId();
+        Long roomId = reviewDtoOpt.get().getRoomId();
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if (!roomOpt.isPresent()) {
@@ -161,9 +148,9 @@ public class ReviewController {
         }
 
 
-        Optional<Review> review = reviewService.deleteReview(requestDeleteReviewDto.getReviewId(), userOpt.get().getId());
+        Optional<ReviewDto> reviewDto = reviewService.deleteReview(requestDeleteReviewDto.getReviewId(), userOpt.get().getId());
 
-        return ResponseEntity.ok(review.get());
+        return ResponseEntity.ok(reviewDto.get());
     }
 
 }

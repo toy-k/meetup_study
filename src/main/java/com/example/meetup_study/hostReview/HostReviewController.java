@@ -16,6 +16,7 @@ import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.review.ReviewService;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
@@ -75,8 +76,8 @@ public class HostReviewController {
             throw new JoinedUserNotFoundException();
         }
 
-        Optional<Review> reviewOpt = reviewService.findById(requestHostReviewDto.getReviewId());
-        if (!reviewOpt.isPresent()) {
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(requestHostReviewDto.getReviewId());
+        if (!reviewDtoOpt.isPresent()) {
             throw new ReviewNotFoundException();
         }
 

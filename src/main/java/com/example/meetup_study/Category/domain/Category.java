@@ -2,6 +2,7 @@ package com.example.meetup_study.Category.domain;
 
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.room.domain.Room;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
