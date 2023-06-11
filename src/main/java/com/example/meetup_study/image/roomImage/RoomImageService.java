@@ -1,12 +1,13 @@
 package com.example.meetup_study.image.roomImage;
 
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
+import com.example.meetup_study.image.roomImage.domain.dto.RoomImageDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 public interface RoomImageService {
-    Optional<RoomImage> createRoomImage(String path, Long roomId);
-    Optional<RoomImage> getRoomImage(Long roomId);
-    Optional<RoomImage> updateRoomImage(String path, Long roomId);
-    Optional<RoomImage> deleteRoomImage(Long roomId);
+    Optional<RoomImageDto> updateRoomImage(MultipartFile file, Long roomId);
+    Optional<RoomImageDto> getRoomImage(Long roomId);
+    Optional<RoomImageDto> deleteRoomImage(Long roomId);
 }

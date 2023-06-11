@@ -68,7 +68,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public User createUser(CustomOauth2UserInfo customOauth2UserInfo, ProviderType providerType) {
 
 
-        UserImage userImage = null;
+        UserImage userImage = new UserImage();
 
         User user = new User(
                 customOauth2UserInfo.getName(),

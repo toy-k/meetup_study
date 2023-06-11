@@ -15,14 +15,14 @@ public class AnnounceImage {
     @Column(name = "announce_image_id")
     private Long id;
 
-    @Column()
-    private String path;
+    @Column(name = "profile")
+    private byte[] profile;
 
-    public AnnounceImage(String path){
-        this.path = path;
+    public AnnounceImage(byte[] profile){
+        this.profile = profile;
     }
 
-    public void changePath(String path) {
-        this.path = path;
+    public void changeProfile(byte[] profile) {
+        this.profile = profile;
     }
 }

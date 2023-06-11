@@ -51,7 +51,7 @@ public class RoomServiceImpl implements RoomService{
             throw new CategoryNotFoundException();
         }
 
-         RoomImage roomImage = new RoomImage(requestRoomDto.getImagePath());
+         RoomImage roomImage = new RoomImage();
 
         Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get(), roomImage));
         JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);

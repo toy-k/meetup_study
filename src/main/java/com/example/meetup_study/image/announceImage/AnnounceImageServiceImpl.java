@@ -2,13 +2,21 @@ package com.example.meetup_study.image.announceImage;
 
 import com.example.meetup_study.announce.AnnounceService;
 import com.example.meetup_study.announce.domain.Announce;
-import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
+import com.example.meetup_study.image.announceImage.domain.dto.AnnounceImageDto;
 import com.example.meetup_study.image.announceImage.domain.repository.AnnounceImageRepository;
+import com.example.meetup_study.image.exception.ImageInvalidRequestException;
+import com.example.meetup_study.image.exception.ImageNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -21,45 +29,95 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
     private final AnnounceRepository announceRepository;
 
     @Override
-    public Optional<AnnounceImage> createAnnounceImage(String path, Long announceId) {
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
+    public Optional<AnnounceImageDto> updateAnnounceImage(MultipartFile file, Long announceId) {
+        try{
+            Optional<Announce> announceOpt = announceRepository.findById(announceId);
 
-        AnnounceImage announceImage = new AnnounceImage(path);
-        announceOpt.get().changeAnnounceImage(announceImage);
+            AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 
-        return Optional.of(announceImageRepository.save(announceImage));
-    }
+            String fileExtension = getFileExtension(file.getOriginalFilename());
+            byte[] data = compressFile(file.getBytes(), fileExtension);
+
+
+            if(announceImage == null){
+                AnnounceImage announceImageInst = new AnnounceImage(data);
+
+                AnnounceImage newAnnounceImage = announceImageRepository.save(announceImageInst);
+
+                announceOpt.get().changeAnnounceImage(newAnnounceImage);
+
+                AnnounceImageDto announceImageDtoOpt = new AnnounceImageDto(newAnnounceImage.getProfile());
+
+                return Optional.of(announceImageDtoOpt);
+
+            }else{
+                Optional<AnnounceImage> announceImageOpt = announceImageRepository.findById(announceImage.getId());
+                if (!announceImageOpt.isPresent()) {
+                    throw new ImageNotFoundException();
+                }
+
+                announceImageOpt.get().changeProfile(data);
+                announceImageRepository.save(announceImageOpt.get());
+                AnnounceImageDto announceImageDtoOpt = new AnnounceImageDto(announceImage.getProfile());
+
+                return Optional.of(announceImageDtoOpt);
+
+
+            }
+        }catch (IOException e){
+            throw new ImageInvalidRequestException();
+        }    }
 
     @Override
-    public Optional<AnnounceImage> getAnnounceImage(Long announceId) {
+    public Optional<AnnounceImageDto> getAnnounceImage(Long announceId) {
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
-
-        return Optional.ofNullable(announceOpt.get().getAnnounceImage());
-    }
-
-    @Override
-    public Optional<AnnounceImage> updateAnnounceImage(String path, Long announceId) {
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 
-        announceImage.changePath(path);
+        AnnounceImageDto announceImageDto = new AnnounceImageDto(announceImage.getProfile());
 
-        return Optional.of(announceImageRepository.save(announceImage));
-    }
+        return Optional.of(announceImageDto);       }
 
     @Override
-    public Optional<AnnounceImage> deleteAnnounceImage(Long announceId) {
+    public Optional<AnnounceImageDto> deleteAnnounceImage(Long announceId) {
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 
-        announceImageRepository.delete(announceImage);
 
-        return Optional.of(announceImage);
+        announceOpt.get().getAnnounceImage().changeProfile(null);
+
+        announceImageRepository.save(announceImage);
+
+        AnnounceImageDto announceImageDto = new AnnounceImageDto(announceImage.getProfile());
+
+        return Optional.of(announceImageDto);
+    }
+
+    private byte[] compressFile(byte[] data, String fileExtension) throws IOException {
+
+        if (fileExtension.equalsIgnoreCase("jpeg") || fileExtension.equalsIgnoreCase("jpg")) {
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpeg", outputStream);
+            return outputStream.toByteArray();
+        } else if (fileExtension.equalsIgnoreCase("png")) {
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", outputStream);
+            return outputStream.toByteArray();
+        } else {
+
+            throw new ImageInvalidRequestException("유저 이미지 업로드 요청 파일 확장자가 잘못되었습니다.");
+        }
+    }
+    private String getFileExtension(String fileName) {
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        } else {
+            return "";
+        }
     }
 }
