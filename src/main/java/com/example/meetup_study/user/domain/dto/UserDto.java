@@ -20,7 +20,7 @@ public class UserDto {
     @Min(value = 3, message = "username은 3글자 이상입니다.")
     private String username;
 
-    private String userImage;
+    private byte[] profile;
 
     @Email(message = "email 형식이 올바르지 않습니다.")
     @NotBlank(message = "email은 필수 입력 값입니다.")
@@ -30,10 +30,10 @@ public class UserDto {
     private String description;
 
 
-    public UserDto(Long id, String username, String userImage, String email, String description) {
+    public UserDto(Long id, String username, byte[] profile, String email, String description) {
         this.id = id;
         this.username = username;
-        this.userImage = userImage;
+        this.profile = profile;
         this.email = email;
         this.description = description;
     }
@@ -46,7 +46,7 @@ public class UserDto {
         return new UserDto(
                 user.getId(),
                 user.getUsername(),
-                user.getUserImage().getPath(),
+                user.getUserImage().getProfile(),
                 user.getEmail(),
                 user.getDescription()
         );

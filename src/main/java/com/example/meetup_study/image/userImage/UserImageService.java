@@ -8,17 +8,12 @@ import java.util.Optional;
 
 public interface UserImageService {
 
-    //path
-    Optional<UserImage> createUserImage(String path, Long userId);
-    Optional<UserImage> getUserImage(Long userId);
-    Optional<UserImage> updateUserImage(String path, Long userId);
-    Optional<UserImage> deleteUserImage(Long userId);
-
-    //byte CREUD
-    Optional<UserImageDto> uploadUserImage(MultipartFile file, Long userId) throws Exception;
-    Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId);
+   Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId);
 
     Optional<UserImageDto> getUserImagee(Long userId);
+
+    //    Optional<byte[]> getUserImageee(Long userId);
+
     Optional<UserImageDto> deleteUserImagee(Long userId);
 
 }

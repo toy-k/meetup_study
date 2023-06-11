@@ -13,26 +13,26 @@ public class FakeUserDto {
 
     private Long id;
     private String username;
-    private String imageUrl;
+    private byte[] profile;
     private String email;
     private String description;
     //fakeuser
     private String accessToken;
     private String refreshToken;
 
-    public FakeUserDto(Long id, String username, String imageUrl, String email, String description) {
+    public FakeUserDto(Long id, String username, byte[] profile, String email, String description) {
         this.id = id;
         this.username = username;
-        this.imageUrl = imageUrl;
+        this.profile = profile;
         this.email = email;
         this.description = description;
     }
 
     //fakeuser
-    public FakeUserDto(Long id, String username, String imageUrl, String email, String description, String accessToken, String refreshToken) {
+    public FakeUserDto(Long id, String username, byte[] profile, String email, String description, String accessToken, String refreshToken) {
         this.id = id;
         this.username = username;
-        this.imageUrl = imageUrl;
+        this.profile = profile;
         this.email = email;
         this.description = description;
         this.accessToken = accessToken;
@@ -43,7 +43,7 @@ public class FakeUserDto {
         return new FakeUserDto(
                 user.getId(),
                 user.getUsername(),
-                user.getUserImage().getPath(),
+                user.getUserImage().getProfile(),
                 user.getEmail(),
                 user.getDescription()
         );
