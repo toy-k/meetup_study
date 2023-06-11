@@ -52,6 +52,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private String PASS_URL_15 = "/api/hostReview";
     private String PASS_URL_16 = "/api/announce";
     private String PASS_URL_17 = "/api/admin";
+    private String PASS_URL_18 = "/api/userImage";
+    private String PASS_URL_19 = "/api/roomImage";
+    private String PASS_URL_20 = "/api/announceImage";
+
+
 
     private final String AUTHORIZATION = "Authorization";
     private final String BEARER = "Bearer ";
@@ -87,7 +92,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     (reqUri.contains(PASS_URL_14) && !reqUri.equals(PASS_URL_14))||
                     (reqUri.contains(PASS_URL_15) && !reqUri.equals(PASS_URL_15))||
                     (reqUri.contains(PASS_URL_16) && !reqUri.equals(PASS_URL_16))||
-                    (reqUri.contains(PASS_URL_17))
+                    (reqUri.contains(PASS_URL_17))||
+                    (reqUri.contains(PASS_URL_18) && !reqUri.equals(PASS_URL_18)) ||
+                    (reqUri.contains(PASS_URL_19) && !reqUri.equals(PASS_URL_19)) ||
+                    (reqUri.contains(PASS_URL_20) && !reqUri.equals(PASS_URL_20))
 
             )
         ){

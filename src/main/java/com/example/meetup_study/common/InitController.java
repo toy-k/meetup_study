@@ -56,7 +56,7 @@ public class InitController {
             email = "jeonghwanlee1"+i+"@gmail.com";
             description = "fakeuser"+i+"description";
 
-            UserImage userImage = new UserImage(imageUrl);
+            UserImage userImage =  new UserImage();
 
 
             User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");

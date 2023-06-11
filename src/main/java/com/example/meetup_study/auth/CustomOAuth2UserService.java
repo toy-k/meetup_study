@@ -68,7 +68,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public User createUser(CustomOauth2UserInfo customOauth2UserInfo, ProviderType providerType) {
 
 
-        UserImage userImage = new UserImage(customOauth2UserInfo.getImageUrl());
+        UserImage userImage = null;
 
         User user = new User(
                 customOauth2UserInfo.getName(),
@@ -88,14 +88,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if(customOauth2UserInfo.getName() != null && !user.getUsername().equals(customOauth2UserInfo.getName())){
             user.changeUsername(customOauth2UserInfo.getName());
-        }
-
-        if(customOauth2UserInfo.getImageUrl() != null && !user.getUserImage().getPath().equals((customOauth2UserInfo.getImageUrl()))){
-
-            UserImage userImage = new UserImage(customOauth2UserInfo.getImageUrl());
-
-            user.changeUserImage(userImage);
-            userImageRepository.save(userImage);
 
         }
     }

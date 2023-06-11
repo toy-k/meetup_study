@@ -6,7 +6,12 @@ import com.example.meetup_study.image.exception.ImageInvalidRequestException;
 import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,27 +29,6 @@ public class UserImageController {
 
     private String ACCESSTOKEN = "AccessToken";
 
-    @PostMapping
-    public ResponseEntity<UserImageDto> uploadUserImagee(@RequestParam("file") MultipartFile file, HttpServletRequest req) throws Exception {
-
-        String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
-        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-
-        if (!userIdOpt.isPresent()) {
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        if (file.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
-
-        Optional<UserImageDto> userImageDtoOpt = userImageService.uploadUserImage(file, userIdOpt.get());
-
-        if(!userImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
-
-        return ResponseEntity.ok(userImageDtoOpt.get());
-    }
 
     @PutMapping
     public ResponseEntity<UserImageDto> updateUserImagee(@RequestParam("file") MultipartFile file, HttpServletRequest req) throws Exception {
@@ -53,8 +37,14 @@ public class UserImageController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if (!userIdOpt.isPresent()) {
+        if(!userIdOpt.isPresent()){
             throw new AccessTokenInvalidRequestException();
+        }
+
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
+
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
         }
 
         if (file.isEmpty()) {
@@ -68,8 +58,14 @@ public class UserImageController {
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
 
-    @GetMapping
-    public ResponseEntity<UserImageDto> getUserImagee(Long userId) {
+    @GetMapping("/userId/{userId}")
+    public ResponseEntity<UserImageDto> getUserImagee(@PathVariable Long userId) {
+
+        Optional<User> userOpt = userService.findById(userId);
+
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.getUserImagee(userId);
 
@@ -78,14 +74,46 @@ public class UserImageController {
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
 
+
+//byte 응답 = 이미지 브라우저에 띄움
+
+//    @GetMapping("/userId/{userId}")
+//    public ResponseEntity<byte[]> getUserImageee(@PathVariable Long userId) {
+//
+//        Optional<User> userOpt = userService.findById(userId);
+//
+//        if (!userOpt.isPresent()) {
+//            throw new UserNotFoundException();
+//        }
+//
+//        Optional<byte[]> imageBytesOpt = userImageService.getUserImageee(userId);
+//
+//        if (!imageBytesOpt.isPresent()) {
+//            throw new ImageNotFoundException();
+//        }
+//
+//        byte[] imageBytes = imageBytesOpt.get();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_JPEG);
+//
+//        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+//    }
+
     @DeleteMapping
     public ResponseEntity<UserImageDto> deleteUserImagee(HttpServletRequest req) {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if (!userIdOpt.isPresent()) {
+        if(!userIdOpt.isPresent()){
             throw new AccessTokenInvalidRequestException();
+        }
+
+        Optional<User> userOpt = userService.findById(userIdOpt.get());
+
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
         }
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.deleteUserImagee(userIdOpt.get());

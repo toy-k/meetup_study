@@ -49,12 +49,12 @@ public class FakeUserController {
             email = "fakeuser"+i+"@fake.com";
             description = "fakeuser"+i+"description";
 
-            UserImage userImage = new UserImage(imageUrl);
+            UserImage userImage = new UserImage();
 
             User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
 
             fakeUserService.createFakeUser(user);
-            userImageService.createUserImage(userImage.getPath(), user.getId());
+//            userImageService.createUserImage(userImage.getPath(), user.getId());
 
 
         };
@@ -103,7 +103,7 @@ public class FakeUserController {
 
         fakeUserService.updateRefreshToken(user, refreshToken);
 
-        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getPath(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
+        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), null, user.getEmail(), user.getDescription(), accessToken, refreshToken);
 
 
         return ResponseEntity.ok(fakeUserDto);

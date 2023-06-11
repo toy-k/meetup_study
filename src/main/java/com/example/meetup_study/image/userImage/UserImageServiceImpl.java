@@ -31,117 +31,67 @@ public class UserImageServiceImpl implements UserImageService {
     private final UserService userService;
 
     @Override
-    @Transactional
-    public Optional<UserImage> createUserImage(String path, Long userId) {
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-        UserImage userImage = new UserImage(path);
-        userOpt.get().changeUserImage(userImage);
-
-        return Optional.of(userImageRepository.save(userImage));
-    }
-
-    @Override
-    public Optional<UserImage> updateUserImage(String path, Long userId) {
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-        UserImage userImage = userOpt.get().getUserImage();
-
-        userImage.changePath(path);
-
-        return Optional.of(userImageRepository.save(userImage));
-
-    }
-
-    @Override
-    public Optional<UserImage> getUserImage(Long userId) {
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-
-        return Optional.ofNullable(userOpt.get().getUserImage());
-    }
-
-    @Override
-    public Optional<UserImage> deleteUserImage(Long userId) {
-
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-        UserImage userImage = userOpt.get().getUserImage();
-
-        userOpt.get().changeUserImage(null);
-
-        userImageRepository.delete(userImage);
-
-        return Optional.of(userImage);
-
-    }
-
-
-    //byte CREUD
-
-    @Override
-    public Optional<UserImageDto> uploadUserImage(MultipartFile file, Long userId) throws Exception {
-
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-        if (file.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
-
-        try{
-            byte[] data = compressFile(file.getBytes());
-
-            UserImage userImage = new UserImage(data);
-
-            UserImage userImageOpt = userImageRepository.save(userImage);
-
-            UserImageDto userImageDtoOpt = new UserImageDto(userImageOpt.getProfile());
-
-
-            return Optional.of(userImageDtoOpt);
-        }catch (IOException e){
-            throw new ImageInvalidRequestException();
-        }
-    }
-
-    @Override
     public Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId) {
 
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
-
-        if (file.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
-
         try{
-            byte[] data = compressFile(file.getBytes());
+            Optional<User> userOpt = userService.findById(userId);
+            UserImage userImage = userOpt.get().getUserImage();
 
-            UserImage userImage = new UserImage(data);
+            String fileExtension = getFileExtension(file.getOriginalFilename());
+            byte[] data = compressFile(file.getBytes(), fileExtension);
 
-            userImage.changeProfile(data);
 
-            UserImage userImageOpt = userImageRepository.save(userImage);
+            if(userImage == null){
+                UserImage userImageInst = new UserImage(data);
 
-            UserImageDto userImageDtoOpt = new UserImageDto(userImage.getProfile());
+                UserImage newUserImage = userImageRepository.save(userImageInst);
 
-            return Optional.of(userImageDtoOpt);
+                userOpt.get().changeUserImage(newUserImage);
+
+                UserImageDto userImageDtoOpt = new UserImageDto(newUserImage.getProfile());
+
+                return Optional.of(userImageDtoOpt);
+
+            }else{
+                Optional<UserImage> userImageOpt = userImageRepository.findById(userImage.getId());
+                if (!userImageOpt.isPresent()) {
+                    throw new ImageNotFoundException();
+                }
+
+                userImageOpt.get().changeProfile(data);
+                userImageRepository.save(userImageOpt.get());
+                UserImageDto userImageDtoOpt = new UserImageDto(userImage.getProfile());
+
+                return Optional.of(userImageDtoOpt);
+
+
+            }
         }catch (IOException e){
             throw new ImageInvalidRequestException();
         }
 
     }
+
+    //byte 응답 = 이미지 브라우저에 띄움
+//    @Override
+//    public Optional<byte[]> getUserImageee(Long userId) {
+//        Optional<User> userOpt = userService.findById(userId);
+//
+//        if (!userOpt.isPresent()) {
+//            throw new UserNotFoundException();
+//        }
+//
+//        UserImage userImage = userOpt.get().getUserImage();
+//        byte[] imageBytes = userImage.getProfile();
+//
+//        return Optional.of(imageBytes);
+//    }
+
 
     @Override
     public Optional<UserImageDto> getUserImagee(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
 
         UserImage userImage = userOpt.get().getUserImage();
 
@@ -155,12 +105,13 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> deleteUserImagee(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()) throw new UserNotFoundException();
+
         UserImage userImage = userOpt.get().getUserImage();
 
-        userOpt.get().changeUserImage(null);
 
-        userImageRepository.delete(userImage);
+        userOpt.get().getUserImage().changeProfile(null);
+
+        userImageRepository.save(userImage);
 
         UserImageDto userImageDto = new UserImageDto(userImage.getProfile());
 
@@ -168,19 +119,31 @@ public class UserImageServiceImpl implements UserImageService {
 
     }
 
-    private byte[] compressFile(byte[] data) throws IOException {
-        // 파일을 압축하거나 처리하는 로직을 구현해주세요.
-        // 여기서는 간단히 이미지를 JPEG 형식으로 압축하는 예시를 제공합니다.
+    private byte[] compressFile(byte[] data, String fileExtension) throws IOException {
 
-        // 이미지 로딩
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+        if (fileExtension.equalsIgnoreCase("jpeg") || fileExtension.equalsIgnoreCase("jpg")) {
 
-        // 이미지를 JPEG 형식으로 압축
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpeg", outputStream);
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpeg", outputStream);
+            return outputStream.toByteArray();
+        } else if (fileExtension.equalsIgnoreCase("png")) {
 
-        return outputStream.toByteArray();
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", outputStream);
+            return outputStream.toByteArray();
+        } else {
+
+            throw new ImageInvalidRequestException("유저 이미지 업로드 요청 파일 확장자가 잘못되었습니다.");
+        }
     }
-
+    private String getFileExtension(String fileName) {
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        } else {
+            return "";
+        }
+    }
 
 }

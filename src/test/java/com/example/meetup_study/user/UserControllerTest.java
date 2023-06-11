@@ -76,7 +76,7 @@ class UserControllerTest {
 
         System.out.println("accessToken = " + accessToken);
 
-        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getImageUrl(), fakeUser_1_Dto.getEmail(), fakeUser_1_Dto.getDescription());
+        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), fakeUser_1_Dto.getDescription());
 
         System.out.println("userDto = " + userDto.getEmail());
 
@@ -120,7 +120,7 @@ class UserControllerTest {
         ResponseEntity<FakeUserDto> fakeUser_1 = fakeUserController.readFakeUser("fakeuser1");
         FakeUserDto fakeUser_1_Dto = fakeUser_1.getBody();
         String accessToken = "Bearer "+ fakeUser_1_Dto.getAccessToken();
-        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), "updatedImageUrl", fakeUser_1_Dto.getEmail(), "updatedDescription");
+        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), "updatedDescription");
 
         //when
         MvcResult mvcResult = mockMvc.perform(put("/api/user/me")
@@ -136,7 +136,7 @@ class UserControllerTest {
         assertAll(
                 () -> assertThat(actual.getUsername()).isEqualTo(userDto.getUsername()),
                 () -> assertThat(actual.getEmail()).isEqualTo(userDto.getEmail()),
-                () -> assertThat(actual.getImageUrl()).isEqualTo("updatedImageUrl"),
+                () -> assertThat(actual.getProfile()).isEqualTo("updatedImageUrl"),
                 () -> assertThat(actual.getDescription()).isEqualTo("updatedDescription")
         );
     }
@@ -150,7 +150,7 @@ class UserControllerTest {
         FakeUserDto fakeUser_1_Dto = fakeUser_1.getBody();
 
         String accessToken = "Bearer " + expiredToken;
-        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), "updatedImageUrl", fakeUser_1_Dto.getEmail(), "updatedDescription");
+        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), "updatedDescription");
 
         //when
         MvcResult mvcResult = mockMvc.perform(put("/api/user/me")
@@ -169,7 +169,7 @@ class UserControllerTest {
         FakeUserDto fakeUser_1_Dto = fakeUser_1.getBody();
 
         String accessToken = "Bearer "+ fakeUser_1_Dto.getAccessToken();
-        UserDto userDto = new UserDto(-1L, fakeUser_1_Dto.getUsername(), "updatedImageUrl", fakeUser_1_Dto.getEmail(), "updatedDescription");
+        UserDto userDto = new UserDto(-1L, fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), "updatedDescription");
 
         //when
         MvcResult mvcResult = mockMvc.perform(put("/user/me")
