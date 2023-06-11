@@ -5,10 +5,13 @@ import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestExceptio
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.hostReview.HostReviewService;
 import com.example.meetup_study.hostReview.domain.HostReview;
+import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
+import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
 import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.ReviewService;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
@@ -23,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -38,7 +42,7 @@ public class AdminController {
     private String ACCESSTOKEN = "AccessToken";
 
     @DeleteMapping("/room")
-    public ResponseEntity<RoomDto> deleteRoom(@RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
+    public ResponseEntity<RoomDto> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -65,7 +69,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/review")
-    public ResponseEntity<Review> deleteReview(Long reviewId, HttpServletRequest req){
+    public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -81,7 +85,9 @@ public class AdminController {
             throw new UserNotFoundException();
         }
 
-        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(reviewId);
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(requestDeleteReviewDto.getReviewId());
+
+
 
         Long roomId = reviewDtoOpt.get().getRoomId();
 
@@ -90,14 +96,13 @@ public class AdminController {
             throw new RoomNotFoundException();
         }
 
+        Optional<ReviewDto> reviewDto = adminService.deleteReview(requestDeleteReviewDto.getReviewId(), userOpt.get().getId());
 
-        Optional<Review> review = adminService.deleteReview(reviewId, userOpt.get().getId());
-
-        return ResponseEntity.ok(review.get());
+        return ResponseEntity.ok(reviewDto.get());
     }
 
-    @DeleteMapping
-    public ResponseEntity<HostReview> deleteHostReview(@RequestParam Long hostReviewId, HttpServletRequest req){
+    @DeleteMapping("/hostReview")
+    public ResponseEntity<HostReviewDto> deleteHostReview(@Valid @RequestBody RequestDeleteHostReviewDto requestDeleteHostReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -113,13 +118,13 @@ public class AdminController {
             throw new UserNotFoundException();
         }
 
-        Optional<HostReview> hostReviewOpt = adminService.deleteHostReview(hostReviewId, userOpt.get().getId());
+        Optional<HostReviewDto> hostReviewDtoOpt = adminService.deleteHostReview(requestDeleteHostReviewDto.getHostReviewId(), userOpt.get().getId());
 
-        if(!hostReviewOpt.isPresent()){
+        if(!hostReviewDtoOpt.isPresent()){
             throw new HostReviewNotFoundException();
         }
 
-        return ResponseEntity.ok(hostReviewOpt.get());
+        return ResponseEntity.ok(hostReviewDtoOpt.get());
     }
 
 

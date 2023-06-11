@@ -1,10 +1,14 @@
 package com.example.meetup_study.admin;
 
+import com.example.meetup_study.common.aop.Timer;
 import com.example.meetup_study.hostReview.domain.HostReview;
+import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
+import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
@@ -12,6 +16,7 @@ import com.example.meetup_study.room.domain.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -32,23 +37,43 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Optional<Review> deleteReview(Long reviewId, Long UserId) {
+    public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
         if(review.isPresent()){
+
+            if(review.get().getIsHostReview()){
+                throw new ReviewInvalidRequestException("이미 호스트가 리뷰 남겨서 삭제할 수 없습니다.");
+            }
+
             reviewRepository.deleteById(reviewId);
-            return review;
+
+            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+            return Optional.of(reviewDto);
         }else{
             throw new ReviewNotFoundException();
         }
     }
 
 
+    @Transactional
     @Override
-    public Optional<HostReview> deleteHostReview(Long hostReviewId, Long userId) {
+    public Optional<HostReviewDto> deleteHostReview(Long hostReviewId, Long userId) {
         Optional<HostReview> hostReviewOpt = hostReviewRepository.findById(hostReviewId);
         if(hostReviewOpt.isPresent()){
+
+            Optional<Review> reviewOpt = reviewRepository.findById(hostReviewOpt.get().getReviewId());
+
+            if (!reviewOpt.isPresent()) {
+                throw new HostReviewNotFoundException();
+            }
+
             hostReviewRepository.deleteById(hostReviewId);
-            return hostReviewOpt;
+            reviewOpt.get().changeIsHostReview(false);
+
+            HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReviewOpt.get());
+
+            return Optional.of(hostReviewDto);
+
         }else{
             throw new HostReviewNotFoundException();
         }

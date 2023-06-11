@@ -2,6 +2,7 @@ package com.example.meetup_study.upload.announceUpload;
 
 import com.example.meetup_study.announce.AnnounceService;
 import com.example.meetup_study.announce.domain.Announce;
+import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
@@ -33,8 +34,8 @@ public class AnnounceUploadController {
     @GetMapping
     public ResponseEntity<AnnounceUploadDto> findFiles(Long announceId) {
 
-        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
-        if (announceOpt.isEmpty()) {
+        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(announceId);
+        if (announceDtoOpt.isEmpty()) {
             throw new AnnounceNotFoundException();
         }
 

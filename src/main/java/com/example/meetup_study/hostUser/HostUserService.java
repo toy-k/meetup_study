@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface HostUserService {
     Optional<HostUser> getHostUserById(Long id);
 
+    Optional<HostUser> getHostUserByRoomId(Long roomId);
+
     Optional<HostUser> getHostUserByUserIdAndRoomId(Long userId, Long roomId);
 }

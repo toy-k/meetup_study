@@ -78,6 +78,9 @@ public class ReviewServiceImpl implements ReviewService{
         if(!review.get().getUser().getId().equals(UserId)){
             throw new ReviewInvalidRequestException("남의 리뷰 삭제할 수 없습니다.");
         }
+        if(review.get().getIsHostReview()){
+            throw new ReviewInvalidRequestException("이미 호스트가 리뷰 남겨서 삭제할 수 없습니다.");
+        }
 
         reviewRepository.deleteById(reviewId);
 

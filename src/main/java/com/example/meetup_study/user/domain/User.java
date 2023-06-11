@@ -3,6 +3,7 @@ package com.example.meetup_study.user.domain;
 
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.common.domain.BaseEntity;
+import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
@@ -73,6 +74,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Column(name="announce_list")
     private List<Announce> announceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column(name="host_review_list")
+    private List<HostReview> hostReviewList = new ArrayList<>();
 
     User(Long id, String username, UserImage userImage, String email, String description) {
         this.id = id;

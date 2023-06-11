@@ -2,6 +2,8 @@ package com.example.meetup_study.image.announceImage;
 
 import com.example.meetup_study.announce.AnnounceService;
 import com.example.meetup_study.announce.domain.Announce;
+import com.example.meetup_study.announce.domain.dto.AnnounceDto;
+import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
 import com.example.meetup_study.image.announceImage.domain.repository.AnnounceImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,11 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
     private final AnnounceImageRepository announceImageRepository;
     private final AnnounceService announceService;
+    private final AnnounceRepository announceRepository;
 
     @Override
     public Optional<AnnounceImage> createAnnounceImage(String path, Long announceId) {
-        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
+        Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         AnnounceImage announceImage = new AnnounceImage(path);
@@ -30,7 +33,7 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
     @Override
     public Optional<AnnounceImage> getAnnounceImage(Long announceId) {
-        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
+        Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         return Optional.ofNullable(announceOpt.get().getAnnounceImage());
@@ -38,7 +41,7 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
     @Override
     public Optional<AnnounceImage> updateAnnounceImage(String path, Long announceId) {
-        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
+        Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
@@ -50,7 +53,7 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
     @Override
     public Optional<AnnounceImage> deleteAnnounceImage(Long announceId) {
-        Optional<Announce> announceOpt = announceService.getAnnounce(announceId);
+        Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()) throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();

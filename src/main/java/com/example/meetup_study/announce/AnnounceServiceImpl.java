@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class AnnounceServiceImpl implements AnnounceService {
 
     @Transactional
     @Override
-    public Optional<Announce> createAnnounce(RequestAnnounceDto requestAnnounceDto) {
+    public Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto) {
         Optional<User> userOpt = userRepository.findById(requestAnnounceDto.getUserId());
 
 
@@ -41,11 +42,13 @@ public class AnnounceServiceImpl implements AnnounceService {
 
         userOpt.get().addAnnounce(announce);
 
-        return Optional.ofNullable(announce);
+        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announce);
+
+        return Optional.of(announceDto);
     }
 
     @Override
-    public Optional<Announce> getAnnounce(Long announceId) {
+    public Optional<AnnounceDto> getAnnounce(Long announceId) {
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(announceOpt.isPresent()) {
             Announce announce = announceOpt.get();
@@ -53,19 +56,26 @@ public class AnnounceServiceImpl implements AnnounceService {
             announce.changeViewCount(viewCount);
         }
 
-        return announceOpt;
+        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announceOpt.get());
+
+        return Optional.of(announceDto);
+
     }
 
     @Override
     public List<AnnounceDto> getAnnounceList(Integer page, Integer size) {
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size);
 
         Page<Announce> announcePage = announceRepository.findAll(pageRequest);
 
         List<Announce> announce = announcePage.getContent();
+        if(announce.isEmpty()){
+            return new ArrayList<>();
+        }
 
         List<AnnounceDto> announceDtos = announce.stream().map(r -> new AnnounceDto().convertToAnnounceDto(r)).collect(Collectors.toList());
+
         return announceDtos;
     }
 
@@ -87,6 +97,7 @@ public class AnnounceServiceImpl implements AnnounceService {
             if(announceDto.getDescription() != null) announce.changeDescription(announceDto.getDescription());
             return new AnnounceDto().convertToAnnounceDto(announce);
         });
+        announceRepository.save(announceOpt.get());
 
         return announceDtoOpt;
 

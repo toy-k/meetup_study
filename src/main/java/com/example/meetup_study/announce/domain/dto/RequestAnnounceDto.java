@@ -4,18 +4,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @RequiredArgsConstructor
 public class RequestAnnounceDto {
 
-    @NotBlank(message = "title은 필수 입력 값입니다.")
+    @NotNull(message = "title은 필수 입력 값입니다.")
     private String title;
 
-    @NotBlank(message = "description은 필수 입력 값입니다.")
+    @NotNull(message = "description은 필수 입력 값입니다.")
     private String description;
 
-    @NotBlank(message = "userId은 필수 입력 값입니다.")
+    @NotNull(message = "userId은 필수 입력 값입니다.")
     private Long userId;
 
     private String imagePath;

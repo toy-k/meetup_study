@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnnounceService {
-    Optional<Announce> createAnnounce(RequestAnnounceDto requestAnnounceDto);
+    Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto);
 
-    Optional<Announce> getAnnounce(Long announceId);
+    Optional<AnnounceDto> getAnnounce(Long announceId);
 
     List<AnnounceDto> getAnnounceList(Integer page, Integer size);
 

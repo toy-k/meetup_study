@@ -17,6 +17,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/room/**")
                 .addPathPatterns("/api/joinedUser")
                 .addPathPatterns("/api/review")
+                .addPathPatterns("/api/hostReview")
+                .addPathPatterns("/api/announce")
+                .addPathPatterns("/api/admin/**")
                 .addPathPatterns("/api/user/me") // user/me put, get
                 .excludePathPatterns("/api/room/id/**")
                 .excludePathPatterns("/api/room/list")

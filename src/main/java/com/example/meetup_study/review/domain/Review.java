@@ -43,4 +43,8 @@ public class Review extends BaseEntity {
         this.content = content;
     }
 
+
+    public void changeIsHostReview(Boolean isHostReview) {
+        this.isHostReview = isHostReview;
+    }
 }
