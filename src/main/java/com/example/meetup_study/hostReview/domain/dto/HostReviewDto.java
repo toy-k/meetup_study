@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter
@@ -14,27 +15,31 @@ import javax.validation.constraints.Positive;
 public class HostReviewDto {
 
     @Positive
-    @NotBlank(message = "id는 필수 입력 값입니다.")
+    @NotNull(message = "id는 필수 입력 값입니다.")
     private Long id;
 
-    @NotBlank(message = "room_id는 필수 입력 값입니다.")
+    @NotNull(message = "room_id는 필수 입력 값입니다.")
     private Long roomId;
 
-    @NotBlank(message = "review_id는 필수 입력 값입니다.")
+    @NotNull(message = "review_id는 필수 입력 값입니다.")
     private Long reviewId;
+
+    @NotNull(message = "userId는 null이 될 수 없습니다.")
+    private Long userId;
 
     @Lob
     private String content;
 
-    public HostReviewDto(Long id, Long roomId, Long reviewId, String content) {
+    public HostReviewDto(Long id, Long userId,Long roomId, Long reviewId, String content) {
         this.id = id;
+        this.userId = userId;
         this.roomId = roomId;
         this.reviewId = reviewId;
         this.content = content;
     }
 
     public HostReviewDto convertToHostReviewDto(HostReview hostReview) {
-        return new HostReviewDto(hostReview.getId(), hostReview.getRoom().getId(), hostReview.getReviewId(), hostReview.getContent());
+        return new HostReviewDto(hostReview.getId(),hostReview.getUser().getId(), hostReview.getRoom().getId(), hostReview.getReviewId(), hostReview.getContent());
     }
 
 }

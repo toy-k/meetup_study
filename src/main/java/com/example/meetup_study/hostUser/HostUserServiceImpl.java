@@ -27,6 +27,16 @@ public class HostUserServiceImpl implements HostUserService {
     }
 
     @Override
+    public Optional<HostUser> getHostUserByRoomId(Long roomId) {
+        Optional<HostUser> hostUser = hostUserRepository.findByRoomId(roomId);
+        if (!hostUser.isPresent()) {
+            throw new HostUserNotFoundException();
+        }
+        return hostUser;
+
+    }
+
+    @Override
     public Optional<HostUser> getHostUserByUserIdAndRoomId(Long userId, Long roomId) {
         Optional<HostUser> hostUser = hostUserRepository.findByUserIdAndRoomId(userId, roomId);
         if (!hostUser.isPresent()) {

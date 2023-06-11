@@ -3,6 +3,7 @@ package com.example.meetup_study.announce;
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
+import com.example.meetup_study.announce.domain.dto.RequestDeleteAnnounceDto;
 import com.example.meetup_study.announce.exception.AnnounceInvalidRequestException;
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +37,7 @@ public class AnnounceController {
 
 
     @PostMapping
-    public ResponseEntity<AnnounceDto> createAnnounce(@RequestBody RequestAnnounceDto requestAnnounceDto, HttpServletRequest req){
+    public ResponseEntity<AnnounceDto> createAnnounce(@Valid @RequestBody RequestAnnounceDto requestAnnounceDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -55,9 +57,7 @@ public class AnnounceController {
             throw new AnnounceInvalidRequestException();
         }
 
-        Optional<Announce> createdAnnounce = announceService.createAnnounce(requestAnnounceDto);
-
-        Optional<AnnounceDto> createdAnnounceDto = createdAnnounce.map(r -> new AnnounceDto().convertToAnnounceDto(r));
+        Optional<AnnounceDto> createdAnnounceDto = announceService.createAnnounce(requestAnnounceDto);
 
         return ResponseEntity.ok(createdAnnounceDto.get());
     }
@@ -66,10 +66,9 @@ public class AnnounceController {
     @GetMapping("/id/{id}")
     public ResponseEntity<AnnounceDto> getAnnounce(@PathVariable Long id){
 
-        Optional<Announce> announceOpt = announceService.getAnnounce(id);
-        if(announceOpt.isPresent()){
-            AnnounceDto announceDtoOpt = new AnnounceDto().convertToAnnounceDto(announceOpt.get());
-            return ResponseEntity.ok(announceDtoOpt);
+        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(id);
+        if(announceDtoOpt.isPresent()){
+            return ResponseEntity.ok(announceDtoOpt.get());
         }else{
             throw new AnnounceNotFoundException();
         }
@@ -78,7 +77,7 @@ public class AnnounceController {
     @GetMapping("/list")
     public ResponseEntity<List<AnnounceDto>> getAnnounceList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
 
-        if(page < 1 || size < 1){
+        if(page < 1 || size != 10){
             page = 1;
             size = 10;
         }
@@ -89,7 +88,7 @@ public class AnnounceController {
     }
 
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<AnnounceDto> updateAnnounce(@RequestBody AnnounceDto AnnounceDto, HttpServletRequest req) throws AccessDeniedException {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
@@ -116,7 +115,7 @@ public class AnnounceController {
     }
 
     @DeleteMapping
-    public ResponseEntity<AnnounceDto> deleteAnnounce(@RequestBody Long id, HttpServletRequest req){
+    public ResponseEntity<AnnounceDto> deleteAnnounce(@Valid @RequestBody RequestDeleteAnnounceDto requestDeleteAnnounceDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -130,17 +129,17 @@ public class AnnounceController {
             throw new UserNotFoundException();
         }
 
-        Optional<Announce> announceOpt = announceService.getAnnounce(id);
+        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(requestDeleteAnnounceDto.getAnnounceId());
 
-        if(!announceOpt.isPresent() ){
+        if(!announceDtoOpt.isPresent() ){
             throw new AnnounceNotFoundException();
         }
 
-        if(userOpt.get().getId() != announceOpt.get().getUser().getId()){
+        if(userOpt.get().getId() != announceDtoOpt.get().getUserId()){
             throw new AnnounceInvalidRequestException();
         }
 
-        Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(id, userOpt.get().getId());
+        Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(requestDeleteAnnounceDto.getAnnounceId(), userOpt.get().getId());
 
         return ResponseEntity.ok(deletedAnnounceDto.get());
     }

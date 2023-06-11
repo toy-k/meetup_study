@@ -3,6 +3,7 @@ package com.example.meetup_study.room.domain;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryEnum;
 import com.example.meetup_study.common.domain.BaseEntity;
+import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.hostUser.domain.HostUser;
@@ -101,6 +102,10 @@ public class Room extends BaseEntity {
     @Column(name="review_list")
     private List<Review> reviewList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Column(name="host_review_list")
+    private List<HostReview> hostReviewList = new ArrayList<>();
+
 
     ////////////////////////////////////////////
 
@@ -125,6 +130,9 @@ public class Room extends BaseEntity {
         this.hostUserList.add(hostUser);
     }
 
+    public void addReview(Review review) {
+        this.reviewList.add(review);
+    }
 
     public void changeTitle(String title) {
         this.title = title;

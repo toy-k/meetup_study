@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @AllArgsConstructor
@@ -13,7 +14,7 @@ import javax.validation.constraints.Positive;
 public class RequestDeleteRoomDto {
 
     @Positive
-    @NotBlank(message = "id는 필수 입력 값입니다.")
+    @NotNull(message = "id는 필수 입력 값입니다.")
     private Long id;
 
 }

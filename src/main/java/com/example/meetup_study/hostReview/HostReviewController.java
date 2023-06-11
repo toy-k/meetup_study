@@ -4,6 +4,7 @@ import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestExceptio
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
+import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestHostReviewDto;
 import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +51,7 @@ public class HostReviewController {
     private String ACCESSTOKEN = "AccessToken";
 
     @PostMapping
-    public ResponseEntity<HostReviewDto> createHostReview(@RequestBody RequestHostReviewDto requestHostReviewDto, HttpServletRequest req){
+    public ResponseEntity<HostReviewDto> createHostReview(@Valid @RequestBody RequestHostReviewDto requestHostReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -81,7 +83,8 @@ public class HostReviewController {
             throw new ReviewNotFoundException();
         }
 
-        Optional<HostUser> hostUserOpt = hostUserService.getHostUserById(requestHostReviewDto.getRoomId());
+
+        Optional<HostUser> hostUserOpt = hostUserService.getHostUserByRoomId(requestHostReviewDto.getRoomId());
         if (!hostUserOpt.isPresent()) {
             throw new HostUserNotFoundException();
         }
@@ -90,19 +93,17 @@ public class HostReviewController {
             throw new HostUserInvalidRequestException();
         }
 
-        Optional<HostReview> hostReviewOpt = hostReviewService.createHostReview(requestHostReviewDto, userOpt.get().getId());
+        Optional<HostReviewDto> hostReviewDtoOpt = hostReviewService.createHostReview(requestHostReviewDto, userOpt.get().getId());
 
-        if(!hostReviewOpt.isPresent()){
+        if(!hostReviewDtoOpt.isPresent()){
             throw new HostReviewInvalidRequestException();
         }
-
-        Optional<HostReviewDto> hostReviewDtoOpt = hostReviewOpt.map(r-> new HostReviewDto().convertToHostReviewDto(r));
 
         return ResponseEntity.ok(hostReviewDtoOpt.get());
 
     }
 
-    @GetMapping("/{roomId}")
+    @GetMapping("/roomId/{roomId}")
     public ResponseEntity<List<HostReviewDto>> getHostReview(@PathVariable Long roomId){
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
@@ -111,19 +112,13 @@ public class HostReviewController {
             throw new RoomNotFoundException();
         }
 
-        List<HostReview> hostReviewList = hostReviewService.findByRoomId(roomId);
-
-        List<HostReviewDto>  hostReviewDtoList = new ArrayList<>();
-
-        for(HostReview hostReview : hostReviewList){
-            hostReviewDtoList.add(new HostReviewDto().convertToHostReviewDto(hostReview));
-        }
+        List<HostReviewDto> hostReviewDtoList = hostReviewService.findByRoomId(roomId);
 
         return ResponseEntity.ok(hostReviewDtoList);
     }
 
     @DeleteMapping
-    public ResponseEntity<HostReview> deleteHostReview(@RequestParam Long hostReviewId, HttpServletRequest req){
+    public ResponseEntity<HostReviewDto> deleteHostReview(@Valid @RequestBody RequestDeleteHostReviewDto requestDeleteHostReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -138,13 +133,13 @@ public class HostReviewController {
             throw new UserNotFoundException();
         }
 
-        Optional<HostReview> hostReviewOpt = hostReviewService.deleteHostReview(hostReviewId, userOpt.get().getId());
+        Optional<HostReviewDto> hostReviewDtoOpt = hostReviewService.deleteHostReview(requestDeleteHostReviewDto.getHostReviewId(), userOpt.get().getId());
 
-        if(!hostReviewOpt.isPresent()){
+        if(!hostReviewDtoOpt.isPresent()){
             throw new HostReviewInvalidRequestException();
         }
 
-        return ResponseEntity.ok(hostReviewOpt.get());
+        return ResponseEntity.ok(hostReviewDtoOpt.get());
     }
 
 }
