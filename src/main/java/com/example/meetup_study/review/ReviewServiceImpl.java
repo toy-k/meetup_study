@@ -2,6 +2,7 @@ package com.example.meetup_study.review;
 
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
+import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
 import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +28,16 @@ public class ReviewServiceImpl implements ReviewService{
     private final UserRepository userRepository;
 
     @Override
-    public List<Review> findByRoomId(Long roomId) {
+    public List<ReviewDto> findByRoomId(Long roomId) {
         Optional<Room> room = roomRepository.findById(roomId);
         if(room.isPresent()) {
 
             List<Review> reviews = reviewRepository.findByRoomId(roomId);
 
-            return reviews;
+            List<ReviewDto> reviewDtoList = reviews.stream()
+                    .map(review -> new ReviewDto().convertToReviewDto(review))
+                    .collect(Collectors.toList());
+            return reviewDtoList;
 
         }else{
             throw new RoomNotFoundException();
@@ -40,28 +45,34 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public List<Review> findByUserId(Long userId) {
+    public List<ReviewDto> findByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             List<Review> reviews = reviewRepository.findByUserId(userId);
-            return reviews;
+
+            List<ReviewDto> reviewDtoList = reviews.stream()
+                    .map(review -> new ReviewDto().convertToReviewDto(review))
+                    .collect(Collectors.toList());
+            return reviewDtoList;
         } else {
             throw new UserNotFoundException();
         }
     }
 
     @Override
-    public Optional<Review> createReview(RequestReviewDto requestReviewDto, Long userId) {
+    public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Room> room = roomRepository.findById(requestReviewDto.getRoomId());
 
         Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
-        return Optional.ofNullable(review);
+        ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review);
+
+        return Optional.of(reviewDto);
     }
 
     @Override
-    public Optional<Review> deleteReview(Long reviewId, Long UserId) {
+    public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
 
         if(!review.get().getUser().getId().equals(UserId)){
@@ -69,22 +80,36 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         reviewRepository.deleteById(reviewId);
-        return review;
+
+        ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+
+        return Optional.of(reviewDto);
     }
 
     @Override
-    public Optional<Review> findById(Long reviewId) {
+    public Optional<ReviewDto> findById(Long reviewId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
         if(review.isPresent()){
-            return review;
+
+            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+
+            return Optional.of(reviewDto);
+
         }else{
             throw new ReviewNotFoundException();
         }
     }
 
     @Override
-    public Optional<Review> findByUserIdAndRoomId(Long userId, Long roomId) {
+    public Optional<ReviewDto> findByUserIdAndRoomId(Long userId, Long roomId) {
         Optional<Review> review = reviewRepository.findByUserIdAndRoomId(userId, roomId);
-        return review;
+
+        if(review.isPresent()){
+            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+
+            return Optional.of(reviewDto);
+        }else{
+            return Optional.empty();
+        }
     }
 }

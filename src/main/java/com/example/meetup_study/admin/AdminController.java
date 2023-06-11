@@ -9,6 +9,7 @@ import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestExc
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.ReviewService;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
@@ -80,9 +81,9 @@ public class AdminController {
             throw new UserNotFoundException();
         }
 
-        Optional<Review> reviewOpt = reviewService.findById(reviewId);
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(reviewId);
 
-        Long roomId = reviewOpt.get().getRoom().getId();
+        Long roomId = reviewDtoOpt.get().getRoomId();
 
         Optional<Room> roomOpt = roomService.getRoom(roomId);
         if(!roomOpt.isPresent()){
