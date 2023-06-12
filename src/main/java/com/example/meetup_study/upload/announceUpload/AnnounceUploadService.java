@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnnounceUploadService {
-    List<AnnounceUploadDto> save(List<MultipartFile> files, Long announceId);
+    List<AnnounceUploadDto> fileUpload(List<MultipartFile> files, Long announceId);
 
     Optional<AnnounceUploadDto> findByAnnounceId(Long announceId);
 

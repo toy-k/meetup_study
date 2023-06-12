@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UploadService {
-    List<UploadDto> save(List<MultipartFile> files, Long roomId);
+    List<UploadDto> fileUpload(List<MultipartFile> files, Long roomId);
     Optional<UploadDto> findByRoomId(Long roomId);
     void downloadZip(HttpServletResponse res, List<String> fileNames, Long roomId);
     FileDeleteStatus deleteByName(String fileName, Long roomId);

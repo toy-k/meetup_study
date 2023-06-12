@@ -2,7 +2,10 @@ package com.example.meetup_study.upload.roomUpload;
 
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
+import com.example.meetup_study.upload.roomUpload.domain.dto.RequestDeleteUploadDto;
+import com.example.meetup_study.upload.roomUpload.domain.dto.RequestUploadDto;
 import com.example.meetup_study.upload.roomUpload.domain.dto.UploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -18,42 +22,36 @@ import java.util.*;
 public class UploadController {
 
     private final UploadService uploadService;
-    private final RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long roomId) {
+    public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, @Valid @RequestBody RequestUploadDto requestUpload) {
 
 
-        List<UploadDto> uploadDtos = uploadService.save(files, roomId);
+        List<UploadDto> uploadDtos = uploadService.fileUpload(files, requestUpload.getRoomId());
 
         return ResponseEntity.ok(uploadDtos);
     }
 
 
-    @GetMapping
-    public ResponseEntity<UploadDto> findFiles(Long roomId) {
-
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if (roomOpt.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 스터디룸입니다.");
-        }
+    @GetMapping("/roomId/{roomId}")
+    public ResponseEntity<UploadDto> findFiles(@PathVariable("roomId") Long roomId) {
 
         Optional<UploadDto> uploadDtoOpt = uploadService.findByRoomId(roomId);
 
         return ResponseEntity.ok(uploadDtoOpt.get());
     }
 
-    @GetMapping("/download")
-    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, Long roomId) {
+    @GetMapping("/download/roomId/{roomId}")
+    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, @PathVariable("roomId") Long roomId) {
 
         uploadService.downloadZip(res, fileNames, roomId);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName, Long roomId) {
+    public ResponseEntity<String> deleteFile(@Valid @RequestBody RequestDeleteUploadDto requestDeleteUploadDto) {
 
 
-        FileDeleteStatus status = uploadService.deleteByName(fileName, roomId);
+        FileDeleteStatus status = uploadService.deleteByName(requestDeleteUploadDto.getFileName(), requestDeleteUploadDto.getRoomId());
 
         if (status != FileDeleteStatus.NOT_FOUND) {
             if (status == FileDeleteStatus.SUCCESS) {
