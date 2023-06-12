@@ -1,6 +1,7 @@
 package com.example.meetup_study.upload.announceUpload;
 
 import com.example.meetup_study.announce.domain.Announce;
+import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
@@ -29,13 +30,13 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 public class AnnounceUploadServiceImpl implements AnnounceUploadService{
 
-    private String UPLOADPATH = "/src/main/resources/upload/announce/";
+    private String UPLOADPATH = "/src/main/resources/uploadFile/announce/";
     private String ZIPFILENAME = "files.zip";
     private final AnnounceUploadRepository announceUploadRepository;
     private final AnnounceRepository announceRepository;
 
     @Override
-    public List<AnnounceUploadDto> save(List<MultipartFile> files, Long announceId) {
+    public List<AnnounceUploadDto> fileUpload(List<MultipartFile> files, Long announceId) {
 
 
         List<AnnounceUploadDto> announceUploadDtos = new ArrayList<>();
@@ -88,9 +89,12 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
     @Override
     public Optional<AnnounceUploadDto> findByAnnounceId(Long announceId) {
 
+        Optional<Announce> announceOpt = announceRepository.findById(announceId);
+        if(!announceOpt.isPresent()){
+            throw new AnnounceNotFoundException();
+        }
 
         Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByAnnounceId(announceId);
-
         if(!announceUploadOpt.isPresent()){
             throw new UploadNotFoundException();
         }
@@ -103,7 +107,9 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
     @Override
     public void downloadZip(HttpServletResponse res, List<String> fileNames, Long announceId) {
 
+
         String zipFileName = ZIPFILENAME;
+
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
         if(!announceOpt.isPresent()){
             throw new AnnounceNotFoundException();

@@ -7,12 +7,15 @@ import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.upload.announceUpload.domain.dto.AnnounceUploadDto;
+import com.example.meetup_study.upload.announceUpload.domain.dto.RequestAnnounceUploadDto;
+import com.example.meetup_study.upload.announceUpload.domain.dto.RequestDeleteAnnounceUploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,39 +24,33 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AnnounceUploadController {
     private final AnnounceUploadService announceUploadService;
-    private final AnnounceService announceService;
 
     @PostMapping
-    public ResponseEntity<List<AnnounceUploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, Long announceId) {
+    public ResponseEntity<List<AnnounceUploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, @Valid @RequestBody RequestAnnounceUploadDto requestAnnounceUploadDto) {
 
-        List<AnnounceUploadDto> announceUploadDtos = announceUploadService.save(files, announceId);
+        List<AnnounceUploadDto> announceUploadDtos = announceUploadService.fileUpload(files, requestAnnounceUploadDto.getAnnounceId());
 
         return ResponseEntity.ok(announceUploadDtos);
     }
 
-    @GetMapping
-    public ResponseEntity<AnnounceUploadDto> findFiles(Long announceId) {
-
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(announceId);
-        if (announceDtoOpt.isEmpty()) {
-            throw new AnnounceNotFoundException();
-        }
+    @GetMapping("/announceId/{announceId}")
+    public ResponseEntity<AnnounceUploadDto> findFiles(@PathVariable("announceId") Long announceId) {
 
         Optional<AnnounceUploadDto> announceUploadDtoOpt = announceUploadService.findByAnnounceId(announceId);
 
         return ResponseEntity.ok(announceUploadDtoOpt.get());
     }
 
-    @GetMapping("/download")
-    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, Long announceId) {
+    @GetMapping("/download/announceId/{announceId}")
+    public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, @PathVariable("announceId") Long announceId) {
 
         announceUploadService.downloadZip(res, fileNames, announceId);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteFile(@RequestParam("file") String fileName, Long announceId) {
+    public ResponseEntity<String> deleteFile(@Valid @RequestBody RequestDeleteAnnounceUploadDto requestDeleteAnnounceUploadDto) {
 
-        FileDeleteStatus status = announceUploadService.deleteByName(fileName, announceId);
+        FileDeleteStatus status = announceUploadService.deleteByName(requestDeleteAnnounceUploadDto.getFileName(), requestDeleteAnnounceUploadDto.getAnnounceId());
 
         if (status != FileDeleteStatus.NOT_FOUND) {
             if (status == FileDeleteStatus.SUCCESS) {
