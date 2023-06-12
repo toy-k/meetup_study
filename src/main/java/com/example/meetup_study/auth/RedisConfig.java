@@ -1,5 +1,6 @@
 package com.example.meetup_study.auth;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -20,11 +21,17 @@ import java.time.Duration;
 @EnableCaching // 캐시 활성화
 public class RedisConfig extends CachingConfigurerSupport {
 
+    @Value("${REDIS_HOST}")
+    private String REDIS_HOST;
+
+    @Value("${REDIS_PORT}")
+    private int REDIS_PORT;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName("localhost");
-        config.setPort(6379);
+        config.setHostName(REDIS_HOST);
+        config.setPort(REDIS_PORT);
         return new LettuceConnectionFactory(config);
     }
 
