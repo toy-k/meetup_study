@@ -12,6 +12,9 @@ import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,11 @@ public class AnnounceImageController {
 
     private String ACCESSTOKEN = "AccessToken";
 
+    @ApiOperation(value = "공지사항 이미지 생성", notes = "공지사항 이미지를 생성합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestAnnounceImageDto.class, required = true, paramType = "body"),
+            @ApiImplicitParam(name= "file", value = "Request File", dataTypeClass = MultipartFile.class, required = true, paramType = "form")
+    })
     @PutMapping
     public ResponseEntity<AnnounceImageDto> updateAnnounceImage(@RequestParam("file") MultipartFile file, @Valid @RequestBody RequestAnnounceImageDto requestAnnounceImageDto, HttpServletRequest req) throws Exception {
 
@@ -64,6 +72,10 @@ public class AnnounceImageController {
         return ResponseEntity.ok(announceImageDtoOpt.get());
     }
 
+    @ApiOperation(value = "공지사항 이미지 조회", notes = "공지사항 이미지를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "announceId", value = "공지사항 ID", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/announceId/{announceId}")
     public ResponseEntity<AnnounceImageDto> getAnnounceImage(@PathVariable Long announceId) {
 
@@ -79,6 +91,11 @@ public class AnnounceImageController {
 
         return ResponseEntity.ok(announceImageDtoOpt.get());
     }
+
+    @ApiOperation(value = "공지사항 이미지 삭제", notes = "공지사항 이미지를 삭제합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteAnnounceImageDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping
     public ResponseEntity<AnnounceImageDto> deleteAnnounceImage(@Valid @RequestBody RequestDeleteAnnounceImageDto requestDeleteAnnounceImageDto, HttpServletRequest req) {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();

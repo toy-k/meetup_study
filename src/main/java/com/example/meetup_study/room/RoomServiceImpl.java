@@ -142,7 +142,6 @@ public class RoomServiceImpl implements RoomService{
                room.changeMaxJoinNumber(roomDto.getMaxJoinNumber());
                room.changePrice(roomDto.getPrice());
                room.changeRoomType(roomDto.getRoomType());
-               room.changeMeetupPhotoPath(roomDto.getMeetupPhotoPath());
 
                 Optional<Category> cate = categoryService.getCategory(roomDto.getCategory());
                 if(!cate.isPresent()){

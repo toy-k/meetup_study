@@ -21,6 +21,10 @@ import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +45,10 @@ public class AdminController {
 
     private String ACCESSTOKEN = "AccessToken";
 
+    @ApiOperation(value = "방 삭제", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteRoomDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping("/room")
     public ResponseEntity<RoomDto> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
@@ -68,6 +76,10 @@ public class AdminController {
         return ResponseEntity.ok(deletedRoomDto.get());
     }
 
+    @ApiOperation(value = "리뷰 삭제", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteReviewDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping("/review")
     public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
@@ -101,6 +113,10 @@ public class AdminController {
         return ResponseEntity.ok(reviewDto.get());
     }
 
+    @ApiOperation(value = "호스트 리뷰 삭제", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteHostReviewDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping("/hostReview")
     public ResponseEntity<HostReviewDto> deleteHostReview(@Valid @RequestBody RequestDeleteHostReviewDto requestDeleteHostReviewDto, HttpServletRequest req){
 

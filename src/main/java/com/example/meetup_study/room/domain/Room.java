@@ -196,7 +196,6 @@ public class Room extends BaseEntity {
         this.roomStatus = requestRoomDto.getRoomStatus();
         this.roomType = requestRoomDto.getRoomType();
         this.viewCount = requestRoomDto.getViewCount();
-        this.meetupPhotoPath = requestRoomDto.getMeetupPhotoPath();
 
         this.roomImage = roomImage;
 

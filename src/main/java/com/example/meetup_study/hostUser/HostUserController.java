@@ -2,18 +2,21 @@ package com.example.meetup_study.hostUser;
 
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.dto.HostUserDto;
+import com.example.meetup_study.hostUser.domain.dto.RequestHostUserDto;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -25,8 +28,12 @@ public class HostUserController {
     private final UserService userService;
     private final RoomService roomService;
 
-    @GetMapping("/id")
-    public ResponseEntity<HostUserDto> getHostUser(Long id){
+    @ApiOperation(value = "호스트 유저 조회", notes = "호스트 유저를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "호스트 유저 id", required = true, dataTypeClass = Long.class, paramType = "path")
+    })
+    @GetMapping("/id/{id}")
+    public ResponseEntity<HostUserDto> getHostUser(@PathVariable Long id){
         Optional<HostUser> hostUseropt =  hostUserService.getHostUserById(id);
 
         HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
@@ -34,19 +41,24 @@ public class HostUserController {
         return ResponseEntity.ok(hostUserDto);
     }
 
-    @GetMapping("ids")
-    public ResponseEntity<HostUserDto> getHostUser(Long userId, Long roomId) {
-        Optional<User> userOpt = userService.findById(userId);
+    @ApiOperation(value = "호스트 유저 조회", notes = "호스트 유저를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "호스트 유저 userId", required = true, dataTypeClass = Long.class, paramType = "path"),
+            @ApiImplicitParam(name = "roomId", value = "호스트 유저 roomId", required = true, dataTypeClass = Long.class, paramType = "path")
+    })
+    @GetMapping("/ids")
+    public ResponseEntity<HostUserDto> getHostUser(@Valid @RequestBody RequestHostUserDto requestHostUserDto) {
+        Optional<User> userOpt = userService.findById(requestHostUserDto.getUserId());
         if(!userOpt.isPresent()){
             throw new UserNotFoundException();
         }
 
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        Optional<Room> roomOpt = roomService.getRoom(requestHostUserDto.getRoomId());
         if(!roomOpt.isPresent()){
             throw new RoomNotFoundException();
         }
 
-        Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(userId, roomId);
+        Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(requestHostUserDto.getUserId(), requestHostUserDto.getRoomId());
 
         HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
 
