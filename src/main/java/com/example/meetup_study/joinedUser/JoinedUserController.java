@@ -16,6 +16,9 @@ import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +41,12 @@ public class JoinedUserController {
 
     private String ACCESSTOKEN = "AccessToken";
 
+    @ApiOperation(value = "방 참여", notes = "방에 참여합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestJoinedUserDto.class, required = true, paramType = "body")
+    })
     @PostMapping
     public ResponseEntity<JoinedUserDto> joinRoom(@Valid @RequestBody RequestJoinedUserDto requestJoinedUserDto, HttpServletRequest req){
-
-        System.out.println("AAA =" + req.getAttribute(ACCESSTOKEN));
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -69,6 +74,10 @@ public class JoinedUserController {
         return ResponseEntity.ok(joinedUserDto);
     }
 
+    @ApiOperation(value = "방 나가기", notes = "방에서 나갑니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestJoinedUserDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping
     public ResponseEntity<JoinedUserDto> leaveRoom(@Valid @RequestBody RequestJoinedUserDto requestJoinedUserDto, HttpServletRequest req){
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
@@ -97,6 +106,10 @@ public class JoinedUserController {
         return ResponseEntity.ok(joinedUserDto);
     }
 
+    @ApiOperation(value = "방 참여자 조회", notes = "방에 참여한 유저들을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "roomId", value = "방 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/id/{id}")
     public ResponseEntity<JoinedUserDto> getJoinedUser(@PathVariable Long id){
         Optional<JoinedUser> joinedUseropt =  joinedUserService.getJoinedUserById(id);
@@ -111,8 +124,13 @@ public class JoinedUserController {
 
     }
 
-    @GetMapping("/ids")
-    public ResponseEntity<JoinedUserDto> getJoinedUser(@RequestParam Long userId, @RequestParam Long roomId) {
+    @ApiOperation(value = "방 참여자 조회", notes = "방에 참여한 유저를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "roomId", value = "방 아이디", dataTypeClass = Long.class, required = true, paramType = "path"),
+            @ApiImplicitParam(name= "userId", value = "유저 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
+    @GetMapping("/ids/roomId/{roomId}/userId/{userId}")
+    public ResponseEntity<JoinedUserDto> getJoinedUser(@PathVariable Long userId, @PathVariable Long roomId) {
         Optional<User> userOpt = userService.findById(userId);
         if(!userOpt.isPresent()){
             throw new UserNotFoundException();
@@ -134,6 +152,10 @@ public class JoinedUserController {
         }
     }
 
+    @ApiOperation(value = "참여 방들 조회", notes = "한 유저가 참여한 방들을 조회합니다")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "userId", value = "유저 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<JoinedUserDto>> getJoinedUserByUserId(@PathVariable Long userId){
 
@@ -155,6 +177,10 @@ public class JoinedUserController {
 
     }
 
+    @ApiOperation(value = "방 참여자들 조회", notes = "방에 참여한 유저들을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "roomId", value = "방 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/roomId/{roomId}")
     public ResponseEntity<List<JoinedUserDto>> getJoinedUserByRoomId(@PathVariable Long roomId) {
 

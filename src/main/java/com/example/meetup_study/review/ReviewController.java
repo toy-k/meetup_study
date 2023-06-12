@@ -1,5 +1,6 @@
 package com.example.meetup_study.review;
 
+import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.joinedUser.JoinedUserService;
@@ -17,6 +18,9 @@ import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +46,12 @@ public class ReviewController {
     private String ACCESSTOKEN = "AccessToken";
 
     //joineduser로 조건확인, 룸 상태확인(end)
+
+
+    @ApiOperation(value = "리뷰 생성", notes = "리뷰를 생성합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestReviewDto.class, required = true, paramType = "body")
+    })
     @PostMapping
     public ResponseEntity<ReviewDto> createReview(@Valid @RequestBody RequestReviewDto requestReviewDto, HttpServletRequest req){
 
@@ -90,6 +100,10 @@ public class ReviewController {
         return ResponseEntity.ok(createdReviewDto.get());
     }
 
+    @ApiOperation(value = "방 리뷰들 조회", notes = "방 리뷰들을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "roomId", value = "roomId", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/roomId/{roomId}")
     public ResponseEntity<List<ReviewDto>> getReview(@PathVariable Long roomId){
 
@@ -105,6 +119,10 @@ public class ReviewController {
         return ResponseEntity.ok(reviewDtoList);
     }
 
+    @ApiOperation(value = "유저의 리뷰들 조회", notes = "유저의 리뷰들을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "userId", value = "userId", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<ReviewDto>> getReviewByUserId(@PathVariable Long userId){
 
@@ -118,6 +136,10 @@ public class ReviewController {
         return ResponseEntity.ok(reviewDtoList);
     }
 
+    @ApiOperation(value = "리뷰 삭제", notes = "리뷰를 삭제합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteReviewDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping
     public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 

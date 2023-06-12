@@ -3,6 +3,7 @@ package com.example.meetup_study.user;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.user.domain.User;
+import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
@@ -35,15 +36,14 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     @Override
-    public Optional<UserDto> updateUser(Long id, UserDto userDto) {
-        if(!id.equals(userDto.getId())) throw new UserInvalidRequestException("id가 일치하지 않습니다.");
+    public Optional<UserDto> updateUser(Long id, RequestUserDto requestUserDto) {
 
         Optional<User> userOpt = userRepository.findById(id);
         if(!userOpt.isPresent()) throw new UserInvalidRequestException();
 
         Optional<UserDto> userDtoOpt = userOpt.map(user->{
-            if (userDto.getUsername()!= null) user.changeUsername(userDto.getUsername());
-            if (userDto.getDescription()!= null) user.changeDescription(userDto.getDescription());
+            if (requestUserDto.getUsername()!= null) user.changeUsername(requestUserDto.getUsername());
+            if (requestUserDto.getDescription()!= null) user.changeDescription(requestUserDto.getDescription());
 
             return new UserDto().converToUserDto(user);
         });

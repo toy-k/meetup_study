@@ -8,6 +8,9 @@ import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +32,10 @@ public class UserImageController {
 
     private String ACCESSTOKEN = "AccessToken";
 
-
+    @ApiOperation(value = "유저 이미지 생성", notes = "유저 이미지를 생성합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "file", value = "Request File", dataTypeClass = MultipartFile.class, required = true, paramType = "form")
+    })
     @PutMapping
     public ResponseEntity<UserImageDto> updateUserImagee(@RequestParam("file") MultipartFile file, HttpServletRequest req) throws Exception {
 
@@ -58,6 +64,10 @@ public class UserImageController {
         return ResponseEntity.ok(userImageDtoOpt.get());
     }
 
+    @ApiOperation(value = "유저 이미지 조회", notes = "유저 이미지를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "userId", value = "유저 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/userId/{userId}")
     public ResponseEntity<UserImageDto> getUserImagee(@PathVariable Long userId) {
 
@@ -100,6 +110,7 @@ public class UserImageController {
 //        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
 //    }
 
+    @ApiOperation(value = "유저 이미지 삭제", notes = "유저 이미지를 삭제합니다.")
     @DeleteMapping
     public ResponseEntity<UserImageDto> deleteUserImagee(HttpServletRequest req) {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();

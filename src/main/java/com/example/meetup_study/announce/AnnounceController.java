@@ -14,6 +14,9 @@ import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +39,10 @@ public class AnnounceController {
     private String ACCESSTOKEN = "AccessToken";
 
 
+    @ApiOperation(value = "공지사항 생성", notes = "공지사항을 생성합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestAnnounceDto.class, required = true, paramType = "body")
+    })
     @PostMapping
     public ResponseEntity<AnnounceDto> createAnnounce(@Valid @RequestBody RequestAnnounceDto requestAnnounceDto, HttpServletRequest req){
 
@@ -62,7 +69,10 @@ public class AnnounceController {
         return ResponseEntity.ok(createdAnnounceDto.get());
     }
 
-
+    @ApiOperation(value = "공지사항 조회", notes = "공지사항을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "id", value = "공지사항 id", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/id/{id}")
     public ResponseEntity<AnnounceDto> getAnnounce(@PathVariable Long id){
 
@@ -73,7 +83,11 @@ public class AnnounceController {
             throw new AnnounceNotFoundException();
         }
     }
-
+    @ApiOperation(value = "공지사항 리스트 조회", notes = "공지사항 리스트를 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "page", value = "페이지", dataTypeClass = Integer.class, required = true, paramType = "query"),
+            @ApiImplicitParam(name= "size", value = "사이즈", dataTypeClass = Integer.class, required = true, paramType = "query")
+    })
     @GetMapping("/list")
     public ResponseEntity<List<AnnounceDto>> getAnnounceList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size){
 
@@ -88,6 +102,10 @@ public class AnnounceController {
     }
 
 
+    @ApiOperation(value = "공지사항 수정", notes = "공지사항을 수정합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = AnnounceDto.class, required = true, paramType = "body")
+    })
     @PutMapping
     public ResponseEntity<AnnounceDto> updateAnnounce(@RequestBody AnnounceDto AnnounceDto, HttpServletRequest req) throws AccessDeniedException {
 
@@ -114,6 +132,10 @@ public class AnnounceController {
         return ResponseEntity.ok(updatedAnnounceDto.get());
     }
 
+    @ApiOperation(value = "공지사항 삭제", notes = "공지사항을 삭제합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteAnnounceDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping
     public ResponseEntity<AnnounceDto> deleteAnnounce(@Valid @RequestBody RequestDeleteAnnounceDto requestDeleteAnnounceDto, HttpServletRequest req){
 

@@ -1,5 +1,6 @@
 package com.example.meetup_study.upload.roomUpload.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,11 @@ public class UploadDto {
 //    @NotNull(message = "room은 필수 입력 값 입니다.")
 //    private Room room;
 
+    @Schema(description = "fileName", example = "fileName", required = true)
     @NotNull(message = "filename은 필수 입력 값 입니다.")
     private String fileName;
 
+    @Schema(description = "filePath", example = "filePath", required = true)
     @NotNull(message = "filePath은 필수 입력 값 입니다.")
     private String filePath;
 

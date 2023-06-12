@@ -9,6 +9,9 @@ import com.example.meetup_study.upload.announceUpload.domain.AnnounceUpload;
 import com.example.meetup_study.upload.announceUpload.domain.dto.AnnounceUploadDto;
 import com.example.meetup_study.upload.announceUpload.domain.dto.RequestAnnounceUploadDto;
 import com.example.meetup_study.upload.announceUpload.domain.dto.RequestDeleteAnnounceUploadDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,11 @@ import java.util.Optional;
 public class AnnounceUploadController {
     private final AnnounceUploadService announceUploadService;
 
+    @ApiOperation(value = "파일 업로드", notes = "파일을 업로드합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "files", value = "파일", dataTypeClass = MultipartFile.class, required = true, paramType = "form"),
+            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestAnnounceUploadDto.class, required = true, paramType = "body")
+    })
     @PostMapping
     public ResponseEntity<List<AnnounceUploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, @Valid @RequestBody RequestAnnounceUploadDto requestAnnounceUploadDto) {
 
@@ -33,6 +41,10 @@ public class AnnounceUploadController {
         return ResponseEntity.ok(announceUploadDtos);
     }
 
+    @ApiOperation(value = "파일 조회", notes = "파일을 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "announceId", value = "공지사항 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/announceId/{announceId}")
     public ResponseEntity<AnnounceUploadDto> findFiles(@PathVariable("announceId") Long announceId) {
 
@@ -41,12 +53,21 @@ public class AnnounceUploadController {
         return ResponseEntity.ok(announceUploadDtoOpt.get());
     }
 
+    @ApiOperation(value = "파일 다운로드", notes = "파일을 다운로드합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "files", value = "파일 이름", dataTypeClass = String.class, required = true, paramType = "query"),
+            @ApiImplicitParam(name = "announceId", value = "공지사항 아이디", dataTypeClass = Long.class, required = true, paramType = "path")
+    })
     @GetMapping("/download/announceId/{announceId}")
     public void downloadZip(HttpServletResponse res, @RequestParam("files") List<String> fileNames, @PathVariable("announceId") Long announceId) {
 
         announceUploadService.downloadZip(res, fileNames, announceId);
     }
 
+    @ApiOperation(value = "파일 삭제", notes = "파일을 삭제합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteAnnounceUploadDto.class, required = true, paramType = "body")
+    })
     @DeleteMapping
     public ResponseEntity<String> deleteFile(@Valid @RequestBody RequestDeleteAnnounceUploadDto requestDeleteAnnounceUploadDto) {
 

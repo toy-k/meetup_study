@@ -2,9 +2,13 @@ package com.example.meetup_study.user;
 
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +28,13 @@ public class UserController {
 
     private String ACCESSTOKEN = "AccessToken";
 
-    @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회")
+    @ApiOperation(value = "특정 유저 정보 조회", notes = "")
+    @ApiImplicitParam(name = "id", value = "유저 id", required = true, dataType = "long", paramType = "path")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 404, message = "유저를 찾을 수 없습니다.", response = UserNotFoundException.class),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
     @GetMapping("/id/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id){
 
@@ -37,6 +47,7 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "내 정보 조회", notes = "")
     @GetMapping("/me")
     public ResponseEntity<UserDto> findMeByToken(HttpServletRequest req){
 
@@ -57,13 +68,17 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "내 정보 수정", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "body", value = "Request body", dataTypeClass = RequestUserDto.class, required = true, paramType = "body"),
+    })
     @PutMapping("/me")
-    public ResponseEntity<UserDto> updateMe(HttpServletRequest req, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateMe(HttpServletRequest req, @RequestBody RequestUserDto requestUserDto){
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
         if (userId.isPresent()) {
-            Optional<UserDto> updatedUserDto = userService.updateUser(userId.get(), userDto);
+            Optional<UserDto> updatedUserDto = userService.updateUser(userId.get(), requestUserDto);
             if (updatedUserDto.isPresent()) {
                 return ResponseEntity.ok(updatedUserDto.get());
             } else {

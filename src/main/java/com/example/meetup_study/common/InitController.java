@@ -124,7 +124,7 @@ public class InitController {
             roomType = RoomType.ONLINE;
             roomImage = new RoomImage();
 
-            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount,meetupPhotoPath, hostUserId, meetupPhotoPath);
+            RequestRoomDto requestRoomDto = new RequestRoomDto(title, desc, category, meetupLocation, meetupStartDate, meetupEndDate, maxJoinNumber, currentJoinNumber, price, roomStatus, roomType, viewCount, hostUserId, meetupPhotoPath);
 
             Optional<User> userOpt = userRepository.findById(user.get().getId());
             if(userOpt.isPresent()){
