@@ -27,25 +27,16 @@ public class FakeUserController {
     private final FakeUserServiceImpl fakeUserService;
     private final FakeRepository fakeUserRepository;
     private final JwtService jwtService;
-    private final UserImageRepository userImageRepository;
-    private final UserImageService userImageService;
-    @GetMapping
-    public String getFakeUser() {
-        return "fakeUser";
-    }
-
 
     @PostMapping
     public String createFakeUser() {
 
         String username;
-        String imageUrl;
         String email;
         String description;
 
         for(int i = 1; i<6; i++){
             username = "fakeusers"+i;
-            imageUrl = "fakeuser"+i+"imageUrl";
             email = "fakeuser"+i+"@fake.com";
             description = "fakeuser"+i+"description";
 
@@ -54,9 +45,6 @@ public class FakeUserController {
             User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
 
             fakeUserService.createFakeUser(user);
-//            userImageService.createUserImage(userImage.getPath(), user.getId());
-
-
         };
         return "createFakeUser";
     }
@@ -94,7 +82,7 @@ public class FakeUserController {
         User user = fakeUserRepository.findByUsername(username).orElse(null);
 
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            throw new UserNotFoundException();
         }
 
         String accessToken = jwtService.generateAccessToken(user.getEmail(), user.getId());
@@ -115,14 +103,14 @@ public class FakeUserController {
     }
 
 
-    @GetMapping("/exception/{id}")
-    public String exception(@PathVariable("id") Long id) {
-        if(id == 1) throw new UserNotFoundException();
-        else if (id == 2) throw new UserInvalidRequestException();
-        else if (id == 3) throw new UserForbiddenException();
-        else if (id == 4) throw new UserUnauthenticationedException();
-        else return "exception";
-    }
+//    @GetMapping("/exception/{id}")
+//    public String exception(@PathVariable("id") Long id) {
+//        if(id == 1) throw new UserNotFoundException();
+//        else if (id == 2) throw new UserInvalidRequestException();
+//        else if (id == 3) throw new UserForbiddenException();
+//        else if (id == 4) throw new UserUnauthenticationedException();
+//        else return "exception";
+//    }
 
 
 }
