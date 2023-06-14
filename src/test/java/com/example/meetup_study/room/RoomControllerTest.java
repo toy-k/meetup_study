@@ -8,6 +8,7 @@ import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
+import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.UserService;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,6 +74,8 @@ class RoomControllerTest {
     private RequestRoomDto requestRoomDto;
     private String accessToken;
 
+    private RoomDto updateRoomDto;
+
     private List<Long> roomIds = new ArrayList<>();
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -107,7 +111,7 @@ class RoomControllerTest {
         }
 
         @Nested
-        @DisplayName("exception")
+        @DisplayName("createRoom exception")
         class CreateRoomExceptionTestSuite {
 
             @Test
@@ -205,116 +209,294 @@ class RoomControllerTest {
                 }
             }
         }
+    }
+
+    @Test
+    void getRoomTest() throws Exception {
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/room/id/13")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        String responseBody = mvcResult.getResponse().getContentAsString();
+        RoomDto roomDto = objectMapper.readValue(responseBody, RoomDto.class);
 
 
-        @Test
-        void getRoomTest() throws Exception {
 
-            MvcResult mvcResult = mockMvc.perform(get("/api/room/id/1")
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andDo(print())
-                    .andReturn();
+        assertAll(
+                () -> assertNotNull(roomDto.getId()),
+                () -> assertNotNull(roomDto.getTitle()),
+                () -> assertNotNull(roomDto.getDescription()),
+                () -> assertNotNull(roomDto.getMeetupStartDate()),
+                () -> assertNotNull(roomDto.getMeetupEndDate()),
+                () -> assertNotNull(roomDto.getLocation()),
+                () -> assertNotNull(roomDto.getCategory()),
+                () -> assertNotNull(roomDto.getRoomStatus()),
+                () -> assertNotNull(roomDto.getRoomType()),
+                () -> assertNotNull(roomDto.getPrice()),
+                () -> assertNotNull(roomDto.getCurrentJoinNumber()),
+                () -> assertNotNull(roomDto.getMaxJoinNumber()),
+                () -> assertNotNull(roomDto.getHostUserId())
+        );
 
-            String responseBody = mvcResult.getResponse().getContentAsString();
-            RoomDto roomDto = objectMapper.readValue(responseBody, RoomDto.class);
+    }
 
+    @Test
+    void getRoomListTest() throws Exception {
+        int page = 1;
+        int size = 10;
 
+        mockMvc.perform(get("/api/room/list")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(size))
+                .andDo(print());
+    }
 
-            assertAll(
-                    () -> assertNotNull(roomDto.getId()),
-                    () -> assertNotNull(roomDto.getTitle()),
-                    () -> assertNotNull(roomDto.getDescription()),
-                    () -> assertNotNull(roomDto.getMeetupStartDate()),
-                    () -> assertNotNull(roomDto.getMeetupEndDate()),
-                    () -> assertNotNull(roomDto.getLocation()),
-                    () -> assertNotNull(roomDto.getCategory())
-            );
-        }
+    @Test
+    void getRoomListBeforeMeetupStartTest() throws Exception {
+        int page = 1;
+        int size = 10;
 
-        @Test
-        void getRoomListTest() throws Exception {
-            int page = 1;
-            int size = 10;
+        MvcResult mvcResult = mockMvc.perform(get("/api/room/list/before-meetup-start")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andDo(print())
+                .andReturn();
 
-            mockMvc.perform(get("/api/room/list")
-                            .param("page", String.valueOf(page))
-                            .param("size", String.valueOf(size))
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(size))
-                    .andDo(print());
-        }
+        String responseBody = mvcResult.getResponse().getContentAsString();
 
-        @Test
-        void getRoomListBeforeMeetupStartTest() throws Exception {
-            int page = 1;
-            int size = 10;
+        List<RoomDto> roomDtoList = objectMapper.readValue(responseBody, new TypeReference<>() {});
 
-            MvcResult mvcResult = mockMvc.perform(get("/api/room/list/before-meetup-start")
-                            .param("page", String.valueOf(page))
-                            .param("size", String.valueOf(size))
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andDo(print())
-                    .andReturn();
+        LocalDateTime now = LocalDateTime.now();
 
-            String responseBody = mvcResult.getResponse().getContentAsString();
-
-            List<RoomDto> roomDtoList = objectMapper.readValue(responseBody, new TypeReference<>() {});
-
-            LocalDateTime now = LocalDateTime.now();
-
-            for (RoomDto roomDto : roomDtoList) {
-                if(!now.isBefore(roomDto.getMeetupStartDate())){
-                    fail("Expected exception was not thrown");
-                }
-
-            }
-        }
-
-
-        @Test
-        void getRoomListAfterMeetupStartTest() throws Exception {
-            int page = 1;
-            int size = 10;
-
-            MvcResult mvcResult = mockMvc.perform(get("/api/room/list/after-meetup-start")
-                            .param("page", String.valueOf(page))
-                            .param("size", String.valueOf(size))
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andDo(print())
-                    .andReturn();
-
-            String responseBody = mvcResult.getResponse().getContentAsString();
-
-            List<RoomDto> roomDtoList = objectMapper.readValue(responseBody, new TypeReference<>() {});
-
-            LocalDateTime now = LocalDateTime.now();
-
-            for (RoomDto roomDto : roomDtoList) {
-                if(now.isBefore(roomDto.getMeetupStartDate())){
-                    fail("Expected exception was not thrown");
-                }
-
+        for (RoomDto roomDto : roomDtoList) {
+            if(!now.isBefore(roomDto.getMeetupStartDate())){
+                fail("Expected exception was not thrown");
             }
 
         }
+    }
 
+
+    @Test
+    void getRoomListAfterMeetupStartTest() throws Exception {
+        int page = 1;
+        int size = 10;
+
+        MvcResult mvcResult = mockMvc.perform(get("/api/room/list/after-meetup-start")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andDo(print())
+                .andReturn();
+
+        String responseBody = mvcResult.getResponse().getContentAsString();
+
+        List<RoomDto> roomDtoList = objectMapper.readValue(responseBody, new TypeReference<>() {});
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (RoomDto roomDto : roomDtoList) {
+            if(now.isBefore(roomDto.getMeetupStartDate())){
+                fail("Expected exception was not thrown");
+            }
+
+        }
+
+    }
+
+
+    @Nested
+    @DisplayName("updateRoomTest")
+    class UpdateRoomTestSuite {
         @Test
         void updateRoomTest() throws Exception {
 
+            String requestBody = objectMapper.writeValueAsString(updateRoomDto);
+
+            MvcResult mvcResult = mockMvc.perform(put("/api/room")
+                            .header("Authorization", accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestBody))
+                    .andExpect(status().isOk())
+                    .andDo(print())
+                    .andReturn();
+
+            String responseBody = mvcResult.getResponse().getContentAsString();
+            RoomDto updatedRoomDto = objectMapper.readValue(responseBody, RoomDto.class);
+
+            assertAll(
+                    () -> assertEquals(updateRoomDto.getId(), updatedRoomDto.getId()),
+                    () -> assertEquals(updateRoomDto.getTitle(), updatedRoomDto.getTitle()),
+                    () -> assertEquals(updateRoomDto.getDescription(), updatedRoomDto.getDescription()),
+                    () -> assertEquals(updateRoomDto.getMeetupStartDate(), updatedRoomDto.getMeetupStartDate()),
+                    () -> assertEquals(updateRoomDto.getMeetupEndDate(), updatedRoomDto.getMeetupEndDate()),
+                    () -> assertEquals(updateRoomDto.getLocation(), updatedRoomDto.getLocation()),
+                    () -> assertEquals(updateRoomDto.getCategory(), updatedRoomDto.getCategory()),
+                    () -> assertEquals(updateRoomDto.getRoomStatus(), updatedRoomDto.getRoomStatus()),
+                    () -> assertEquals(updateRoomDto.getRoomType(), updatedRoomDto.getRoomType()),
+                    () -> assertEquals(updateRoomDto.getPrice(), updatedRoomDto.getPrice()),
+                    () -> assertEquals(updateRoomDto.getCurrentJoinNumber(), updatedRoomDto.getCurrentJoinNumber()),
+                    () -> assertEquals(updateRoomDto.getMaxJoinNumber(), updatedRoomDto.getMaxJoinNumber()),
+                    () -> assertEquals(updateRoomDto.getHostUserId(), updatedRoomDto.getHostUserId())
+
+            );
+
+
         }
+
+        @Nested
+        @DisplayName("updateRoom exception")
+        class UpdateRoomExceptionTestSuite {
+            @Test
+            void updateRoomTest_AccessTokenInvalidRequestException() throws Exception {
+                String accessToken = "fakeAccessToken";
+
+                String requestBody = objectMapper.writeValueAsString(updateRoomDto);
+
+                try {
+                    mockMvc.perform(put("/api/room")
+                                    .header("Authorization", accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(requestBody))
+                            .andDo(print())
+                            .andExpect(status().isUnauthorized());
+                } catch (NestedServletException e) {
+                    fail("Expected exception was not thrown");
+                }
+
+            }
+            @Test
+            void updateRoomTest_UserNotFoundException() throws Exception {
+                String accessToken = "Bearer " + jwtService.generateAccessToken("fake@email.com", 444L);
+                String requestBody = objectMapper.writeValueAsString(updateRoomDto);
+
+                try {
+                    mockMvc.perform(put("/api/room")
+                                    .header("Authorization", accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(requestBody))
+                            .andDo(print())
+                            .andExpect(status().isUnauthorized());
+                    //                    .andExpect(status().isNotFound());
+                } catch (NestedServletException e) {
+                    fail("Expected exception was not thrown");
+                }
+
+            }
+            @Test
+            void updateRoomTest_RoomInvalidRequestException_user() throws Exception {
+                RoomDto exceptionRoomDto = updateRoomDto;
+                exceptionRoomDto.setHostUserId(444L);
+                String requestBody = objectMapper.writeValueAsString(updateRoomDto);
+
+                try {
+                    mockMvc.perform(put("/api/room")
+                                    .header("Authorization", accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(requestBody))
+                            .andDo(print())
+                            .andExpect(status().isBadRequest());
+                    //                    .andExpect(status().isNotFound());
+                } catch (NestedServletException e) {
+                    fail("Expected exception was not thrown");
+                }
+
+            }
+            @Test
+            void updateRoomTest_RoomInvalidRequestException_date() throws Exception {
+                RoomDto exceptionRoomDto = updateRoomDto;
+
+                exceptionRoomDto.setMeetupStartDate(LocalDateTime.now().minusDays(2));
+                exceptionRoomDto.setMeetupEndDate(LocalDateTime.now().minusDays(4));
+                String requestBody = objectMapper.writeValueAsString(exceptionRoomDto);
+
+                try {
+                    mockMvc.perform(put("/api/room")
+                                    .header("Authorization", accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(requestBody))
+                            .andDo(print())
+                            .andExpect(status().isBadRequest());
+                } catch (NestedServletException e) {
+                    fail("Expected exception was not thrown");
+                }
+
+            }
+            //        @Test
+//        void updateRoomTest_RoomInvalidRequestException_category() throws Exception {
+//            RequestRoomDto exceptionRequestRoomDto = requestRoomDto;
+//            exceptionRequestRoomDto.setCategory("ASDF");
+//            String requestBody = objectMapper.writeValueAsString(exceptionRequestRoomDto);
+//
+//            try {
+//                mockMvc.perform(post("/api/room")
+//                                .header("Authorization", accessToken)
+//                                .contentType(MediaType.APPLICATION_JSON)
+//                                .content(requestBody))
+//                        .andDo(print())
+//                        .andExpect(status().isBadRequest());
+//            } catch (NestedServletException e) {
+//                fail("Expected exception was not thrown");
+//            }
+//
+//        }
+            @Test
+            void updateRoomTest_RoomInvalidRequestException_price() throws Exception {
+                RoomDto exceptionRoomDto = updateRoomDto;
+                exceptionRoomDto.setPrice(-1L);
+                String requestBody = objectMapper.writeValueAsString(exceptionRoomDto);
+
+                try {
+                    mockMvc.perform(put("/api/room")
+                                    .header("Authorization", accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(requestBody))
+                            .andDo(print())
+                            .andExpect(status().isBadRequest());
+                } catch (NestedServletException e) {
+                    fail("Expected exception was not thrown");
+                }
+
+            }
+        }
+
+
+
+    }
 
         @Test
         void deleteRoomTest() throws Exception {
 
+            RequestDeleteRoomDto requestDeleteRoomDto = new RequestDeleteRoomDto(createdRoomDto.getId());
+
+            String requestDeleteBody = objectMapper.writeValueAsString(requestDeleteRoomDto);
+            // when
+            MvcResult deletedMvcResult = mockMvc.perform(delete("/api/room")
+                            .header("Authorization",accessToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestDeleteBody))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String deletedResponseBody = deletedMvcResult.getResponse().getContentAsString();
+            RoomDto deletedRoomDtoResponse = objectMapper.readValue(deletedResponseBody, RoomDto.class);
+
+            // then
+            assertThat(deletedRoomDtoResponse.getId()).isEqualTo(createdRoomDto.getId());
         }
-    }
+
 
 
 
@@ -376,17 +558,36 @@ class RoomControllerTest {
         RoomDto createdRoomDto = objectMapper.readValue(responseBody, RoomDto.class);
 
 
+        RoomDto roomDto = new RoomDto(
+                13L,
+                "update_title",
+                "update_desc",
+                CategoryEnum.ALCHOLE,
+                "meetupLocation",
+                LocalDateTime.now().minusDays(4),
+                LocalDateTime.now().minusDays(3),
+                9,
+                1,
+                30000L,
+                RoomStatus.OPEN,
+                RoomType.ONLINE,
+                1L,
+                fakeUserDto.getId()
+        );
+
+
         this.requestRoomDto = requestRoomDto;
         this.createdRoomDto = createdRoomDto;
         this.accessToken = accessToken;
+        this.updateRoomDto = roomDto;
     }
 
     private void createRoomList() throws Exception{
         System.out.println("5===============================");
-        ResponseEntity<FakeUserDto> fakeUser_2 = fakeUserController.readFakeUser("fakeuser2");
-        FakeUserDto fakeUser_2_Dto = fakeUser_2.getBody();
+        ResponseEntity<FakeUserDto> fakeUser_1 = fakeUserController.readFakeUser("fakeuser1");
+        FakeUserDto fakeUser_1_Dto = fakeUser_1.getBody();
 
-        String accessToken = "Bearer "+ fakeUser_2_Dto.getAccessToken();
+        String accessToken = "Bearer "+ fakeUser_1_Dto.getAccessToken();
         List<Long> roomIds = new ArrayList<>();
 
         System.out.println("6===============================");
@@ -421,7 +622,7 @@ class RoomControllerTest {
             meetupLocation = "meetupLocation"+i;
             meetupPhotoPath = "meetupPhotoPath"+i;
             category = CategoryEnum.values()[i%5];
-            hostUserId = fakeUser_2_Dto.getId();
+            hostUserId = fakeUser_1_Dto.getId();
             currentJoinNumber = 1;
             viewCount =1L;
             maxJoinNumber = 10;

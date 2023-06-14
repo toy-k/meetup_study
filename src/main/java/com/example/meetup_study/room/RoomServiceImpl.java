@@ -56,6 +56,7 @@ public class RoomServiceImpl implements RoomService{
         Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get(), roomImage));
         JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
         room.addJoinedUser(joinedUser);
+
         HostUser hostUser = new HostUser(userOpt.get(), room);
         room.addHostUser(hostUser);
 
@@ -129,9 +130,10 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId) {
+
         Optional <Room> roomOpt = roomRepository.findById(roomDto.getId());
 
-        if(roomOpt.isPresent() && (roomOpt.get().getHostUserList().get(0).getId().equals(userId))) {
+        if(roomOpt.isPresent() && (roomOpt.get().getHostUserList().get(0).getUser().getId().equals(userId))) {
 
             Optional<RoomDto> roomDtoOpt = roomOpt.map(room -> {
                 room.changeTitle(roomDto.getTitle());
