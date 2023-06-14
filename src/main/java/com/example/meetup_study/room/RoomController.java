@@ -160,6 +160,7 @@ public class RoomController {
     @PutMapping()
     public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
 
+
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
 

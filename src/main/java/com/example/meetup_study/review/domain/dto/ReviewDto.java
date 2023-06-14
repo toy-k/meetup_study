@@ -14,7 +14,7 @@ public class ReviewDto {
 
     @Schema(description = "리뷰 id", example = "1", required = true)
     @Positive
-    @NotBlank(message = "id는 필수 입력 값입니다.")
+    @NotNull(message = "id는 필수 입력 값입니다.")
     private Long id;
 
     @Schema(description = "유저 id", example = "1", required = true)
