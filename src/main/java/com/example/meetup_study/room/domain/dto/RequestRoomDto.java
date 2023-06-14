@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.coyote.Request;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -96,4 +97,5 @@ public class RequestRoomDto {
         this.hostUserId = hostUserId;
         this.imagePath = imagePath;
     }
+
 }
