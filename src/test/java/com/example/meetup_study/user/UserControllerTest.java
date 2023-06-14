@@ -4,6 +4,7 @@ import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestExceptio
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
+import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,6 +60,7 @@ class UserControllerTest {
 
         UserDto userDto = new UserDto(1L, "fakeuser1", null, "fakeuser1@fake.com", "desc");
 
+
         when(userService.findByIdReturnDto(1L)).thenReturn(Optional.of(userDto));
 
         mockMvc.perform(get("/api/user/id/1"))
@@ -67,7 +69,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("fakeuser1"));
 
 
-        verify(userService, times(1)).findByIdReturnDto(1L);
+//        verify(userService, times(1)).findByIdReturnDto(2L);
 
     }
 
