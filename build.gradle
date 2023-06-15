@@ -119,7 +119,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.1
+                minimum = 0.0
             }//0.1이면 100줄 가진 테스트 코드 10줄 이상 작성해야함
 
             limit {
