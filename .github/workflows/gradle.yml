@@ -7,8 +7,8 @@
  name: Java CI with Gradle
  
  on:
-#    push:
-#      branches: [ "main" ]
+   push:
+     branches: [ "main" ]
    pull_request:
      branches: [ "main" ]
 
@@ -95,7 +95,7 @@
        run: redis-cli ping
 
      - name: Build with Gradle
-       run: ./gradlew clean build -info
+       run: ./gradlew clean test -info
 
      - name: Publish Unit Test Results
        uses: mikepenz/action-junit-report@v3
