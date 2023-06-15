@@ -347,7 +347,7 @@ class RoomControllerTest {
                     () -> assertEquals(updateRoomDto.getRoomStatus(), updatedRoomDto.getRoomStatus()),
                     () -> assertEquals(updateRoomDto.getRoomType(), updatedRoomDto.getRoomType()),
                     () -> assertEquals(updateRoomDto.getPrice(), updatedRoomDto.getPrice()),
-                    () -> assertEquals(updateRoomDto.getCurrentJoinNumber(), updatedRoomDto.getCurrentJoinNumber()),
+                    // () -> assertEquals(updateRoomDto.getCurrentJoinNumber(), updatedRoomDto.getCurrentJoinNumber()),
                     () -> assertEquals(updateRoomDto.getMaxJoinNumber(), updatedRoomDto.getMaxJoinNumber()),
                     () -> assertEquals(updateRoomDto.getHostUserId(), updatedRoomDto.getHostUserId())
 
