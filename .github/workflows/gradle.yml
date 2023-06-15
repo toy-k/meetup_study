@@ -51,8 +51,8 @@
          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
          echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
          echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
-         echo "REDIS_HOST" >> $GITHUB_WORKSPACE/src/main/resources/.env
-         echo "REDIS_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
+         echo "REDIS_HOST=$REDIS_HOST" >> $GITHUB_WORKSPACE/src/main/resources/.env
+         echo "REDIS_PORT=$REDIS_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
 
        env:
          APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
@@ -95,7 +95,7 @@
        run: redis-cli ping
 
      - name: Build with Gradle
-       run: ./gradlew clean test -info
+       run: ./gradlew clean build -info
 
      - name: Publish Unit Test Results
        uses: mikepenz/action-junit-report@v3
