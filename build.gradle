@@ -119,22 +119,14 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.0
-            }
-
-            limit {
-                counter = 'BRANCH'
-                value = 'COVEREDRATIO'
-                minimum = 0.0
-            }
+                minimum = 0.1
+            }//0.1이면 100줄 가진 테스트 코드 10줄 이상 작성해야함
 
             limit {
                 counter = 'LINE'
                 value = 'TOTALCOUNT'
                 maximum = 1000
-            }
-
-            //excludes = []
+            }//테스트 코드는 1000줄 이상 작성하면 안됨
         }
 
     }
