@@ -9,8 +9,8 @@
  on:
    push:
      branches: [ "main" ]
-   pull_request:
-     branches: [ "main" ]
+#    pull_request:
+#      branches: [ "main" ]
 
  permissions:
    contents: read
@@ -51,6 +51,8 @@
          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> $GITHUB_WORKSPACE/src/main/resources/.env
          echo "MAIL_PORT=$MAIL_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
          echo "MAIL_USERNAME=$MAIL_USERNAME" >> $GITHUB_WORKSPACE/src/main/resources/.env
+         echo "REDIS_HOST" >> $GITHUB_WORKSPACE/src/main/resources/.env
+         echo "REDIS_PORT" >> $GITHUB_WORKSPACE/src/main/resources/.env
 
        env:
          APPLICATION_DEV_DRIVER_CLASS_NAME: ${{secrets.APPLICATION_DEV_DRIVER_CLASS_NAME}}
@@ -72,6 +74,9 @@
          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
          MAIL_PORT: ${{secrets.MAIL_PORT}}
          MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+         REDIS_HOST: ${{secrets.REDIS_HOST}}
+         REDIS_PORT: ${{secrets.REDIS_PORT}}
+         
 
      - name: Generate Gradle Wrapper
        run: gradle wrapper
