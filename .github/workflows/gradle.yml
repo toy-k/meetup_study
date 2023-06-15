@@ -3,11 +3,9 @@
  # separate terms of service, privacy policy, and support
  # documentation.
  # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
- # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
- - name: WIP
-  # You may pin to the exact commit or the version.
-  # uses: wip/action@032daff62a8e89e075c7824b4ac296cb0eb4612e
-   uses: wip/action@v1.1.0
+ # For more information see: https://docs.github.com/en/actio
+ name: Java CI with Gradle
+ 
  on:
    push:
      branches: [ "main" ]
