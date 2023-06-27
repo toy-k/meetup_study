@@ -232,6 +232,14 @@ public class RoomController {
         return ResponseEntity.ok(deletedRoomDto.get());
     }
 
+    //방갯수
+    @ApiOperation(value = "방 갯수", notes = "방 갯수를 조회합니다.")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getRoomCount(){
+        Long roomCount = roomService.getRoomCount();
+        return ResponseEntity.ok(roomCount);
+    }
+
     //junit test
     private ResponseEntity<String> deleteAllRooms(){
         roomService.deleteAllRooms();

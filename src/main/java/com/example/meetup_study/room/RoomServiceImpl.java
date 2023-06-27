@@ -175,6 +175,11 @@ public class RoomServiceImpl implements RoomService{
         roomRepository.deleteAll();
     }
 
+    @Override
+    public Long getRoomCount() {
+        return roomRepository.count();
+    }
+
     private Long incrementViewCount(Long roomId) {
         String key = "room:" + roomId + ":viewCount";
         Long count = redisTemplate.opsForValue().increment(key);
