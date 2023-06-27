@@ -13,6 +13,8 @@ import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import com.example.meetup_study.user.fakeUser.exception.UserUnauthenticationedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,9 @@ public class FakeUserController {
     private final FakeUserServiceImpl fakeUserService;
     private final FakeRepository fakeUserRepository;
     private final JwtService jwtService;
+
+    @Value("${jwt.accessToken.expiration}")
+    private Long ACCESSTOKENEXPIRATION;
 
     @PostMapping
     public String createFakeUser() {
@@ -93,8 +98,15 @@ public class FakeUserController {
 
         FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), null, user.getEmail(), user.getDescription(), accessToken, refreshToken);
 
+        HttpHeaders headers = new HttpHeaders();
 
-        return ResponseEntity.ok(fakeUserDto);
+        headers.add("expires", ACCESSTOKENEXPIRATION.toString());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fakeUserDto);
+
+//        return ResponseEntity.ok(fakeUserDto);
     }
 
     @GetMapping("/all")

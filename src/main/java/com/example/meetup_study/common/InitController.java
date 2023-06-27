@@ -39,9 +39,13 @@ public class InitController {
     private final CategoryService categoryService;
     private final UserImageRepository userImageRepository;
 
+//    @PostConstruct
+    public void initDummy(){
+        this.createDummy();
+    }
 
     @PostMapping
-    @PostConstruct //스프링 컨테이너 생성 전에 초기화돼서 joinedUser, HoustUser 생성안함
+//    @PostConstruct //스프링 컨테이너 생성 전에 초기화돼서 joinedUser, HoustUser 생성안함
     @Transactional
     public String createDummy(){
 
@@ -130,11 +134,13 @@ public class InitController {
             if(userOpt.isPresent()){
 
                 Room room = roomRepository.save(new Room(requestRoomDto, categorys, roomImage));
-                JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
 
+                JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
                 room.addJoinedUser(joinedUser);
+
                 HostUser hostUser = new HostUser(userOpt.get(), room);
                 room.addHostUser(hostUser);
+
             }else{
                 throw new UserNotFoundException();
             }
