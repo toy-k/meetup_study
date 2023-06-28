@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -72,9 +73,19 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         log.debug("[JwtAuthenticationProcessingFilter] doFilterInternal()");
 
         try{
-
         String reqUri = request.getRequestURI();
         log.debug("[JwtAuthenticationProcessingFilter] reqUri: {}", reqUri);
+
+        if (CorsUtils.isPreFlightRequest(request)) {
+            System.out.println("================================" + HttpServletResponse.SC_OK);
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "*");
+            response.setHeader("Access-Control-Max-Age", "3600");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().flush();
+            return;
+        }
 
         if(reqUri.equals(PASS_URL_1) ||
             reqUri.equals(PASS_URL_2) ||
@@ -82,7 +93,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             reqUri.equals(PASS_URL_4) ||
             reqUri.contains(PASS_URL_5) ||
             (reqUri.contains(PASS_URL_6) && !reqUri.equals(PASS_URL_6 + "/me")) ||
-            (reqUri.contains(PASS_URL_7) && (!reqUri.equals(PASS_URL_7)) || (!reqUri.equals(PASS_URL_7+"/count"))) ||
+            (reqUri.contains(PASS_URL_7) && (!reqUri.equals(PASS_URL_7))) ||
+            (reqUri.equals(PASS_URL_7+"/count")) ||
             reqUri.contains(PASS_URL_8) ||
             (!reqUri.equals(PASS_URL_9) && reqUri.contains(PASS_URL_9) ||
             reqUri.contains(PASS_URL_10) ||

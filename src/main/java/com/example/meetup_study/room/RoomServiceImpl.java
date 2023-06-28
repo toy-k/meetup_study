@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +84,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<RoomDto> getRoomList(Integer page, Integer size) {
-        PageRequest pageRequest = PageRequest.of(page-1, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
         Page<Room> roomsPage = roomRepository.findAll(pageRequest);
 
         List<Room> rooms = roomsPage.getContent();
@@ -98,7 +99,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<RoomDto> getRoomListBeforeMeetupStart(Integer page, Integer size) {
-        PageRequest pageRequest = PageRequest.of(page-1, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
         LocalDateTime now = now();
         Page<Room> roomsPage = roomRepository.findByMeetupStartDateBefore(now, pageRequest);
 
@@ -114,7 +115,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<RoomDto> getRoomListAfterMeetupStart(Integer page, Integer size) {
-        PageRequest pageRequest = PageRequest.of(page-1, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
         LocalDateTime now = now();
         Page<Room> roomsPage = roomRepository.findByMeetupStartDateAfter(now, pageRequest);
 
