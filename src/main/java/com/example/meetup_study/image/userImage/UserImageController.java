@@ -39,9 +39,11 @@ public class UserImageController {
     @PutMapping
     public ResponseEntity<UserImageDto> updateUserImagee(@RequestParam("file") MultipartFile file, HttpServletRequest req) throws Exception {
 
+
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
 
         if(!userIdOpt.isPresent()){
             throw new AccessTokenInvalidRequestException();
@@ -59,7 +61,9 @@ public class UserImageController {
 
         Optional<UserImageDto> userImageDtoOpt = userImageService.updateUserImagee(file, userIdOpt.get());
 
+
         if(!userImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
+
 
         return ResponseEntity.ok(userImageDtoOpt.get());
     }

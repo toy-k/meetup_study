@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.*;
@@ -31,11 +32,11 @@ public class UploadController {
             @ApiImplicitParam(name = "files", value = "파일", dataTypeClass = MultipartFile.class, required = true, paramType = "form"),
             @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestUploadDto.class, required = true, paramType = "body")
     })
-    @PostMapping
-    public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files, @Valid @RequestBody RequestUploadDto requestUpload) {
+    @PostMapping()
+    public ResponseEntity<List<UploadDto>> fileUpload(@RequestParam("files") List<MultipartFile> files,@RequestParam("roomId") Long roomId) {
 
 
-        List<UploadDto> uploadDtos = uploadService.fileUpload(files, requestUpload.getRoomId());
+        List<UploadDto> uploadDtos = uploadService.fileUpload(files, roomId);
 
         return ResponseEntity.ok(uploadDtos);
     }
@@ -83,6 +84,12 @@ public class UploadController {
         } else {
             return ResponseEntity.status(404).body("파일을 찾을 수 없습니다.");
         }
+    }
+
+    @PostConstruct
+    public void fileCleanUp() {
+
+        uploadService.fileCleanUp();
     }
 
 

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -56,19 +57,30 @@ public class UploadServiceImpl implements UploadService{
             }
 
             String fileName = roomId + "-" + file.getOriginalFilename();
-            String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + roomOpt.get().getId() + "/";
+            String folderPath = System.getProperty("user.dir") + UPLOADPATH + "/" + roomOpt.get().getId() + "/";
 
             try {
-                String fullPath = filePath + fileName;
-                File storage = new File(filePath);
-                if (!storage.exists()) {
-                    storage.mkdirs();
-                    storage.createNewFile();
+
+                File folder = new File(folderPath);
+                boolean folderCreated = folder.mkdirs();
+
+                if(folderCreated){
+                    File newFile = new File(folder, fileName);
+                    boolean fileCreated= newFile.createNewFile();
+
+                    if(fileCreated){
+                        System.out.println("파일 생성 성공");
+                        file.transferTo(newFile);
+                    }else{
+                        System.out.println("파일 생성 실패");
+                    }
+
+                }else{
+                    System.out.println("폴더 생성 실패");
                 }
 
-                file.transferTo(storage);
 
-                UploadDto uploadDto = new UploadDto(fileName, fullPath);
+                UploadDto uploadDto = new UploadDto(fileName, folderPath+fileName);
 
                 uploadDtos.add(uploadDto);
             } catch (IOException e) {
@@ -126,7 +138,7 @@ public class UploadServiceImpl implements UploadService{
                     throw new UploadInvalidRequestException("존재하지 않는 파일입니다.");
                 }
 
-                File file = new File(filePath +  roomId + "-" + fileName);
+                File file = new File(filePath +  fileName);
 
                 if (!file.exists()) {
                     throw new UploadInvalidRequestException("존재하지 않는 파일입니다. (STORAGE)");
@@ -180,5 +192,31 @@ public class UploadServiceImpl implements UploadService{
         } else {
             return FileDeleteStatus.NOT_FOUND;
         }
+    }
+
+    @Override
+    public void fileCleanUp(){
+        String filePath = System.getProperty("user.dir") + UPLOADPATH;
+        File uploadDirectory = new File(filePath);
+
+        if (uploadDirectory.exists() && uploadDirectory.isDirectory()) {
+            deleteDirectory(uploadDirectory);
+        }
+
+    }
+    private void deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+
+        // Delete the empty directory
+        directory.delete();
     }
 }

@@ -14,4 +14,5 @@ public interface UploadService {
     void downloadZip(HttpServletResponse res, List<String> fileNames, Long roomId);
     FileDeleteStatus deleteByName(String fileName, Long roomId);
 
+    void fileCleanUp();
 }

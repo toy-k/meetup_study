@@ -10,6 +10,7 @@ import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Optional;
@@ -34,12 +36,19 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId) {
 
         try{
+            long fileSize = file.getSize();
+
+
             Optional<User> userOpt = userService.findById(userId);
             UserImage userImage = userOpt.get().getUserImage();
 
             String fileExtension = getFileExtension(file.getOriginalFilename());
             byte[] data = compressFile(file.getBytes(), fileExtension);
 
+//            System.out.println("=========================================");
+//            System.out.println("Uploaded file size: " + fileSize + " bytes");
+//            System.out.println("Uploaded file size: " + data.length + " bytes");
+//            System.out.println("=========================================");
 
             if(userImage == null){
                 UserImage userImageInst = new UserImage(data);
@@ -125,13 +134,24 @@ public class UserImageServiceImpl implements UserImageService {
 
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "jpeg", outputStream);
+
+            Thumbnails.of(image)
+                    .size(150, 150)
+                    .outputFormat("jpg")
+                    .outputQuality(0.8)
+                    .toOutputStream(outputStream);
+
             return outputStream.toByteArray();
         } else if (fileExtension.equalsIgnoreCase("png")) {
 
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", outputStream);
+            Thumbnails.of(image)
+                    .size(150, 150)
+                    .outputFormat("png")
+                    .outputQuality(0.8)
+                    .toOutputStream(outputStream);
+
             return outputStream.toByteArray();
         } else {
 
@@ -145,5 +165,4 @@ public class UserImageServiceImpl implements UserImageService {
             return "";
         }
     }
-
 }

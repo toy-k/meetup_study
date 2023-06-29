@@ -96,7 +96,7 @@ public class FakeUserController {
 
         fakeUserService.updateRefreshToken(user, refreshToken);
 
-        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), null, user.getEmail(), user.getDescription(), accessToken, refreshToken);
+        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
 
         HttpHeaders headers = new HttpHeaders();
 

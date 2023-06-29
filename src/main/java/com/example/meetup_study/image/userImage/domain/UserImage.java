@@ -16,7 +16,7 @@ public class UserImage extends BaseEntity {
     @Column(name = "user_image_id")
     private Long id;
 
-    @Column(name = "profile")
+    @Column(name = "profile", columnDefinition = "BLOB")
     private byte[] profile;
 
 
