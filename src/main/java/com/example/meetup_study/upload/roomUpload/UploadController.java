@@ -50,8 +50,12 @@ public class UploadController {
     public ResponseEntity<UploadDto> findFiles(@PathVariable("roomId") Long roomId) {
 
         Optional<UploadDto> uploadDtoOpt = uploadService.findByRoomId(roomId);
+        if(uploadDtoOpt.isPresent()){
+            return ResponseEntity.ok(uploadDtoOpt.get());
+        }else{
+            return ResponseEntity.ok(null);
+        }
 
-        return ResponseEntity.ok(uploadDtoOpt.get());
     }
 
     @ApiOperation(value = "파일 다운로드", notes = "파일을 다운로드합니다.")

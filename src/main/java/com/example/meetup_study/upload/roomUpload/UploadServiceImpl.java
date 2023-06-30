@@ -106,7 +106,7 @@ public class UploadServiceImpl implements UploadService{
 
         Optional<Upload> uploadOpt = uploadRepository.findByRoomId(roomId);
         if(!uploadOpt.isPresent()){
-            throw new UploadNotFoundException();
+            return Optional.empty();
         }
 
         UploadDto uploadDto = new UploadDto(uploadOpt.get().getFileName(), uploadOpt.get().getFilePath());

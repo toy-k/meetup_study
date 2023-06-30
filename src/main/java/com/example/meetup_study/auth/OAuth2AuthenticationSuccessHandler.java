@@ -28,7 +28,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         try{
             UserPrincipal customOAuth2User = (UserPrincipal) authentication.getPrincipal();
             loginSuccess(response, customOAuth2User);
-            response.sendRedirect("/");
+            response.sendRedirect("http://localhost:3000/sign-in");
         }catch (Exception e){
              throw new OAuth2SuccessInvalidRequestException();
         }

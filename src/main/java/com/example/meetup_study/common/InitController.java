@@ -7,6 +7,8 @@ import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.review.ReviewService;
+import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
 import com.example.meetup_study.user.domain.*;
@@ -38,6 +40,7 @@ public class InitController {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final UserImageRepository userImageRepository;
+    private final ReviewService reviewService;
 
 //    @PostConstruct
     public void initDummy(){
@@ -57,7 +60,7 @@ public class InitController {
         for(int i = 1; i<7; i++){
             username = "fakeuser"+i;
             imageUrl = "fakeuser"+i+"imageUrl";
-            email = "jeonghwanlee1"+i+"@gmail.com";
+            email = "jeonghwanlee2"+i+"@gmail.com";
             description = "fakeuser"+i+"description";
 
             UserImage userImage =  new UserImage();
@@ -70,18 +73,11 @@ public class InitController {
 
         };
 
-
-
-
         //category
 
         for (CategoryEnum cate : CategoryEnum.values()) {
             categoryService.createCategory(cate);
         }
-
-
-
-
 
         //room
         String title;
@@ -106,6 +102,7 @@ public class InitController {
 
         for(int i=1; i<12; i++){
 
+            //fakeuser, Fkaeroom 생성
             title = "title"+i;
             desc = "desc"+i;
             if(i%2==0){
@@ -143,6 +140,17 @@ public class InitController {
 
             }else{
                 throw new UserNotFoundException();
+            }
+
+            //fake review 생성.
+            if(i == 11){
+                for(Long j=1L; j<5L; j++){
+                    user = fakeUserRepository.findByUsername("fakeuser"+j);
+                    RequestReviewDto requestReviewDto = new RequestReviewDto(11L, 4, "참 좋은 모임이었수다 " + j);
+                    reviewService.createReview(requestReviewDto, user.get().getId());
+
+                }
+
             }
         }
         return "createdummy";

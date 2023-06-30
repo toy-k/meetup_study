@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -102,6 +103,8 @@ public class FakeUserController {
 
         headers.add("expires", ACCESSTOKENEXPIRATION.toString());
 
+        headers.add("Set-Cookie", "AccessToken=" + accessToken + "; Path=/; Max-Age=" + ACCESSTOKENEXPIRATION);
+
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fakeUserDto);
@@ -110,8 +113,17 @@ public class FakeUserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(fakeUserService.findAll());
+    public ResponseEntity<List<FakeUserDto>> findAll() {
+
+        List<User> users = fakeUserRepository.findAll();
+
+        //순회하면서 FakeUserDto fakeUserDto 로 변환해서 리스트로 변환 java 11
+        List<FakeUserDto> fakeUserDtos = users.stream()
+                .map(user -> new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), null, null))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(fakeUserDtos);
+
     }
 
 

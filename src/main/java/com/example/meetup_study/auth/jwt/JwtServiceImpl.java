@@ -29,7 +29,7 @@ public class JwtServiceImpl implements JwtService {
     private String SECRETKEY;
 
     @Value("${jwt.accessToken.expiration}")
-    private Long ACCESSTOKENEXPIRATION;
+    private Long ACCESSTOKENEXPIRATION;  //1000 = 1초
 
     @Value("${jwt.accessToken.header}")
     private String ACCESSTOKENHEADER;
@@ -77,10 +77,15 @@ public class JwtServiceImpl implements JwtService {
     public void setResponseAccessToken(HttpServletResponse res, String accessToken) {
 
         Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setMaxAge(Math.toIntExact(ACCESSTOKENEXPIRATION / 1000));
+        //        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setMaxAge(Math.toIntExact(ACCESSTOKENEXPIRATION));
         accessTokenCookie.setPath("/");
         res.addCookie(accessTokenCookie);
+
+        Cookie expiresCookie = new Cookie("expires", ACCESSTOKENEXPIRATION.toString());
+        expiresCookie.setMaxAge(Math.toIntExact(ACCESSTOKENEXPIRATION));
+        expiresCookie.setPath("/");
+        res.addCookie(expiresCookie);
 
         res.setStatus(HttpServletResponse.SC_OK);
 
@@ -91,10 +96,13 @@ public class JwtServiceImpl implements JwtService {
     public void setResponseRefreshToken(HttpServletResponse res, String refreshToken){
 
         Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(Math.toIntExact(REFRESHTOKENEXPIRATION / 1000));
+        Cookie expires = new Cookie("refreshExpires", REFRESHTOKENEXPIRATION.toString());
+            //        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(Math.toIntExact(REFRESHTOKENEXPIRATION));
         refreshTokenCookie.setPath("/");
         res.addCookie(refreshTokenCookie);
+//        res.addHeader("refreshExpires", REFRESHTOKENEXPIRATION.toString());
+        res.addCookie(expires);
 
         res.setStatus(HttpServletResponse.SC_OK);
 

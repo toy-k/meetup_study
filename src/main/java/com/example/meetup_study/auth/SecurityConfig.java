@@ -28,9 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-//    private final AccessDeniedHandler AccessDeniedHandler;
     private final AuthorizationAccessDeniedHandler accessDeniedHandler; // 수정된 부분
 
+// http://localhost:8080/oauth2/authorization/google
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -70,8 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-
-//        JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository, new AuthenticationDeniedEntryPoint());
 
         JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository, accessDeniedHandler);
 
