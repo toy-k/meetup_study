@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,6 +35,23 @@ public class UserServiceImpl implements UserService{
 
         return userDtoOpt;
     }
+
+    @Override
+    public Optional<UserDto> findByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<UserDto> userDtoOpt = userOpt.map(user -> new UserDto().converToUserDto(user));
+
+        return userDtoOpt;
+    }
+
+    @Override
+    public List<UserDto> findAllUser() {
+        List<User> userList = userRepository.findAll();
+        List<UserDto> userDtoList = userList.stream().map(user -> new UserDto().converToUserDto(user)).collect(Collectors.toList());
+
+        return userDtoList;
+    }
+
 
     @Transactional
     @Override

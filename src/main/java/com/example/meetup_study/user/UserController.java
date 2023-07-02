@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,7 +29,7 @@ public class UserController {
 
     private String ACCESSTOKEN = "AccessToken";
 
-    @ApiOperation(value = "특정 유저 정보 조회", notes = "")
+    @ApiOperation(value = "특정 유저 정보 조회(id)", notes = "")
     @ApiImplicitParam(name = "id", value = "유저 id", required = true, dataType = "long", paramType = "path")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "성공"),
@@ -46,6 +47,35 @@ public class UserController {
             throw new UserNotFoundException();
         }
     }
+
+    @ApiOperation(value = "특정 유저 정보 조회(usernmae)", notes = "")
+    @ApiImplicitParam(name = "username", value = "유저 username", required = true, dataType = "String", paramType = "path")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 404, message = "유저를 찾을 수 없습니다.", response = UserNotFoundException.class),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDto> findUserByUsername(@PathVariable String username){
+
+        Optional<UserDto> userDto = userService.findByUsername(username);
+        if(userDto.isPresent()){
+            return ResponseEntity.ok(userDto.get());
+        }
+        else {
+            throw new UserNotFoundException();
+        }
+    }
+
+    //user list
+    @ApiOperation(value = "유저 리스트 조회", notes = "")
+    @GetMapping("/list")
+    public ResponseEntity<List<UserDto>> findAllUser(){
+
+        List<UserDto> userList = userService.findAllUser();
+        return ResponseEntity.ok(userList);
+    }
+
 
     @ApiOperation(value = "내 정보 조회", notes = "")
     @GetMapping("/me")
