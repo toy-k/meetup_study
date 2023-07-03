@@ -97,7 +97,7 @@ public class FakeUserController {
 
         fakeUserService.updateRefreshToken(user, refreshToken);
 
-        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), accessToken, refreshToken);
+        FakeUserDto fakeUserDto = new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), user.getRoleType(),accessToken, refreshToken);
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -119,7 +119,7 @@ public class FakeUserController {
 
         //순회하면서 FakeUserDto fakeUserDto 로 변환해서 리스트로 변환 java 11
         List<FakeUserDto> fakeUserDtos = users.stream()
-                .map(user -> new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), null, null))
+                .map(user -> new FakeUserDto(user.getId(), user.getUsername(), user.getUserImage().getProfile(), user.getEmail(), user.getDescription(), user.getRoleType(),null, null))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(fakeUserDtos);

@@ -1,6 +1,8 @@
 package com.example.meetup_study.user.domain.dto;
 
+import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,18 +27,23 @@ public class ResponseUserDto {
 
     private String description;
 
+    @Schema(description = "유저 권한", example = "USER", required = true)
+    private RoleType roleType;
 
-    public ResponseUserDto(String username, String email, String description) {
+
+    public ResponseUserDto(String username, String email, String description, RoleType roleType) {
         this.username = username;
         this.email = email;
         this.description = description;
+        this.roleType = roleType;
     }
 
     public ResponseUserDto converToReesponseUserDto(User user) {
         return new ResponseUserDto(
                 user.getUsername(),
                 user.getEmail(),
-                user.getDescription()
+                user.getDescription(),
+                user.getRoleType()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.example.meetup_study.user.domain.dto;
 
+import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,13 +36,16 @@ public class UserDto {
     @Schema(description = "유저 소개", example = "안녕하세요", required = true)
     private String description;
 
+    @Schema(description = "유저 권한", example = "USER", required = true)
+    private RoleType roleType;
 
-    public UserDto(Long id, String username, byte[] profile, String email, String description) {
+    public UserDto(Long id, String username, byte[] profile, String email, String description, RoleType roleType) {
         this.id = id;
         this.username = username;
         this.profile = profile;
         this.email = email;
         this.description = description;
+        this.roleType = roleType;
     }
 
     public UserDto() {
@@ -54,7 +58,8 @@ public class UserDto {
                 user.getUsername(),
                 user.getUserImage().getProfile(),
                 user.getEmail(),
-                user.getDescription()
+                user.getDescription(),
+                user.getRoleType()
         );
     }
 }

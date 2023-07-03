@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/api/room", "/api/user/me", "/api/upload").access("hasRole('ROLE_USER')")
-                .antMatchers("/api/room/admin").access("hasRole('ROLE_ADMIN')") // "/api/announce" 추가
+                .antMatchers("/api/admin", "/api/announce").access("hasRole('ROLE_ADMIN')") // "/api/announce" 추가
                 .anyRequest().permitAll()
                 .and() //localhost:8080/login
                     .oauth2Login().userInfoEndpoint().userService(customOauth2UserService)

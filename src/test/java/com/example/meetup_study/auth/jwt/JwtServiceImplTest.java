@@ -76,7 +76,7 @@ class JwtServiceImplTest {
 
         String refreshToken = "Bearer "+ fakeUser_1_Dto.getAccessToken();
 
-        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), fakeUser_1_Dto.getDescription());
+        UserDto userDto = new UserDto(fakeUser_1_Dto.getId(), fakeUser_1_Dto.getUsername(), fakeUser_1_Dto.getProfile(), fakeUser_1_Dto.getEmail(), fakeUser_1_Dto.getDescription(),  fakeUser_1_Dto.getRoleType());
 
         //when
         MvcResult mvcResult = mockMvc.perform(get("/api/user/me")

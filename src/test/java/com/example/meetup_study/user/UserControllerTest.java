@@ -2,6 +2,7 @@ package com.example.meetup_study.user;
 
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
 import com.example.meetup_study.user.domain.repository.UserRepository;
@@ -58,7 +59,7 @@ class UserControllerTest {
     @Test
     void findUserByIdTest() throws Exception {
 
-        UserDto userDto = new UserDto(1L, "fakeuser1", null, "fakeuser1@fake.com", "desc");
+        UserDto userDto = new UserDto(1L, "fakeuser1", null, "fakeuser1@fake.com", "desc", RoleType.USER);
 
 
         when(userService.findByIdReturnDto(1L)).thenReturn(Optional.of(userDto));
@@ -90,7 +91,7 @@ class UserControllerTest {
     @Test
     void findMeByToken() throws Exception {
 
-        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc");
+        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc",RoleType.USER);
         String accessToken = "fakeAccessToken";
 
         MockHttpServletRequest req = new MockHttpServletRequest();
@@ -111,7 +112,7 @@ class UserControllerTest {
 
     @Test
     void findMeByToken_UserNotFoundException() throws Exception{
-        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc");
+        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc",RoleType.USER);
         String accessToken = "fakeAccessToken";
 
         MockHttpServletRequest req = new MockHttpServletRequest();
@@ -143,7 +144,7 @@ class UserControllerTest {
     @Test
     void findMeByToken_AccessTokenInvalidRequestException() throws Exception{
 
-        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc");
+        UserDto userDto= new UserDto(1L, "fakeuser1", null, "fakeUser1@fake.com", "desc",RoleType.USER);
         String accessToken = "fakeAccessToken";
 
         MockHttpServletRequest req = new MockHttpServletRequest();
@@ -167,7 +168,7 @@ class UserControllerTest {
 
         String accessToken = "fakeAccessToken";
 
-        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription");
+        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription",RoleType.USER);
 
         when(jwtService.extractUserId(accessToken)).thenReturn(Optional.of(1L));
         when(userService.updateUser(anyLong(), any())).thenReturn(Optional.of(updatedUserDto));
@@ -203,7 +204,7 @@ class UserControllerTest {
     void updateMeTest_UserNotFoundExceptioin() throws Exception{
         String accessToken = "fakeAccessToken";
 
-        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription");
+        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription",RoleType.USER);
 
         when(jwtService.extractUserId(accessToken)).thenReturn(Optional.of(1L));
         when(userService.updateUser(anyLong(), any())).thenReturn(Optional.empty());
@@ -238,7 +239,7 @@ class UserControllerTest {
     void updateMeTest_AccessTokenInvalidRequestException() throws Exception{
         String accessToken = "fakeAccessToken";
 
-        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription");
+        UserDto updatedUserDto = new UserDto(1L, "updatedUsername", null, "updatedEmail", "updatedDescription",RoleType.USER);
 
         when(jwtService.extractUserId(accessToken)).thenReturn(Optional.empty());
 

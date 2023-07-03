@@ -1,6 +1,7 @@
 package com.example.meetup_study.user.fakeUser;
 
 
+import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,17 +21,20 @@ public class FakeUserDto {
     //fakeuser
     private String accessToken;
     private String refreshToken;
+    private RoleType roleType;
 
-    public FakeUserDto(Long id, String username, byte[] profile, String email, String description) {
+
+    public FakeUserDto(Long id, String username, byte[] profile, String email, String description, RoleType roleType) {
         this.id = id;
         this.username = username;
         this.profile = profile;
         this.email = email;
         this.description = description;
+        this.roleType = roleType;
     }
 
     //fakeuser
-    public FakeUserDto(Long id, String username, byte[] profile, String email, String description, String accessToken, String refreshToken) {
+    public FakeUserDto(Long id, String username, byte[] profile, String email, String description, RoleType roleType,String accessToken, String refreshToken) {
         this.id = id;
         this.username = username;
         this.profile = profile;
@@ -38,6 +42,7 @@ public class FakeUserDto {
         this.description = description;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.roleType = roleType;
     }
 
     public FakeUserDto converToUserDto(User user) {
@@ -46,7 +51,8 @@ public class FakeUserDto {
                 user.getUsername(),
                 user.getUserImage().getProfile(),
                 user.getEmail(),
-                user.getDescription()
+                user.getDescription(),
+                user.getRoleType()
         );
     }
 }

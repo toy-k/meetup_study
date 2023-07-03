@@ -66,7 +66,13 @@ public class InitController {
             UserImage userImage =  new UserImage();
 
 
-            User user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
+            User user;
+            if(i != 6 ){
+                user = new User(username, userImage, email, description, RoleType.USER, ProviderType.GITHUB, "provider_id");
+            }else{
+                user = new User(username, userImage, email, description, RoleType.ADMIN, ProviderType.GITHUB, "provider_id");
+            }
+
 
             fakeUserService.createFakeUser(user);
             userImageRepository.save(userImage);
