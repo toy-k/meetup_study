@@ -30,7 +30,8 @@ public class User extends BaseEntity {
     @Column(name = "users_id")
     private Long id;
 
-    @Column()
+    @Column(name = "username", unique = true)
+    @org.hibernate.annotations.Index(name = "idx_username")
     private String username;
 
     private String password;
