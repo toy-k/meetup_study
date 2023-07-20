@@ -17,4 +17,6 @@ public interface AnnounceService {
     Optional<AnnounceDto> updateAnnounce(AnnounceDto announceDto, Long userId);
 
     Optional<AnnounceDto> deleteAnnounce(Long announceId, Long userId);
+
+    Long getAnnounceCount();
 }

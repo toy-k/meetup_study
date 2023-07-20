@@ -5,9 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,11 +35,21 @@ public class AnnounceDto {
     @NotBlank(message = "userId은 필수 입력 값입니다.")
     private Long userId;
 
-    public AnnounceDto(Long id, String title, String description, Long userId) {
+    @Column(name = "created_at", updatable = false, nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    public AnnounceDto(Long id, String title, String description, Long userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.userId = userId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public AnnounceDto convertToAnnounceDto(Announce announce) {
@@ -43,7 +57,9 @@ public class AnnounceDto {
                 announce.getId(),
                 announce.getTitle(),
                 announce.getDescription(),
-                announce.getUser().getId()
+                announce.getUser().getId(),
+                announce.getCreatedAt(),
+                announce.getUpdatedAt()
         );
 
     }

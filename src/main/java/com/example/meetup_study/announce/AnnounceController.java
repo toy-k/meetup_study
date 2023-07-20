@@ -165,4 +165,11 @@ public class AnnounceController {
 
         return ResponseEntity.ok(deletedAnnounceDto.get());
     }
+
+    @ApiOperation(value = "공지사항 갯수", notes = "공지사항 갯수를 조회합니다.")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getAnnounceCount(){
+        Long announceCount = announceService.getAnnounceCount();
+        return ResponseEntity.ok(announceCount);
+    }
 }
