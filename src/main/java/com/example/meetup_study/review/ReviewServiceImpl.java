@@ -48,7 +48,8 @@ public class ReviewServiceImpl implements ReviewService{
     public List<ReviewDto> findByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            List<Review> reviews = reviewRepository.findByUserId(userId);
+//            List<Review> reviews = reviewRepository.findByUserId(userId);
+            List<Review> reviews = user.get().getReviewList();
 
             List<ReviewDto> reviewDtoList = reviews.stream()
                     .map(review -> new ReviewDto().convertToReviewDto(review))

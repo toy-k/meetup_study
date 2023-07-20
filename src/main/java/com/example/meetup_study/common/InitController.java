@@ -2,6 +2,9 @@ package com.example.meetup_study.common;
 
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.announce.AnnounceService;
+import com.example.meetup_study.announce.domain.dto.AnnounceDto;
+import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.image.userImage.domain.UserImage;
@@ -41,12 +44,13 @@ public class InitController {
     private final CategoryService categoryService;
     private final UserImageRepository userImageRepository;
     private final ReviewService reviewService;
+    private final AnnounceService announceService;
 
-//    @PostConstruct
-    public void initDummy(){
-        this.createDummy();
-    }
-
+////    @PostConstruct
+//    public void initDummy(){
+//        this.createDummy();
+//    }
+//
     @PostMapping
 //    @PostConstruct //스프링 컨테이너 생성 전에 초기화돼서 joinedUser, HoustUser 생성안함
     @Transactional
@@ -57,6 +61,7 @@ public class InitController {
         String email;
         String description;
 
+        //fakeuser 생성
         for(int i = 1; i<7; i++){
             username = "fakeuser"+i;
             imageUrl = "fakeuser"+i+"imageUrl";
@@ -105,10 +110,9 @@ public class InitController {
 
         Optional<User> user = fakeUserRepository.findByUsername("fakeuser5");
 
-
+        //fakeRoom 생성
         for(int i=1; i<12; i++){
 
-            //fakeuser, Fkaeroom 생성
             title = "title"+i;
             desc = "desc"+i;
             if(i%2==0){
@@ -159,6 +163,25 @@ public class InitController {
 
             }
         }
+
+        //fakeAnnounce 생성
+        Optional<User> adminUser = fakeUserRepository.findByUsername("fakeuser6");
+
+        String announceTitle;
+        String announceDesc;
+        Long announceUserId;
+
+        for(int k=1; k<13; k++){
+            announceTitle = "announce "+k;
+            announceDesc = "desc "+k;
+            announceUserId = adminUser.get().getId();
+            RequestAnnounceDto requestAnnounceDto = new RequestAnnounceDto(announceTitle, announceDesc, announceUserId);
+            Optional<AnnounceDto> announceDto = announceService.createAnnounce(requestAnnounceDto);
+
+        }
+
+
+
         return "createdummy";
 
     }

@@ -2,6 +2,7 @@ package com.example.meetup_study.room.domain.dto;
 
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.RoomStatus;
@@ -10,7 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -84,10 +88,17 @@ public class RoomDto {
     @Positive
     private Long hostUserId;
 
+    @Column(name = "created_at", updatable = false, nullable = false)
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
 
 
-    public RoomDto(Long id, String title, String description, CategoryEnum category, String location, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, Integer maxJoinNumber, Integer currentJoinNumber, Long price, RoomStatus roomstatus, RoomType roomType, Long viewCount, Long hostUserId) {
+    public RoomDto(Long id, String title, String description, CategoryEnum category, String location, LocalDateTime meetupStartDate, LocalDateTime meetupEndDate, Integer maxJoinNumber, Integer currentJoinNumber, Long price, RoomStatus roomstatus, RoomType roomType, Long viewCount, Long hostUserId, LocalDateTime createdAt, LocalDateTime updatedAt) {
 
         this.id = id;
         this.title = title;
@@ -104,6 +115,9 @@ public class RoomDto {
         this.viewCount = viewCount;
 
         this.hostUserId = hostUserId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+
     }
 
     public RoomDto convertToRoomDto(Room room) {
@@ -122,7 +136,9 @@ public class RoomDto {
                 room.getRoomType(),
                 room.getViewCount(),
 
-                convertToHostUserId(room)
+                convertToHostUserId(room),
+room.getCreatedAt(),
+room.getUpdatedAt()
 //                room.getHostUserList().get(0).getId()
         );
     }

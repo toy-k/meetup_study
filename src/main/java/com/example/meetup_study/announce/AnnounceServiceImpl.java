@@ -13,6 +13,7 @@ import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +66,8 @@ public class AnnounceServiceImpl implements AnnounceService {
     @Override
     public List<AnnounceDto> getAnnounceList(Integer page, Integer size) {
 
-        PageRequest pageRequest = PageRequest.of(page-1, size);
-
+//        PageRequest pageRequest = PageRequest.of(page-1, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
         Page<Announce> announcePage = announceRepository.findAll(pageRequest);
 
         List<Announce> announce = announcePage.getContent();
@@ -122,9 +123,16 @@ public class AnnounceServiceImpl implements AnnounceService {
         return announceDto;
     }
 
+    @Override
+    public Long getAnnounceCount() {
+        return announceRepository.count();
+    }
+
     private Long incrementViewCount(Long announceId){
         String key = "announce:" + announceId + ":viewCount";
         Long count = redisTemplate.opsForValue().increment(key);
         return count.longValue();
     }
+
+
 }
