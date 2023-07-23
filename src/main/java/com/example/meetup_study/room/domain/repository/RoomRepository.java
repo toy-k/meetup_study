@@ -23,7 +23,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // 연관 모든 데이터 호출시 entitygraph , 특정 데이터만 원할때 fetch join
     // 쓰기지연 덕분에 룸만 호출할지 연관 데이터호출할지 쿼리 나중에 결정
 
-    @EntityGraph(attributePaths = { "hostUserList", "hostUserList.user", "uploadList" })
+    @EntityGraph(attributePaths = { "hostUserList", "hostUserList.user" })
     Optional<Room> findById(Long id);
 
 }
