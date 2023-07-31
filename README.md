@@ -1,10 +1,17 @@
 # meetup_study (모임 서비스)
+  - 사용기술
   - 실행방법
   - 스크린샷
   - 구현 기능
   - 할 일
   - 학습 자료
 
+
+## [사용기술]
+
+<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white">
+<img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
+<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 ## [실행방법]
 ```
