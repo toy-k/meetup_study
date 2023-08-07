@@ -4,6 +4,7 @@ import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
@@ -38,7 +39,9 @@ public class RoomController {
     private final JwtService jwtService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final RoomMapper roomMapper;
 
+//    RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -93,7 +96,8 @@ public class RoomController {
     public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
 
         Optional<Room> roomOpt = roomService.getRoom(id);
-        RoomDto roomDtoOpt = new RoomDto().convertToRoomDto(roomOpt.get());
+        RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
+
         return ResponseEntity.ok(roomDtoOpt);
     }
 

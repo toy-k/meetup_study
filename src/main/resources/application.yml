@@ -17,22 +17,22 @@ spring:
             scope:
               - email
               - profile
-  cache:
-    type: redis
-    redis:
-        host: ${REDIS_HOST}
-        port: ${REDIS_PORT}
-
-  mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          required: true
+#  cache:
+#    type: redis
+#    redis:
+#        host: ${REDIS_HOST}
+#        port: ${REDIS_PORT}
+#
+#  mail:
+#    host: ${MAIL_HOST}
+#    port: ${MAIL_PORT}
+#    username: ${MAIL_USERNAME}
+#    password: ${MAIL_PASSWORD}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          required: true
   servlet:
     multipart:
       enabled: true
@@ -46,50 +46,50 @@ springdoc:
   swagger-ui:
     base-url: http://localhost:8080/swagger-ui/index.html
 
-jwt:
-  secretKey: ${JWT_SECRET_KEY}
-  accessToken:
-    expiration: ${JWT_ACCESSTOKEN_EXPIRATION}
-    header: ${JWT_ACCESSTOKEN_HEADER}
-  refreshToken:
-    expiration: ${JWT_REFRESHTOKEN_EXPIRATION}
-    header: ${JWT_REFRESHTOKEN_HEADER}
+#jwt:
+#  secretKey: ${JWT_SECRET_KEY}
+#  accessToken:
+#    expiration: ${JWT_ACCESSTOKEN_EXPIRATION}
+#    header: ${JWT_ACCESSTOKEN_HEADER}
+#  refreshToken:
+#    expiration: ${JWT_REFRESHTOKEN_EXPIRATION}
+#    header: ${JWT_REFRESHTOKEN_HEADER}
 
-logging:
-  level:
-    root: info
-    com.example: debug
-    com.example.meetup_study: debug
-#    root: DEBUG
-#    org.springframework: DEBUG
-#    org.hibernate: DEBUG
-
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  datasource:
-    driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
-    url: ${APPLICATION_URL}
-    username: ${APPLICATION_USERNAME}
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
+#logging:
+#  level:
+#    root: info
+#    com.example: debug
+#    com.example.meetup_study: debug
+##    root: DEBUG
+##    org.springframework: DEBUG
+##    org.hibernate: DEBUG
 
 ---
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
+#  datasource:
+#    driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
+#    url: ${APPLICATION_URL}
+#    username: ${APPLICATION_USERNAME}
+#    password:
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+
+---
+#spring:
+#  config:
+#    activate:
+#      on-profile: prod
+#  datasource:
+#    driverClassName: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
