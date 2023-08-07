@@ -44,6 +44,8 @@ public class RoomServiceImpl implements RoomService{
     private final CategoryService categoryService;
     private final RoomMapper roomMapper;
 
+//    RoomDto roomDto = roomMapper.toRoomDto(room);
+
 
     @Transactional
     @Override
