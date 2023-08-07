@@ -7,6 +7,7 @@ import com.example.meetup_study.Category.exception.CategoryNotFoundException;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
@@ -41,6 +42,8 @@ public class RoomServiceImpl implements RoomService{
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final CategoryService categoryService;
+    private final RoomMapper roomMapper;
+
 
     @Transactional
     @Override
@@ -61,9 +64,10 @@ public class RoomServiceImpl implements RoomService{
         HostUser hostUser = new HostUser(userOpt.get(), room);
         room.addHostUser(hostUser);
 
-        return Optional.ofNullable(new RoomDto().convertToRoomDto(room));
+        RoomDto roomDto = roomMapper.toRoomDto(room);
 
-//        return Optional.ofNullable(room);
+        return Optional.ofNullable(roomDto);
+
 
     }
 
@@ -92,7 +96,7 @@ public class RoomServiceImpl implements RoomService{
             return new ArrayList<>(); // 빈 리스트 반환
         }
 
-        List<RoomDto> roomDtos = rooms.stream().map(r -> new RoomDto().convertToRoomDto(r)).collect(Collectors.toList());
+        List<RoomDto> roomDtos = rooms.stream().map(r -> roomMapper.toRoomDto(r)).collect(Collectors.toList());
 
         return roomDtos;
     }
@@ -108,7 +112,7 @@ public class RoomServiceImpl implements RoomService{
             return new ArrayList<>(); // 빈 리스트 반환
         }
 
-        List<RoomDto> roomDtos = rooms.stream().map(r -> new RoomDto().convertToRoomDto(r)).collect(Collectors.toList());
+        List<RoomDto> roomDtos = rooms.stream().map(r -> roomMapper.toRoomDto(r)).collect(Collectors.toList());
 
         return roomDtos;
     }
@@ -124,7 +128,7 @@ public class RoomServiceImpl implements RoomService{
             return new ArrayList<>(); // 빈 리스트 반환
         }
 
-        List<RoomDto> roomDtos = rooms.stream().map(r -> new RoomDto().convertToRoomDto(r)).collect(Collectors.toList());
+        List<RoomDto> roomDtos = rooms.stream().map(r -> roomMapper.toRoomDto(r)).collect(Collectors.toList());
 
         return roomDtos;
     }
@@ -152,7 +156,7 @@ public class RoomServiceImpl implements RoomService{
                 }
                 room.changeCategory(cate.get());
 
-                return new RoomDto().convertToRoomDto(room);
+                return roomMapper.toRoomDto(room);
             });
 
             roomRepository.save(roomOpt.get());
@@ -166,7 +170,7 @@ public class RoomServiceImpl implements RoomService{
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
         Optional <Room> room = roomRepository.findById(id);
         roomRepository.delete(room.get());
-        Optional<RoomDto> roomDto = room.map(r -> new RoomDto().convertToRoomDto(r));
+        Optional<RoomDto> roomDto = room.map(r -> roomMapper.toRoomDto(r));
 
         return roomDto;
     }

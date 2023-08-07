@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: prod
   datasource:
     driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
     url: ${APPLICATION_URL}

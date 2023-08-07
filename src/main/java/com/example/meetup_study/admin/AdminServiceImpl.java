@@ -5,6 +5,7 @@ import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
+import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
@@ -26,12 +27,15 @@ public class AdminServiceImpl implements AdminService{
     private final ReviewRepository reviewRepository;
     private final RoomRepository roomRepository;
     private final HostReviewRepository hostReviewRepository;
+    private final RoomMapper roomMapper;
+
 
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
         Optional <Room> room = roomRepository.findById(id);
+
         roomRepository.delete(room.get());
-        Optional<RoomDto> roomDto = room.map(r -> new RoomDto().convertToRoomDto(r));
+        Optional<RoomDto> roomDto = room.map(r -> roomMapper.toRoomDto(r));
 
         return roomDto;
     }

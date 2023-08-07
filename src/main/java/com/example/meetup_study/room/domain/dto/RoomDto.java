@@ -8,6 +8,7 @@ import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.RoomStatus;
 import com.example.meetup_study.room.domain.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoomDto {
 
     @Schema(description = "방 id", example = "1", required = true)
@@ -119,42 +120,42 @@ public class RoomDto {
         this.updatedAt = updatedAt;
 
     }
-
-    public RoomDto convertToRoomDto(Room room) {
-        return new RoomDto(
-                room.getId(),
-                room.getTitle(),
-                room.getDescription(),
-                convertToCategoryEnum(room.getCategory()),
-                room.getLocation(),
-                room.getMeetupStartDate(),
-                room.getMeetupEndDate(),
-                room.getMaxJoinNumber(),
-                room.getCurrentJoinNumber(),
-                room.getPrice(),
-                room.getRoomStatus(),
-                room.getRoomType(),
-                room.getViewCount(),
-
-                convertToHostUserId(room),
-room.getCreatedAt(),
-room.getUpdatedAt()
-//                room.getHostUserList().get(0).getId()
-        );
-    }
-
-    private CategoryEnum convertToCategoryEnum(Category category) {
-        return category.getName();
-    }
-
-    private Long convertToHostUserId(Room room) {
-
-        List<HostUser> hostUserList = room.getHostUserList();
-
-        Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
-
-
-        return hostUserId;
-    }
+//
+//    public RoomDto convertToRoomDto(Room room) {
+//        return new RoomDto(
+//                room.getId(),
+//                room.getTitle(),
+//                room.getDescription(),
+//                convertToCategoryEnum(room.getCategory()),
+//                room.getLocation(),
+//                room.getMeetupStartDate(),
+//                room.getMeetupEndDate(),
+//                room.getMaxJoinNumber(),
+//                room.getCurrentJoinNumber(),
+//                room.getPrice(),
+//                room.getRoomStatus(),
+//                room.getRoomType(),
+//                room.getViewCount(),
+//
+//                convertToHostUserId(room),
+//room.getCreatedAt(),
+//room.getUpdatedAt()
+////                room.getHostUserList().get(0).getId()
+//        );
+//    }
+//
+//    private CategoryEnum convertToCategoryEnum(Category category) {
+//        return category.getName();
+//    }
+//
+//    private Long convertToHostUserId(Room room) {
+//
+//        List<HostUser> hostUserList = room.getHostUserList();
+//
+//        Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
+//
+//
+//        return hostUserId;
+//    }
 }
 
