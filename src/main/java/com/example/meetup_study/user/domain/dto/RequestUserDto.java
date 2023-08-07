@@ -2,10 +2,7 @@ package com.example.meetup_study.user.domain.dto;
 
 import com.example.meetup_study.user.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -14,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class RequestUserDto {
 
     @Schema(description = "유저 이름", example = "홍길동", required = true)
@@ -30,17 +28,12 @@ public class RequestUserDto {
     private String description;
 
 
-    public RequestUserDto(String username, String email, String description) {
-        this.username = username;
-        this.email = email;
-        this.description = description;
-    }
 
-    public RequestUserDto converToRequestUserDto(User user) {
-        return new RequestUserDto(
-                user.getUsername(),
-                user.getEmail(),
-                user.getDescription()
-        );
-    }
+//    public RequestUserDto converToRequestUserDto(User user) {
+//        return new RequestUserDto(
+//                user.getUsername(),
+//                user.getEmail(),
+//                user.getDescription()
+//        );
+//    }
 }

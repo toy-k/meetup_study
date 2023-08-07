@@ -2,6 +2,7 @@ package com.example.meetup_study.user;
 
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
+import com.example.meetup_study.mapper.UserMapper;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public Optional<User> findById(Long id) {
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<UserDto> findByIdReturnDto(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
-        Optional<UserDto> userDtoOpt = userOpt.map(user -> new UserDto().converToUserDto(user));
+        Optional<UserDto> userDtoOpt = userOpt.map(user -> userMapper.toUserDto(user));
 
         return userDtoOpt;
     }
@@ -39,7 +41,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<UserDto> findByUsername(String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
-        Optional<UserDto> userDtoOpt = userOpt.map(user -> new UserDto().converToUserDto(user));
+        Optional<UserDto> userDtoOpt = userOpt.map(user -> userMapper.toUserDto(user));
 
         return userDtoOpt;
     }
@@ -47,7 +49,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserDto> findAllUser() {
         List<User> userList = userRepository.findAll();
-        List<UserDto> userDtoList = userList.stream().map(user -> new UserDto().converToUserDto(user)).collect(Collectors.toList());
+        List<UserDto> userDtoList = userList.stream().map(user -> userMapper.toUserDto(user)).collect(Collectors.toList());
 
         return userDtoList;
     }
@@ -64,7 +66,7 @@ public class UserServiceImpl implements UserService{
             if (requestUserDto.getUsername()!= null) user.changeUsername(requestUserDto.getUsername());
             if (requestUserDto.getDescription()!= null) user.changeDescription(requestUserDto.getDescription());
 
-            return new UserDto().converToUserDto(user);
+            return userMapper.toUserDto(user);
         });
 
         return userDtoOpt;

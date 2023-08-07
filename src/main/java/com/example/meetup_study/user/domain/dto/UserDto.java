@@ -4,10 +4,7 @@ import com.example.meetup_study.user.domain.RoleType;
 import com.example.meetup_study.user.domain.User;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -15,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto {
 
     @Schema(description = "유저 id", example = "1", required = true)
@@ -39,27 +38,4 @@ public class UserDto {
     @Schema(description = "유저 권한", example = "USER", required = true)
     private RoleType roleType;
 
-    public UserDto(Long id, String username, byte[] profile, String email, String description, RoleType roleType) {
-        this.id = id;
-        this.username = username;
-        this.profile = profile;
-        this.email = email;
-        this.description = description;
-        this.roleType = roleType;
-    }
-
-    public UserDto() {
-
-    }
-
-    public UserDto converToUserDto(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getUsername(),
-                user.getUserImage().getProfile(),
-                user.getEmail(),
-                user.getDescription(),
-                user.getRoleType()
-        );
-    }
 }
