@@ -2,14 +2,14 @@ package com.example.meetup_study.review.domain.dto;
 
 import com.example.meetup_study.review.domain.Review;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.*;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewDto {
 
     @Schema(description = "리뷰 id", example = "1", required = true)
@@ -36,15 +36,4 @@ public class ReviewDto {
     @Lob
     private String content;
 
-    public ReviewDto(Long id, Long userId,Long roomId, Integer rating, String content) {
-        this.id = id;
-        this.userId = userId;
-        this.roomId = roomId;
-        this.rating = rating;
-        this.content = content;
-    }
-
-    public ReviewDto convertToReviewDto(Review review) {
-        return new ReviewDto(review.getId(), review.getUser().getId(),review.getRoom().getId(), review.getRating(), review.getContent());
-    }
 }

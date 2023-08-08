@@ -1,6 +1,7 @@
 package com.example.meetup_study.announce.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class RequestAnnounceDto {
 
     @Schema(description = "공지사항 제목", example = "공지사항 제목", required = true)
@@ -22,11 +24,5 @@ public class RequestAnnounceDto {
     @Schema(description = "공지사항 작성자 id", example = "1", required = true)
     @NotNull(message = "userId은 필수 입력 값입니다.")
     private Long userId;
-
-    public RequestAnnounceDto(String title, String description, Long userId) {
-        this.title = title;
-        this.description = description;
-        this.userId = userId;
-    }
 
 }

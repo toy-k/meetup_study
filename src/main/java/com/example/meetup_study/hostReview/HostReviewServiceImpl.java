@@ -6,6 +6,7 @@ import com.example.meetup_study.hostReview.domain.dto.RequestHostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
 import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
+import com.example.meetup_study.mapper.HostReviewMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
 import com.example.meetup_study.room.domain.Room;
@@ -29,6 +30,7 @@ public class HostReviewServiceImpl implements HostReviewService{
     private final ReviewRepository reviewRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final HostReviewMapper hostReviewMapper;
 
     @Transactional
     @Override
@@ -47,7 +49,7 @@ public class HostReviewServiceImpl implements HostReviewService{
 
 
 
-        HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReview);
+        HostReviewDto hostReviewDto = hostReviewMapper.toHostReviewDto(hostReview);
 
         return Optional.ofNullable(hostReviewDto);
     }
@@ -60,7 +62,7 @@ public class HostReviewServiceImpl implements HostReviewService{
             List<HostReview> hostReviews = hostReviewRepository.findByRoomId(roomId);
 
             List<HostReviewDto> hostReviewDtoList = hostReviews.stream()
-                    .map(hostReview -> new HostReviewDto().convertToHostReviewDto(hostReview))
+                    .map(hostReview -> hostReviewMapper.toHostReviewDto(hostReview))
                     .collect(Collectors.toList());
 
             return hostReviewDtoList;
@@ -92,7 +94,7 @@ public class HostReviewServiceImpl implements HostReviewService{
         hostReviewRepository.deleteById(hostReviewId);
         reviewOpt.get().changeIsHostReview(false);
 
-        HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReviewOpt.get());
+        HostReviewDto hostReviewDto = hostReviewMapper.toHostReviewDto(hostReviewOpt.get());
 
         return Optional.ofNullable(hostReviewDto);
     }

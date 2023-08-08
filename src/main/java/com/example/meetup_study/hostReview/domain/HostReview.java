@@ -3,12 +3,15 @@ package com.example.meetup_study.hostReview.domain;
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HostReview extends BaseEntity {
 
     @Id
@@ -30,9 +33,9 @@ public class HostReview extends BaseEntity {
     @Column(name = "review_id")
     private Long reviewId;
 
-    public HostReview() {
-
-    }
+//    public HostReview() {
+//
+//    }
     public HostReview(User user, Room room, String content, Long reviewId) {
         this.room = room;
         this.user = user;

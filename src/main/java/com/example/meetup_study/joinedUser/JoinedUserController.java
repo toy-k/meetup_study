@@ -6,6 +6,7 @@ import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
 import com.example.meetup_study.joinedUser.domain.dto.RequestJoinedUserDto;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
+import com.example.meetup_study.mapper.JoinedUserMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.room.RoomService;
@@ -38,6 +39,7 @@ public class JoinedUserController {
     private final UserService userService;
     private final RoomService roomService;
     private final JwtService jwtService;
+    private final JoinedUserMapper joinedUserMapper;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -69,7 +71,7 @@ public class JoinedUserController {
 
         Optional<JoinedUser> joinedUseropt = joinedUserService.joinRoom(requestJoinedUserDto.getUserId(), requestJoinedUserDto.getRoomId());
 
-        JoinedUserDto joinedUserDto = new JoinedUserDto().convertToJoinedUserDto(joinedUseropt.get());
+        JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
 
         return ResponseEntity.ok(joinedUserDto);
     }
@@ -101,7 +103,7 @@ public class JoinedUserController {
 
         Optional<JoinedUser> joinedUseropt = joinedUserService.leaveRoom(requestJoinedUserDto.getUserId(),requestJoinedUserDto.getRoomId());
 
-        JoinedUserDto joinedUserDto = new JoinedUserDto().convertToJoinedUserDto(joinedUseropt.get());
+        JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
 
         return ResponseEntity.ok(joinedUserDto);
     }
@@ -115,7 +117,7 @@ public class JoinedUserController {
         Optional<JoinedUser> joinedUseropt =  joinedUserService.getJoinedUserById(id);
 
         if(joinedUseropt.isPresent()){
-            JoinedUserDto joinedUserDto = new JoinedUserDto().convertToJoinedUserDto(joinedUseropt.get());
+            JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
             return ResponseEntity.ok(joinedUserDto);
 
         }else{
@@ -144,7 +146,7 @@ public class JoinedUserController {
         Optional<JoinedUser> joinedUseropt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, roomId);
 
         if (joinedUseropt.isPresent()) {
-            JoinedUserDto joinedUserDto = new JoinedUserDto().convertToJoinedUserDto(joinedUseropt.get());
+            JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
             return ResponseEntity.ok(joinedUserDto);
 
         } else {
@@ -169,7 +171,7 @@ public class JoinedUserController {
         List<JoinedUserDto> joinedUserDtos = new ArrayList<>();
 
         for(JoinedUser joinedUser : joinedUseropt){
-            joinedUserDtos.add(new JoinedUserDto().convertToJoinedUserDto(joinedUser));
+            joinedUserDtos.add(joinedUserMapper.toJoinedUserDto(joinedUser));
         }
 
         return ResponseEntity.ok(joinedUserDtos);
@@ -194,7 +196,7 @@ public class JoinedUserController {
         List<JoinedUserDto> joinedUserDtos = new ArrayList<>();
 
         for (JoinedUser joinedUser : joinedUseropt) {
-            joinedUserDtos.add(new JoinedUserDto().convertToJoinedUserDto(joinedUser));
+            joinedUserDtos.add(joinedUserMapper.toJoinedUserDto(joinedUser));
         }
 
         return ResponseEntity.ok(joinedUserDtos);

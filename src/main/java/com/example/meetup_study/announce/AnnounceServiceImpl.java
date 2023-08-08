@@ -7,6 +7,7 @@ import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
 import com.example.meetup_study.announce.exception.AnnounceInvalidRequestException;
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
+import com.example.meetup_study.mapper.AnnounceMapper;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
@@ -30,6 +31,7 @@ public class AnnounceServiceImpl implements AnnounceService {
     private final AnnounceRepository announceRepository;
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final AnnounceMapper announceMapper;
 
     @Transactional
     @Override
@@ -43,7 +45,9 @@ public class AnnounceServiceImpl implements AnnounceService {
 
         userOpt.get().addAnnounce(announce);
 
-        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announce);
+//        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announce);
+
+        AnnounceDto announceDto = announceMapper.toAnnounceDto(announce);
 
         return Optional.of(announceDto);
     }
@@ -57,7 +61,7 @@ public class AnnounceServiceImpl implements AnnounceService {
             announce.changeViewCount(viewCount);
         }
 
-        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announceOpt.get());
+        AnnounceDto announceDto = announceMapper.toAnnounceDto(announceOpt.get());
 
         return Optional.of(announceDto);
 
@@ -75,7 +79,7 @@ public class AnnounceServiceImpl implements AnnounceService {
             return new ArrayList<>();
         }
 
-        List<AnnounceDto> announceDtos = announce.stream().map(r -> new AnnounceDto().convertToAnnounceDto(r)).collect(Collectors.toList());
+        List<AnnounceDto> announceDtos = announce.stream().map(r -> announceMapper.toAnnounceDto(r)).collect(Collectors.toList());
 
         return announceDtos;
     }
@@ -96,7 +100,7 @@ public class AnnounceServiceImpl implements AnnounceService {
         Optional<AnnounceDto> announceDtoOpt = announceOpt.map(announce->{
             if(announceDto.getTitle() != null) announce.changeTitle(announceDto.getTitle());
             if(announceDto.getDescription() != null) announce.changeDescription(announceDto.getDescription());
-            return new AnnounceDto().convertToAnnounceDto(announce);
+            return announceMapper.toAnnounceDto(announce);
         });
         announceRepository.save(announceOpt.get());
 
@@ -118,7 +122,7 @@ public class AnnounceServiceImpl implements AnnounceService {
             throw new AnnounceInvalidRequestException();
         }
         announceRepository.deleteById(announceId);
-        Optional<AnnounceDto> announceDto = announceOpt.map(r -> new AnnounceDto().convertToAnnounceDto(r));
+        Optional<AnnounceDto> announceDto = announceOpt.map(r -> announceMapper.toAnnounceDto(r));
 
         return announceDto;
     }

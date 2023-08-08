@@ -2,9 +2,7 @@ package com.example.meetup_study.announce.domain.dto;
 
 import com.example.meetup_study.announce.domain.Announce;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -15,7 +13,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class AnnounceDto {
 
     @Schema(description = "공지사항 id", example = "1", required = true)
@@ -43,24 +42,24 @@ public class AnnounceDto {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public AnnounceDto(Long id, String title, String description, Long userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public AnnounceDto convertToAnnounceDto(Announce announce) {
-        return new AnnounceDto(
-                announce.getId(),
-                announce.getTitle(),
-                announce.getDescription(),
-                announce.getUser().getId(),
-                announce.getCreatedAt(),
-                announce.getUpdatedAt()
-        );
-
-    }
+//    public AnnounceDto(Long id, String title, String description, Long userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+//        this.id = id;
+//        this.title = title;
+//        this.description = description;
+//        this.userId = userId;
+//        this.createdAt = createdAt;
+//        this.updatedAt = updatedAt;
+//    }
+//
+//    public AnnounceDto convertToAnnounceDto(Announce announce) {
+//        return new AnnounceDto(
+//                announce.getId(),
+//                announce.getTitle(),
+//                announce.getDescription(),
+//                announce.getUser().getId(),
+//                announce.getCreatedAt(),
+//                announce.getUpdatedAt()
+//        );
+//
+//    }
 }

@@ -5,6 +5,8 @@ import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
+import com.example.meetup_study.mapper.HostReviewMapper;
+import com.example.meetup_study.mapper.ReviewMapper;
 import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
@@ -28,7 +30,8 @@ public class AdminServiceImpl implements AdminService{
     private final RoomRepository roomRepository;
     private final HostReviewRepository hostReviewRepository;
     private final RoomMapper roomMapper;
-
+    private final HostReviewMapper hostReviewMapper;
+    private final ReviewMapper reviewMapper;
 
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
@@ -51,7 +54,7 @@ public class AdminServiceImpl implements AdminService{
 
             reviewRepository.deleteById(reviewId);
 
-            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+            ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
             return Optional.of(reviewDto);
         }else{
             throw new ReviewNotFoundException();
@@ -74,7 +77,8 @@ public class AdminServiceImpl implements AdminService{
             hostReviewRepository.deleteById(hostReviewId);
             reviewOpt.get().changeIsHostReview(false);
 
-            HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReviewOpt.get());
+//            HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReviewOpt.get());
+            HostReviewDto hostReviewDto = hostReviewMapper.toHostReviewDto(hostReviewOpt.get());
 
             return Optional.of(hostReviewDto);
 
