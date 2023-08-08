@@ -1,19 +1,14 @@
 package com.example.meetup_study.admin;
 
-import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.hostReview.HostReviewService;
-import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
-import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.review.ReviewService;
-import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
@@ -21,7 +16,6 @@ import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

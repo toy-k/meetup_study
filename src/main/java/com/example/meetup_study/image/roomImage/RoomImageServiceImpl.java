@@ -5,7 +5,7 @@ import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.image.roomImage.domain.dto.RoomImageDto;
 import com.example.meetup_study.image.roomImage.domain.repository.RoomImageRepository;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

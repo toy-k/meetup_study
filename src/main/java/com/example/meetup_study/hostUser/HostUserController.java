@@ -4,7 +4,7 @@ import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.dto.HostUserDto;
 import com.example.meetup_study.hostUser.domain.dto.RequestHostUserDto;
 import com.example.meetup_study.mapper.HostUserMapper;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;

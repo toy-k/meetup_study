@@ -6,9 +6,9 @@
 //import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 //import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 //import com.example.meetup_study.review.domain.dto.ReviewDto;
-//import com.example.meetup_study.room.RoomService;
-//import com.example.meetup_study.room.domain.RoomStatus;
-//import com.example.meetup_study.room.domain.RoomType;
+//import com.example.meetup_study.room.service.RoomService;
+//import com.example.meetup_study.room.domain.enums.RoomStatus;
+//import com.example.meetup_study.room.domain.enums.RoomType;
 //import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 //import com.example.meetup_study.room.domain.dto.RoomDto;
 //import com.example.meetup_study.user.UserService;

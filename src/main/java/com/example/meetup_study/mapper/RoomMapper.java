@@ -26,23 +26,8 @@ public interface RoomMapper {
 
     RoomMapper INSTANCE = Mappers.getMapper(RoomMapper.class);
 
-    @Mapping(target = "category", qualifiedByName = "convertToCategoryEnum")
-    @Mapping(target = "hostUserId", source = "hostUserList", qualifiedByName = "convertToHostUserId")
-    RoomDto toRoomDto(Room room);
 
-    @Named("convertToCategoryEnum")
-    default CategoryEnum convertToCategoryEnum(Category category) {
-        return category.getName();
-    }
-
-    @Named("convertToHostUserId")
-    default Long convertToHostUserId(List<HostUser> hostUserList) {
-
-        Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
-        return hostUserId;
-    }
-//    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    default RoomDto createRoomDto(Room room) {
+    default RoomDto toRoomDto(Room room) {
         return new RoomDto(
                 room.getId(),
                 room.getTitle(),
@@ -60,8 +45,46 @@ public interface RoomMapper {
                 convertToHostUserId(room.getHostUserList()),
                 room.getCreatedAt(),
                 room.getUpdatedAt()
-      );
+        );
     }
+
+
+    //    @Mapping(target = "category", qualifiedByName = "convertToCategoryEnum")
+//    @Mapping(target = "hostUserId", source = "hostUserList", qualifiedByName = "convertToHostUserId")
+//    RoomDto toRoomDto(Room room);
+//
+//    @Named("convertToCategoryEnum")
+    default CategoryEnum convertToCategoryEnum(Category category) {
+        return category.getName();
+    }
+    //
+//    @Named("convertToHostUserId")
+    default Long convertToHostUserId(List<HostUser> hostUserList) {
+
+        Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
+        return hostUserId;
+    }
+////    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//    default RoomDto createRoomDto(Room room) {
+//        return new RoomDto(
+//                room.getId(),
+//                room.getTitle(),
+//                room.getDescription(),
+//                convertToCategoryEnum(room.getCategory()),
+//                room.getLocation(),
+//                room.getMeetupStartDate(),
+//                room.getMeetupEndDate(),
+//                room.getMaxJoinNumber(),
+//                room.getCurrentJoinNumber(),
+//                room.getPrice(),
+//                room.getRoomStatus(),
+//                room.getRoomType(),
+//                room.getViewCount(),
+//                convertToHostUserId(room.getHostUserList()),
+//                room.getCreatedAt(),
+//                room.getUpdatedAt()
+//      );
+//    }
 }
 
 

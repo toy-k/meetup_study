@@ -2,12 +2,10 @@ package com.example.meetup_study.hostReview;
 
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestHostReviewDto;
 import com.example.meetup_study.hostReview.exception.HostReviewInvalidRequestException;
-import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
 import com.example.meetup_study.hostUser.HostUserService;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.exception.HostUserInvalidRequestException;
@@ -16,10 +14,9 @@ import com.example.meetup_study.joinedUser.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.review.ReviewService;
-import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
@@ -34,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

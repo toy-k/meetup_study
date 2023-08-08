@@ -6,8 +6,8 @@
 //import com.example.meetup_study.Category.domain.CategoryEnum;
 //import com.example.meetup_study.auth.jwt.JwtService;
 //import com.example.meetup_study.image.roomImage.domain.RoomImage;
-//import com.example.meetup_study.room.domain.RoomStatus;
-//import com.example.meetup_study.room.domain.RoomType;
+//import com.example.meetup_study.room.domain.enums.RoomStatus;
+//import com.example.meetup_study.room.domain.enums.RoomType;
 //import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 //import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 //import com.example.meetup_study.room.domain.dto.RoomDto;

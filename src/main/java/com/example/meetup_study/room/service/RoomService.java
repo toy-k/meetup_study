@@ -1,4 +1,4 @@
-package com.example.meetup_study.room;
+package com.example.meetup_study.room.service;
 
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface RoomService {
     Optional<RoomDto> createRoom(RequestRoomDto requestRoomDto);
+
+    Optional<Room> getRoomAndIncrementViewCount(Long id);
 
     Optional<Room> getRoom(Long id);
 

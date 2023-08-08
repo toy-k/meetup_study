@@ -9,7 +9,7 @@ import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.roomImage.domain.dto.RequestDeleteRoomImageDto;
 import com.example.meetup_study.image.roomImage.domain.dto.RequestRoomImageDto;
 import com.example.meetup_study.image.roomImage.domain.dto.RoomImageDto;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
