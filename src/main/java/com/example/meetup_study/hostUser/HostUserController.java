@@ -3,6 +3,7 @@ package com.example.meetup_study.hostUser;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.hostUser.domain.dto.HostUserDto;
 import com.example.meetup_study.hostUser.domain.dto.RequestHostUserDto;
+import com.example.meetup_study.mapper.HostUserMapper;
 import com.example.meetup_study.room.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
@@ -27,6 +28,7 @@ public class HostUserController {
     private final HostUserService hostUserService;
     private final UserService userService;
     private final RoomService roomService;
+    private final HostUserMapper hostUserMapper;
 
     @ApiOperation(value = "호스트 유저 조회", notes = "호스트 유저를 조회합니다.")
     @ApiImplicitParams({
@@ -36,7 +38,7 @@ public class HostUserController {
     public ResponseEntity<HostUserDto> getHostUser(@PathVariable Long id){
         Optional<HostUser> hostUseropt =  hostUserService.getHostUserById(id);
 
-        HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
+        HostUserDto hostUserDto = hostUserMapper.toHostUserDto(hostUseropt.get());
 
         return ResponseEntity.ok(hostUserDto);
     }
@@ -60,7 +62,7 @@ public class HostUserController {
 
         Optional<HostUser> hostUseropt = hostUserService.getHostUserByUserIdAndRoomId(requestHostUserDto.getUserId(), requestHostUserDto.getRoomId());
 
-        HostUserDto hostUserDto = new HostUserDto().convertToHostUserDto(hostUseropt.get());
+        HostUserDto hostUserDto = hostUserMapper.toHostUserDto(hostUseropt.get());
 
         return ResponseEntity.ok(hostUserDto);
 

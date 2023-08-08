@@ -1,5 +1,6 @@
 package com.example.meetup_study.review;
 
+import com.example.meetup_study.mapper.ReviewMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
@@ -26,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final ReviewMapper reviewMapper;
 
     @Override
     public List<ReviewDto> findByRoomId(Long roomId) {
@@ -35,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService{
             List<Review> reviews = reviewRepository.findByRoomId(roomId);
 
             List<ReviewDto> reviewDtoList = reviews.stream()
-                    .map(review -> new ReviewDto().convertToReviewDto(review))
+                    .map(review -> reviewMapper.toReviewDto(review))
                     .collect(Collectors.toList());
             return reviewDtoList;
 
@@ -52,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService{
             List<Review> reviews = user.get().getReviewList();
 
             List<ReviewDto> reviewDtoList = reviews.stream()
-                    .map(review -> new ReviewDto().convertToReviewDto(review))
+                    .map(review -> reviewMapper.toReviewDto(review))
                     .collect(Collectors.toList());
             return reviewDtoList;
         } else {
@@ -67,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
-        ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review);
+        ReviewDto reviewDto = reviewMapper.toReviewDto(review);
 
         return Optional.of(reviewDto);
     }
@@ -85,7 +87,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         reviewRepository.deleteById(reviewId);
 
-        ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+        ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
 
         return Optional.of(reviewDto);
     }
@@ -95,7 +97,7 @@ public class ReviewServiceImpl implements ReviewService{
         Optional<Review> review = reviewRepository.findById(reviewId);
         if(review.isPresent()){
 
-            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+            ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
 
             return Optional.of(reviewDto);
 
@@ -109,7 +111,7 @@ public class ReviewServiceImpl implements ReviewService{
         Optional<Review> review = reviewRepository.findByUserIdAndRoomId(userId, roomId);
 
         if(review.isPresent()){
-            ReviewDto reviewDto = new ReviewDto().convertToReviewDto(review.get());
+            ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
 
             return Optional.of(reviewDto);
         }else{

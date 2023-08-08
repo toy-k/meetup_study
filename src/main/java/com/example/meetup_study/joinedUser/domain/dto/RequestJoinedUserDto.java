@@ -1,6 +1,7 @@
 package com.example.meetup_study.joinedUser.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,8 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class RequestJoinedUserDto {
 
     @Schema(description = "참여 유저가 속한 방 id", example = "1", required = true)
@@ -21,9 +23,4 @@ public class RequestJoinedUserDto {
     @NotNull(message = "UserId은 필수 입력 값입니다.")
     private Long UserId;
 
-
-    public RequestJoinedUserDto(Long roomId, Long userId) {
-        RoomId = roomId;
-        UserId = userId;
-    }
 }

@@ -3,6 +3,7 @@ package com.example.meetup_study.hostReview.domain.dto;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +13,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@AllArgsConstructor
 public class HostReviewDto {
 
     @Schema(description = "호스트 리뷰 id", example = "1", required = true)
@@ -36,17 +38,17 @@ public class HostReviewDto {
     @Lob
     private String content;
 
-    public HostReviewDto(Long id, Long userId,Long roomId, Long reviewId, String content) {
-        this.id = id;
-        this.userId = userId;
-        this.roomId = roomId;
-        this.reviewId = reviewId;
-        this.content = content;
-    }
+//    public HostReviewDto(Long id, Long userId,Long roomId, Long reviewId, String content) {
+//        this.id = id;
+//        this.userId = userId;
+//        this.roomId = roomId;
+//        this.reviewId = reviewId;
+//        this.content = content;
+//    }
 
-    public HostReviewDto convertToHostReviewDto(HostReview hostReview) {
-        return new HostReviewDto(hostReview.getId(),hostReview.getUser().getId(), hostReview.getRoom().getId(), hostReview.getReviewId(), hostReview.getContent());
-    }
+//    public HostReviewDto convertToHostReviewDto(HostReview hostReview) {
+//        return new HostReviewDto(hostReview.getId(),hostReview.getUser().getId(), hostReview.getRoom().getId(), hostReview.getReviewId(), hostReview.getContent());
+//    }
 
 }
 
