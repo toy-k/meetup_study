@@ -180,13 +180,21 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         if(accessTokenOpt.isPresent()){
             String accessToken = accessTokenOpt.get();
             if(jwtService.isValidAccessToken(accessToken)){
-                Optional<String> emailOpt = jwtService.extractEmail(accessToken);
-                if(emailOpt.isPresent()) {
-                    String email = emailOpt.get();
-                    Optional<User> userOpt = userRepository.findByEmail(email);
+//                Optional<String> emailOpt = jwtService.extractEmail(accessToken);
+                Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+
+                if(userIdOpt.isPresent()) {
+//                    String email = emailOpt.get();
+                    Long userId = userIdOpt.get();
+//                    Optional<User> userOpt = userRepository.findByEmail(email);
+                    Optional<User> userOpt = userRepository.findById(userId);
                     if(userOpt.isPresent()){
                         saveAuthentication(userOpt.get());
+                    }else{
+                        throw new UserNotFoundException();
                     }
+                }else{
+                    throw new AccessTokenInvalidRequestException();
                 }
             }
 

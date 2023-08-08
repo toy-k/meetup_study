@@ -1,6 +1,6 @@
 package com.example.meetup_study.common.scheduler;
 
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;

@@ -1,12 +1,8 @@
 package com.example.meetup_study.room.domain.dto;
 
-import com.example.meetup_study.Category.domain.Category;
 import com.example.meetup_study.Category.domain.CategoryEnum;
-import com.example.meetup_study.common.domain.BaseEntity;
-import com.example.meetup_study.hostUser.domain.HostUser;
-import com.example.meetup_study.room.domain.Room;
-import com.example.meetup_study.room.domain.RoomStatus;
-import com.example.meetup_study.room.domain.RoomType;
+import com.example.meetup_study.room.domain.enums.RoomStatus;
+import com.example.meetup_study.room.domain.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +17,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

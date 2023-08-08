@@ -1,13 +1,12 @@
 package com.example.meetup_study.room.domain.dto;
 
 import com.example.meetup_study.Category.domain.CategoryEnum;
-import com.example.meetup_study.room.domain.RoomStatus;
-import com.example.meetup_study.room.domain.RoomType;
+import com.example.meetup_study.room.domain.enums.RoomStatus;
+import com.example.meetup_study.room.domain.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.coyote.Request;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;

@@ -1,8 +1,5 @@
 package com.example.meetup_study.upload.roomUpload;
 
-import com.example.meetup_study.room.RoomService;
-import com.example.meetup_study.room.domain.Room;
-import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.upload.FileDeleteStatus;
 import com.example.meetup_study.upload.roomUpload.domain.dto.RequestDeleteUploadDto;
 import com.example.meetup_study.upload.roomUpload.domain.dto.RequestUploadDto;

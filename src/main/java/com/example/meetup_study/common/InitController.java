@@ -12,8 +12,8 @@ import com.example.meetup_study.image.userImage.domain.repository.UserImageRepos
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.review.ReviewService;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
-import com.example.meetup_study.room.domain.RoomStatus;
-import com.example.meetup_study.room.domain.RoomType;
+import com.example.meetup_study.room.domain.enums.RoomStatus;
+import com.example.meetup_study.room.domain.enums.RoomType;
 import com.example.meetup_study.user.domain.*;
 import com.example.meetup_study.Category.domain.CategoryEnum;
 import com.example.meetup_study.room.domain.Room;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;

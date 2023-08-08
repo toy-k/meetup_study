@@ -1,10 +1,13 @@
-package com.example.meetup_study.room;
+package com.example.meetup_study.room.controller;
 
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.Category.exception.CategoryNotFoundException;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.mapper.RoomMapper;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
@@ -37,8 +40,6 @@ public class RoomController {
 
     private final RoomService roomService;
     private final JwtService jwtService;
-    private final UserService userService;
-    private final CategoryService categoryService;
     private final RoomMapper roomMapper;
 
 //    RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
@@ -56,27 +57,14 @@ public class RoomController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+        Long userId = userIdOpt.get();
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != requestRoomDto.getHostUserId()){
+        if(userId != requestRoomDto.getHostUserId()){
             throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
         if(requestRoomDto.getMeetupEndDate().isBefore(requestRoomDto.getMeetupStartDate())){
             throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
-        }
-
-        if(requestRoomDto.getPrice() < 0){
-            throw new RoomInvalidRequestException("가격이 0보다 작습니다.");
         }
 
         requestRoomDto.setCurrentJoinNumber(1);
@@ -95,7 +83,7 @@ public class RoomController {
     @GetMapping("/id/{id}")
     public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
 
-        Optional<Room> roomOpt = roomService.getRoom(id);
+        Optional<Room> roomOpt = roomService.getRoomAndIncrementViewCount(id);
         RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
 
         return ResponseEntity.ok(roomDtoOpt);
@@ -132,7 +120,6 @@ public class RoomController {
             size = 10;
         }
 
-
         List<RoomDto> roomDtos = roomService.getRoomListBeforeMeetupStart(page, size);
 
         return ResponseEntity.ok(roomDtos);
@@ -168,18 +155,11 @@ public class RoomController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
 
-        Optional<Long> userId = jwtService.extractUserId(accessToken);
-        if(!userId.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+        Long userId = userIdOpt.get();
 
-        Optional<User> userOpt = userService.findById(userId.get());
 
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != roomDto.getHostUserId()){
+        if(userId != roomDto.getHostUserId()){
             throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
         }
 
@@ -187,17 +167,8 @@ public class RoomController {
             throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
         }
 
-        Optional<Category> categoryOpt = categoryService.getCategory(roomDto.getCategory());
-        if(!categoryOpt.isPresent()){
-            throw new RoomInvalidRequestException("카테고리가 없습니다.");
-        }
 
-        if(roomDto.getPrice() < 0){
-            throw new RoomInvalidRequestException("가격이 0보다 작습니다.");
-        }
-
-
-        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userOpt.get().getId());
+        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userId);
 
         return ResponseEntity.ok(updatedRoomDto.get());
     }
@@ -211,27 +182,19 @@ public class RoomController {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
-        Optional<Long> userId = jwtService.extractUserId(accessToken);
-
-        if(!userId.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userId.get());
+        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
+        Long userId = userIdOpt.get();
 
         Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
 
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
         if(!roomOpt.isPresent()) {
             throw new RoomNotFoundException();
         }
-        if(userOpt.get().getId() != roomOpt.get().getHostUserList().get(0).getUser().getId()) {
+        if(userId != roomOpt.get().getHostUserList().get(0).getUser().getId()) {
             throw new UserInvalidRequestException("이 유저는  방을 만들지 않았습니다.");
         }
 
-        Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userOpt.get().getId());
+        Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userId);
 
         return ResponseEntity.ok(deletedRoomDto.get());
     }

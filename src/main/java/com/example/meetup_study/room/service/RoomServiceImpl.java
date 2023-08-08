@@ -1,8 +1,7 @@
-package com.example.meetup_study.room;
+package com.example.meetup_study.room.service;
 
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
-import com.example.meetup_study.Category.domain.CategoryRepository;
 import com.example.meetup_study.Category.exception.CategoryNotFoundException;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
@@ -14,6 +13,7 @@ import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
 import com.example.meetup_study.room.exception.RoomInvalidRequestException;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ import static java.time.LocalDateTime.now;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class RoomServiceImpl implements RoomService{
+public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
@@ -53,11 +53,7 @@ public class RoomServiceImpl implements RoomService{
         Optional<User> userOpt = userRepository.findById(requestRoomDto.getHostUserId());
         Optional<Category> categoryOpt = categoryService.getCategory(requestRoomDto.getCategory());
 
-        if(!categoryOpt.isPresent()){
-            throw new CategoryNotFoundException();
-        }
-
-         RoomImage roomImage = new RoomImage();
+        RoomImage roomImage = new RoomImage();
 
         Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get(), roomImage));
         JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
@@ -65,22 +61,34 @@ public class RoomServiceImpl implements RoomService{
 
         HostUser hostUser = new HostUser(userOpt.get(), room);
         room.addHostUser(hostUser);
+        initializeViewCount(room.getId());
 
         RoomDto roomDto = roomMapper.toRoomDto(room);
 
         return Optional.ofNullable(roomDto);
 
-
     }
 
     @Transactional
+    @Override
+    public Optional<Room> getRoomAndIncrementViewCount(Long id) {
+        Optional<Room> roomOpt = roomRepository.findById(id);
+        if (roomOpt.isPresent()) {
+            Room room = roomOpt.get();
+            Long viewCount = this.incrementViewCount(id);
+            room.changeViewCount(viewCount);
+        } else {
+            throw new RoomNotFoundException();
+        }
+
+        return roomOpt;
+    }
+
     @Override
     public Optional<Room> getRoom(Long id) {
         Optional<Room> roomOpt = roomRepository.findById(id);
         if(roomOpt.isPresent()) {
             Room room = roomOpt.get();
-            Long viewCount = this.incrementViewCount(id);
-            room.changeViewCount(viewCount);
         }else{
             throw new RoomNotFoundException();
         }
@@ -135,6 +143,7 @@ public class RoomServiceImpl implements RoomService{
         return roomDtos;
     }
 
+    @Transactional
     @Override
     public Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId) {
 
@@ -152,16 +161,17 @@ public class RoomServiceImpl implements RoomService{
                room.changePrice(roomDto.getPrice());
                room.changeRoomType(roomDto.getRoomType());
 
-                Optional<Category> cate = categoryService.getCategory(roomDto.getCategory());
-                if(!cate.isPresent()){
-                    throw new CategoryNotFoundException();
-                }
-                room.changeCategory(cate.get());
+               if(!roomDto.getCategory().equals(room.getCategory().getName())) {
+                   Optional<Category> cate = categoryService.getCategory(roomDto.getCategory());
+                   if(!cate.isPresent()){
+                       throw new CategoryNotFoundException();
+                   }
+                   room.changeCategory(cate.get());
+               }
 
                 return roomMapper.toRoomDto(room);
             });
 
-            roomRepository.save(roomOpt.get());
             return roomDtoOpt;
         }else{
             throw new RoomInvalidRequestException("해당 방이 존재하지 않거나, 방장이 아닙니다.") ;
@@ -186,10 +196,16 @@ public class RoomServiceImpl implements RoomService{
     public Long getRoomCount() {
         return roomRepository.count();
     }
+    private void initializeViewCount(Long roomId) {
+        String key = "room:" + roomId + ":viewCount";
+        redisTemplate.opsForValue().set(key, "1");
+    }
 
     private Long incrementViewCount(Long roomId) {
         String key = "room:" + roomId + ":viewCount";
-        Long count = redisTemplate.opsForValue().increment(key);
+        Long count = redisTemplate.opsForValue().increment(key,1L);
+        System.out.println("incrementViewCount "+ roomId +" : " + count);
+
         return count.longValue();
     }
 }

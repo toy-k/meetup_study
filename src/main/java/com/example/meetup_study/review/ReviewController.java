@@ -1,18 +1,16 @@
 package com.example.meetup_study.review;
 
-import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.joinedUser.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
-import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
-import com.example.meetup_study.room.RoomService;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.UserService;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
