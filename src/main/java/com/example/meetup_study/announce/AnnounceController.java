@@ -1,6 +1,5 @@
 package com.example.meetup_study.announce;
 
-import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestDeleteAnnounceDto;
@@ -8,10 +7,7 @@ import com.example.meetup_study.announce.exception.AnnounceInvalidRequestExcepti
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.room.domain.Room;
-import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
-import com.example.meetup_study.room.domain.dto.RoomDto;
-import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;

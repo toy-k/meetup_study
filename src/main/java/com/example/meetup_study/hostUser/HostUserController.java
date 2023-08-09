@@ -7,7 +7,7 @@ import com.example.meetup_study.mapper.HostUserMapper;
 import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;

@@ -36,4 +36,7 @@ public class ReviewDto {
     @Lob
     private String content;
 
+    @Schema(description = "리뷰 작성자가 호스트인지 여부", example = "false", required = true)
+    private Boolean isHostReview = false;
+
 }

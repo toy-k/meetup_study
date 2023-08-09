@@ -1,8 +1,6 @@
 package com.example.meetup_study.user.domain.dto;
 
-import com.example.meetup_study.user.domain.RoleType;
-import com.example.meetup_study.user.domain.User;
-import io.swagger.annotations.ApiModelProperty;
+import com.example.meetup_study.user.domain.enums.RoleType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

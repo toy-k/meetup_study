@@ -2,7 +2,7 @@
 //
 //import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 //import com.example.meetup_study.auth.jwt.JwtService;
-//import com.example.meetup_study.user.domain.RoleType;
+//import com.example.meetup_study.user.domain.enums.RoleType;
 //import com.example.meetup_study.user.domain.dto.RequestUserDto;
 //import com.example.meetup_study.user.domain.dto.UserDto;
 //import com.example.meetup_study.user.domain.repository.UserRepository;

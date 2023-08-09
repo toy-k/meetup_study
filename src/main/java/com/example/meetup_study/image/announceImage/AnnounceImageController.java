@@ -9,7 +9,7 @@ import com.example.meetup_study.image.announceImage.domain.dto.RequestAnnounceIm
 import com.example.meetup_study.image.announceImage.domain.dto.RequestDeleteAnnounceImageDto;
 import com.example.meetup_study.image.exception.ImageInvalidRequestException;
 import com.example.meetup_study.image.exception.ImageNotFoundException;
-import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;

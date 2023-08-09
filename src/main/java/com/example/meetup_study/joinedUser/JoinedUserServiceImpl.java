@@ -8,7 +8,7 @@ import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.enums.RoomStatus;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;

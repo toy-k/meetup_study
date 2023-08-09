@@ -1,4 +1,4 @@
-package com.example.meetup_study.review;
+package com.example.meetup_study.review.service;
 
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;

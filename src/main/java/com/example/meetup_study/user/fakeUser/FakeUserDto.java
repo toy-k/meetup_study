@@ -1,12 +1,11 @@
 package com.example.meetup_study.user.fakeUser;
 
 
-import com.example.meetup_study.user.domain.RoleType;
+import com.example.meetup_study.user.domain.enums.RoleType;
 import com.example.meetup_study.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @Setter

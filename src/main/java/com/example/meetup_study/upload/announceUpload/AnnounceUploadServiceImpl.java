@@ -56,20 +56,29 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
             }
 
             String fileName = announceId + "-" + file.getOriginalFilename();
-            String filePath = System.getProperty("user.dir") + UPLOADPATH + "/" + announceOpt.get().getId() + "/";
+            String folderPath = System.getProperty("user.dir") + UPLOADPATH + "/" + announceOpt.get().getId() + "/";
 
             try {
-                String fullPath = filePath + fileName;
-                File storage = new File(filePath);
-                if (!storage.exists()) {
-                    storage.mkdirs();
-                    storage.createNewFile();
+                File folder = new File(folderPath);
+                boolean folderCreated = folder.mkdirs();
+
+                if(folderCreated){
+                    File newFile = new File(folder, fileName);
+                    boolean fileCreated= newFile.createNewFile();
+
+                    if(fileCreated){
+                        System.out.println("파일 생성 성공");
+                        file.transferTo(newFile);
+                    }else{
+                        System.out.println("파일 생성 실패");
+                    }
+
+                }else{
+                    System.out.println("폴더 생성 실패");
                 }
 
-                file.transferTo(storage);
 
-
-                AnnounceUploadDto announceUploadDto = new AnnounceUploadDto(fileName, fullPath);
+                AnnounceUploadDto announceUploadDto = new AnnounceUploadDto(fileName, folderPath+fileName);
 
                 announceUploadDtos.add(announceUploadDto);
 

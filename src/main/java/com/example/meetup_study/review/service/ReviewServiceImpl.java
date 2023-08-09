@@ -1,5 +1,8 @@
-package com.example.meetup_study.review;
+package com.example.meetup_study.review.service;
 
+import com.example.meetup_study.joinedUser.JoinedUserService;
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
+import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.mapper.ReviewMapper;
 import com.example.meetup_study.review.domain.Review;
 import com.example.meetup_study.review.domain.dto.RequestReviewDto;
@@ -10,12 +13,14 @@ import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
+import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +33,8 @@ public class ReviewServiceImpl implements ReviewService{
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final ReviewMapper reviewMapper;
+    private final JoinedUserService joinedUserService;
+    private final RoomService roomService;
 
     @Override
     public List<ReviewDto> findByRoomId(Long roomId) {
@@ -64,10 +71,30 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Room> room = roomRepository.findById(requestReviewDto.getRoomId());
 
-        Review review = reviewRepository.save(new Review(user.get(), room.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
+        Optional<Room> roomOpt = roomService.getRoom(requestReviewDto.getRoomId());
+        if (!roomOpt.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+
+        Optional<JoinedUser> joinedUserOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+        if(!joinedUserOpt.isPresent()){
+            throw new JoinedUserNotFoundException();
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isBefore(roomOpt.get().getMeetupEndDate())){
+            throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
+        }
+
+        Optional<ReviewDto> reviewDtoOpt = this.findByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+        if(reviewDtoOpt.isPresent()){
+            throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
+        }
+
+        Optional<User> user = userRepository.findById(userId);
+
+        Review review = reviewRepository.save(new Review(user.get(), roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
         ReviewDto reviewDto = reviewMapper.toReviewDto(review);
 
@@ -76,20 +103,28 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
-        Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if(!review.get().getUser().getId().equals(UserId)){
+        Optional<ReviewDto> reviewDtoOpt = this.findById(reviewId);
+        if(!reviewDtoOpt.isPresent()){
+            throw new ReviewNotFoundException();
+        }
+
+        Long roomId = reviewDtoOpt.get().getRoomId();
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        if (!roomOpt.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+
+        if(!reviewDtoOpt.get().getUserId().equals(UserId)){
             throw new ReviewInvalidRequestException("남의 리뷰 삭제할 수 없습니다.");
         }
-        if(review.get().getIsHostReview()){
+        if(reviewDtoOpt.get().getIsHostReview()){
             throw new ReviewInvalidRequestException("이미 호스트가 리뷰 남겨서 삭제할 수 없습니다.");
         }
 
         reviewRepository.deleteById(reviewId);
 
-        ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
-
-        return Optional.of(reviewDto);
+        return reviewDtoOpt;
     }
 
     @Override

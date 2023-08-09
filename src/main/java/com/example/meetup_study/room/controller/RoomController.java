@@ -1,10 +1,5 @@
 package com.example.meetup_study.room.controller;
 
-import com.example.meetup_study.Category.CategoryService;
-import com.example.meetup_study.Category.domain.Category;
-import com.example.meetup_study.Category.domain.CategoryEnum;
-import com.example.meetup_study.Category.exception.CategoryNotFoundException;
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.room.service.RoomService;
@@ -14,10 +9,7 @@ import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.exception.RoomInvalidRequestException;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.user.UserService;
-import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -57,21 +49,8 @@ public class RoomController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-        Long userId = userIdOpt.get();
 
-        if(userId != requestRoomDto.getHostUserId()){
-            throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
-        }
-
-        if(requestRoomDto.getMeetupEndDate().isBefore(requestRoomDto.getMeetupStartDate())){
-            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
-        }
-
-        requestRoomDto.setCurrentJoinNumber(1);
-        requestRoomDto.setViewCount(1L);
-
-
-        Optional<RoomDto> createdRoomDto = roomService.createRoom(requestRoomDto);
+        Optional<RoomDto> createdRoomDto = roomService.createRoom(requestRoomDto, userIdOpt.get());
 
         return ResponseEntity.ok(createdRoomDto.get());
     }
@@ -151,24 +130,10 @@ public class RoomController {
     @PutMapping()
     public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
 
-
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
-
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-        Long userId = userIdOpt.get();
 
-
-        if(userId != roomDto.getHostUserId()){
-            throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
-        }
-
-        if(roomDto.getMeetupEndDate().isBefore(roomDto.getMeetupStartDate())){
-            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
-        }
-
-
-        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userId);
+        Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userIdOpt.get());
 
         return ResponseEntity.ok(updatedRoomDto.get());
     }
@@ -181,20 +146,9 @@ public class RoomController {
     public ResponseEntity<RoomDto> deleteRoom(@RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-        Long userId = userIdOpt.get();
 
-        Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
-
-        if(!roomOpt.isPresent()) {
-            throw new RoomNotFoundException();
-        }
-        if(userId != roomOpt.get().getHostUserList().get(0).getUser().getId()) {
-            throw new UserInvalidRequestException("이 유저는  방을 만들지 않았습니다.");
-        }
-
-        Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userId);
+        Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userIdOpt.get());
 
         return ResponseEntity.ok(deletedRoomDto.get());
     }

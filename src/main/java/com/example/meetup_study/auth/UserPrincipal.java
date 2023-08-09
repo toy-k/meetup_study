@@ -1,7 +1,7 @@
 package com.example.meetup_study.auth;
 
-import com.example.meetup_study.user.domain.ProviderType;
-import com.example.meetup_study.user.domain.RoleType;
+import com.example.meetup_study.user.domain.enums.ProviderType;
+import com.example.meetup_study.user.domain.enums.RoleType;
 import com.example.meetup_study.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
