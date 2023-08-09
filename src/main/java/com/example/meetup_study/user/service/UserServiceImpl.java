@@ -1,13 +1,12 @@
-package com.example.meetup_study.user;
+package com.example.meetup_study.user.service;
 
-import com.example.meetup_study.image.userImage.domain.UserImage;
-import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
 import com.example.meetup_study.mapper.UserMapper;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<UserDto> findByIdReturnDto(Long id) {
         Optional<User> userOpt = userRepository.findById(id);
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
         Optional<UserDto> userDtoOpt = userOpt.map(user -> userMapper.toUserDto(user));
 
         return userDtoOpt;
@@ -41,6 +43,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<UserDto> findByUsername(String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
         Optional<UserDto> userDtoOpt = userOpt.map(user -> userMapper.toUserDto(user));
 
         return userDtoOpt;
@@ -50,7 +55,6 @@ public class UserServiceImpl implements UserService{
     public List<UserDto> findAllUser() {
         List<User> userList = userRepository.findAll();
         List<UserDto> userDtoList = userList.stream().map(user -> userMapper.toUserDto(user)).collect(Collectors.toList());
-
         return userDtoList;
     }
 
@@ -60,15 +64,11 @@ public class UserServiceImpl implements UserService{
     public Optional<UserDto> updateUser(Long id, RequestUserDto requestUserDto) {
 
         Optional<User> userOpt = userRepository.findById(id);
-        if(!userOpt.isPresent()) throw new UserInvalidRequestException();
 
         Optional<UserDto> userDtoOpt = userOpt.map(user->{
-            if (requestUserDto.getUsername()!= null) user.changeUsername(requestUserDto.getUsername());
             if (requestUserDto.getDescription()!= null) user.changeDescription(requestUserDto.getDescription());
-
             return userMapper.toUserDto(user);
         });
-
         return userDtoOpt;
 
     }

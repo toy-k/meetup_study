@@ -5,24 +5,18 @@ import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
-import com.example.meetup_study.upload.roomUpload.domain.dto.UploadDto;
-import com.example.meetup_study.user.UserService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Optional;
 
 @Service

@@ -1,4 +1,4 @@
-package com.example.meetup_study.user;
+package com.example.meetup_study.user.service;
 
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;

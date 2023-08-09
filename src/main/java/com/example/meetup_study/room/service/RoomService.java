@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoomService {
-    Optional<RoomDto> createRoom(RequestRoomDto requestRoomDto);
+    Optional<RoomDto> createRoom(RequestRoomDto requestRoomDto, Long userId);
 
     Optional<Room> getRoomAndIncrementViewCount(Long id);
 

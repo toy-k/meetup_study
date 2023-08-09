@@ -1,6 +1,6 @@
 //package com.example.meetup_study.auth.jwt;
 //
-//import com.example.meetup_study.user.UserController;
+//import com.example.meetup_study.user.controller.UserController;
 //import com.example.meetup_study.user.domain.dto.UserDto;
 //import com.example.meetup_study.user.fakeUser.FakeUserController;
 //import com.example.meetup_study.user.fakeUser.FakeUserDto;

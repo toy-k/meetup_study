@@ -12,7 +12,7 @@
 //import com.example.meetup_study.room.domain.enums.RoomType;
 //import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 //import com.example.meetup_study.room.domain.dto.RoomDto;
-//import com.example.meetup_study.user.UserService;
+//import com.example.meetup_study.user.service.UserService;
 //import com.example.meetup_study.user.fakeUser.FakeRepository;
 //import com.example.meetup_study.user.fakeUser.FakeUserController;
 //import com.example.meetup_study.user.fakeUser.FakeUserDto;

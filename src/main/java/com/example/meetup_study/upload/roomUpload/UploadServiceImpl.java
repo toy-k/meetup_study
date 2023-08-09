@@ -60,7 +60,6 @@ public class UploadServiceImpl implements UploadService{
             String folderPath = System.getProperty("user.dir") + UPLOADPATH + "/" + roomOpt.get().getId() + "/";
 
             try {
-
                 File folder = new File(folderPath);
                 boolean folderCreated = folder.mkdirs();
 

@@ -50,7 +50,11 @@ public class AnnounceUploadController {
 
         Optional<AnnounceUploadDto> announceUploadDtoOpt = announceUploadService.findByAnnounceId(announceId);
 
-        return ResponseEntity.ok(announceUploadDtoOpt.get());
+        if(announceUploadDtoOpt.isPresent()){
+            return ResponseEntity.ok(announceUploadDtoOpt.get());
+        }else {
+            return ResponseEntity.ok(null);
+        }
     }
 
     @ApiOperation(value = "파일 다운로드", notes = "파일을 다운로드합니다.")

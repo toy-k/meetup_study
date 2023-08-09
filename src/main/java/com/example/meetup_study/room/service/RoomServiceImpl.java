@@ -16,6 +16,7 @@ import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,19 @@ public class RoomServiceImpl implements RoomService {
 
     @Transactional
     @Override
-    public Optional<RoomDto> createRoom(RequestRoomDto requestRoomDto) {
+    public Optional<RoomDto> createRoom(RequestRoomDto requestRoomDto, Long userId) {
+
+        if(userId != requestRoomDto.getHostUserId()){
+            throw new RoomInvalidRequestException("이 유저는 방을 만들지 않았습니다.");
+        }
+
+        if(requestRoomDto.getMeetupEndDate().isBefore(requestRoomDto.getMeetupStartDate())){
+            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+        }
+
+        requestRoomDto.setCurrentJoinNumber(1);
+        requestRoomDto.setViewCount(1L);
+
         Optional<User> userOpt = userRepository.findById(requestRoomDto.getHostUserId());
         Optional<Category> categoryOpt = categoryService.getCategory(requestRoomDto.getCategory());
 
@@ -147,6 +160,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Optional<RoomDto> updateRoom(RoomDto roomDto, Long userId) {
 
+        if(userId != roomDto.getHostUserId()){
+            throw new RoomInvalidRequestException("이 유저는 없거나, 방을 만들지 않았습니다.");
+        }
+
+        if(roomDto.getMeetupEndDate().isBefore(roomDto.getMeetupStartDate())){
+            throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
+        }
+
         Optional <Room> roomOpt = roomRepository.findById(roomDto.getId());
 
         if(roomOpt.isPresent() && (roomOpt.get().getHostUserList().get(0).getUser().getId().equals(userId))) {
@@ -180,9 +201,17 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
-        Optional <Room> room = roomRepository.findById(id);
-        roomRepository.delete(room.get());
-        Optional<RoomDto> roomDto = room.map(r -> roomMapper.toRoomDto(r));
+        Optional<Room> roomOpt = roomRepository.findById(id);
+
+        if(!roomOpt.isPresent()) {
+            throw new RoomNotFoundException();
+        }
+        if(userId != roomOpt.get().getHostUserList().get(0).getUser().getId()) {
+            throw new UserInvalidRequestException("이 유저는  방을 만들지 않았습니다.");
+        }
+
+        roomRepository.delete(roomOpt.get());
+        Optional<RoomDto> roomDto = roomOpt.map(r -> roomMapper.toRoomDto(r));
 
         return roomDto;
     }

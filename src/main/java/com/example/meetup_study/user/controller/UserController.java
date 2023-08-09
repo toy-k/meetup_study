@@ -1,14 +1,12 @@
-package com.example.meetup_study.user;
+package com.example.meetup_study.user.controller;
 
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.*;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,12 +38,7 @@ public class UserController {
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id){
 
         Optional<UserDto> userDto = userService.findByIdReturnDto(id);
-        if(userDto.isPresent()){
-            return ResponseEntity.ok(userDto.get());
-        }
-        else {
-            throw new UserNotFoundException();
-        }
+        return ResponseEntity.ok(userDto.get());
     }
 
     @ApiOperation(value = "특정 유저 정보 조회(usernmae)", notes = "")
@@ -59,12 +52,7 @@ public class UserController {
     public ResponseEntity<UserDto> findUserByUsername(@PathVariable String username){
 
         Optional<UserDto> userDto = userService.findByUsername(username);
-        if(userDto.isPresent()){
-            return ResponseEntity.ok(userDto.get());
-        }
-        else {
-            throw new UserNotFoundException();
-        }
+        return ResponseEntity.ok(userDto.get());
     }
 
     //user list
@@ -85,17 +73,8 @@ public class UserController {
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
 
-        if(userId.isPresent()){
-            Optional<UserDto> userDto = userService.findByIdReturnDto(userId.get());
-            if(userDto.isPresent()){
-                return ResponseEntity.ok(userDto.get());
-            }
-            else {
-                throw new UserNotFoundException();
-            }
-        }else{
-            throw new AccessTokenInvalidRequestException();
-        }
+        Optional<UserDto> userDto = userService.findByIdReturnDto(userId.get());
+        return ResponseEntity.ok(userDto.get());
     }
 
     @ApiOperation(value = "내 정보 수정", notes = "")
@@ -107,16 +86,8 @@ public class UserController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
-        if (userId.isPresent()) {
-            Optional<UserDto> updatedUserDto = userService.updateUser(userId.get(), requestUserDto);
-            if (updatedUserDto.isPresent()) {
-                return ResponseEntity.ok(updatedUserDto.get());
-            } else {
-                throw new UserNotFoundException();
-            }
-        }else {
-            throw new AccessTokenInvalidRequestException();
-        }
+        Optional<UserDto> updatedUserDto = userService.updateUser(userId.get(), requestUserDto);
+        return ResponseEntity.ok(updatedUserDto.get());
     }
 
 

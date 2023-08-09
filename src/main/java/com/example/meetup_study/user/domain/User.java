@@ -8,6 +8,8 @@ import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.user.domain.enums.ProviderType;
+import com.example.meetup_study.user.domain.enums.RoleType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

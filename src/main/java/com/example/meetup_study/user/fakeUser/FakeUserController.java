@@ -1,16 +1,11 @@
 package com.example.meetup_study.user.fakeUser;
 
 import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.image.userImage.UserImageService;
 import com.example.meetup_study.image.userImage.domain.UserImage;
-import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
-import com.example.meetup_study.user.domain.ProviderType;
-import com.example.meetup_study.user.domain.RoleType;
+import com.example.meetup_study.user.domain.enums.ProviderType;
+import com.example.meetup_study.user.domain.enums.RoleType;
 import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserForbiddenException;
-import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
-import com.example.meetup_study.user.fakeUser.exception.UserUnauthenticationedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -29,7 +29,9 @@ public interface ReviewMapper {
                 review.getUser().getId(),
                 review.getRoom().getId(),
                 review.getRating(),
-                review.getContent());
+                review.getContent(),
+                review.getIsHostReview());
+
     }
 
 }
