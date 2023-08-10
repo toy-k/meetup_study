@@ -2,7 +2,7 @@ package com.example.meetup_study.common;
 
 import com.example.meetup_study.Category.CategoryService;
 import com.example.meetup_study.Category.domain.Category;
-import com.example.meetup_study.announce.AnnounceService;
+import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.hostUser.domain.HostUser;
@@ -155,12 +155,13 @@ public class InitController {
 
             //fake review 생성.
             if(i == 11){
-                for(Long j=1L; j<5L; j++){
-                    user = fakeUserRepository.findByUsername("fakeuser"+j);
-                    RequestReviewDto requestReviewDto = new RequestReviewDto(11L, 4, "참 좋은 모임이었수다 " + j);
+//                for(Long j=1L; j<5L; j++){
+
+//                    user = fakeUserRepository.findByUsername("fakeuser"+j);
+                    RequestReviewDto requestReviewDto = new RequestReviewDto(11L, 4, "참 좋은 모임이었수다 " + user.get().getId());
                     reviewService.createReview(requestReviewDto, user.get().getId());
 
-                }
+//                }
 
             }
         }
@@ -177,7 +178,7 @@ public class InitController {
             announceDesc = "desc "+k;
             announceUserId = adminUser.get().getId();
             RequestAnnounceDto requestAnnounceDto = new RequestAnnounceDto(announceTitle, announceDesc, announceUserId);
-            Optional<AnnounceDto> announceDto = announceService.createAnnounce(requestAnnounceDto);
+            Optional<AnnounceDto> announceDto = announceService.createAnnounce(requestAnnounceDto, announceUserId);
 
         }
 

@@ -1,4 +1,4 @@
-package com.example.meetup_study.image.userImage;
+package com.example.meetup_study.image.userImage.service;
 
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;

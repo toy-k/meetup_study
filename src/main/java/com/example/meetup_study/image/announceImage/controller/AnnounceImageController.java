@@ -1,17 +1,12 @@
-package com.example.meetup_study.image.announceImage;
+package com.example.meetup_study.image.announceImage.controller;
 
-import com.example.meetup_study.announce.AnnounceService;
-import com.example.meetup_study.announce.domain.dto.AnnounceDto;
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
+import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.image.announceImage.service.AnnounceImageService;
 import com.example.meetup_study.image.announceImage.domain.dto.AnnounceImageDto;
 import com.example.meetup_study.image.announceImage.domain.dto.RequestAnnounceImageDto;
 import com.example.meetup_study.image.announceImage.domain.dto.RequestDeleteAnnounceImageDto;
-import com.example.meetup_study.image.exception.ImageInvalidRequestException;
-import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.user.service.UserService;
-import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -47,27 +42,7 @@ public class AnnounceImageController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(requestAnnounceImageDto.getAnnounceId());
-        if (!announceDtoOpt.isPresent()) throw new ImageNotFoundException();
-
-
-        if (file.isEmpty()) {
-            throw new ImageNotFoundException();
-        }
-
         Optional<AnnounceImageDto> announceImageDtoOpt = announceImageService.updateAnnounceImage(file, requestAnnounceImageDto.getAnnounceId());
-
-        if(!announceImageDtoOpt.isPresent()) throw new ImageNotFoundException();
 
         return ResponseEntity.ok(announceImageDtoOpt.get());
     }
@@ -79,15 +54,8 @@ public class AnnounceImageController {
     @GetMapping("/announceId/{announceId}")
     public ResponseEntity<AnnounceImageDto> getAnnounceImage(@PathVariable Long announceId) {
 
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(announceId);
-
-        if(!announceDtoOpt.isPresent()){
-            throw new ImageNotFoundException();
-        }
 
         Optional<AnnounceImageDto> announceImageDtoOpt = announceImageService.getAnnounceImage(announceId);
-
-        if(!announceImageDtoOpt.isPresent()) throw new ImageNotFoundException();
 
         return ResponseEntity.ok(announceImageDtoOpt.get());
     }
@@ -102,24 +70,7 @@ public class AnnounceImageController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(requestDeleteAnnounceImageDto.getAnnounceId());
-        if(!announceDtoOpt.isPresent()){
-            throw new ImageNotFoundException();
-        }
-
         Optional<AnnounceImageDto> announceImageDtoOpt = announceImageService.deleteAnnounceImage(requestDeleteAnnounceImageDto.getAnnounceId());
-
-        if(!announceImageDtoOpt.isPresent()) throw new ImageInvalidRequestException();
 
         return ResponseEntity.ok(announceImageDtoOpt.get());
     }

@@ -1,4 +1,4 @@
-package com.example.meetup_study.image.announceImage;
+package com.example.meetup_study.image.announceImage.service;
 
 import com.example.meetup_study.image.announceImage.domain.dto.AnnounceImageDto;
 import org.springframework.web.multipart.MultipartFile;

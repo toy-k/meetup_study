@@ -1,21 +1,14 @@
-package com.example.meetup_study.admin;
+package com.example.meetup_study.admin.controller;
 
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
+import com.example.meetup_study.admin.service.AdminService;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
-import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
-import com.example.meetup_study.review.service.ReviewService;
 import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
 import com.example.meetup_study.review.domain.dto.ReviewDto;
-import com.example.meetup_study.room.service.RoomService;
-import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
-import com.example.meetup_study.room.exception.RoomNotFoundException;
 import com.example.meetup_study.user.service.UserService;
-import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -32,10 +25,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
-    private final RoomService roomService;
     private final JwtService jwtService;
     private final UserService userService;
-    private final ReviewService reviewService;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -50,22 +41,7 @@ public class AdminController {
 
         Optional<Long> userId = jwtService.extractUserId(accessToken);
 
-        if(!userId.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userId.get());
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<Room> roomOpt = roomService.getRoom(requestDeleteRoomDto.getId());
-
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
-        Optional<RoomDto> deletedRoomDto = adminService.deleteRoom(requestDeleteRoomDto.getId(), userOpt.get().getId());
+        Optional<RoomDto> deletedRoomDto = adminService.deleteRoom(requestDeleteRoomDto.getId(), userId.get());
 
         return ResponseEntity.ok(deletedRoomDto.get());
     }
@@ -81,28 +57,8 @@ public class AdminController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
 
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(requestDeleteReviewDto.getReviewId());
-
-
-
-        Long roomId = reviewDtoOpt.get().getRoomId();
-
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
-        Optional<ReviewDto> reviewDto = adminService.deleteReview(requestDeleteReviewDto.getReviewId(), userOpt.get().getId());
+        Optional<ReviewDto> reviewDto = adminService.deleteReview(requestDeleteReviewDto.getReviewId(), userIdOpt.get());
 
         return ResponseEntity.ok(reviewDto.get());
     }
@@ -118,21 +74,7 @@ public class AdminController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<HostReviewDto> hostReviewDtoOpt = adminService.deleteHostReview(requestDeleteHostReviewDto.getHostReviewId(), userOpt.get().getId());
-
-        if(!hostReviewDtoOpt.isPresent()){
-            throw new HostReviewNotFoundException();
-        }
+        Optional<HostReviewDto> hostReviewDtoOpt = adminService.deleteHostReview(requestDeleteHostReviewDto.getHostReviewId(), userIdOpt.get());
 
         return ResponseEntity.ok(hostReviewDtoOpt.get());
     }

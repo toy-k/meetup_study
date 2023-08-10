@@ -1,4 +1,4 @@
-package com.example.meetup_study.announce;
+package com.example.meetup_study.announce.service;
 
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnnounceService {
-    Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto);
+    Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto, Long userId);
 
     Optional<AnnounceDto> getAnnounce(Long announceId);
 
