@@ -24,7 +24,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Slf4j
 public class User extends BaseEntity {
 
     @Id
@@ -101,7 +100,6 @@ public class User extends BaseEntity {
     }
 
     public void updateRefreshToken(String refreshToken) {
-        log.debug("[User entity] updateRefreshToken");
         this.refreshToken = refreshToken;
     }
 

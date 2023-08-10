@@ -98,11 +98,6 @@ public class AnnounceUploadServiceImpl implements AnnounceUploadService{
     @Override
     public Optional<AnnounceUploadDto> findByAnnounceId(Long announceId) {
 
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
-        if(!announceOpt.isPresent()){
-            throw new AnnounceNotFoundException();
-        }
-
         Optional<AnnounceUpload> announceUploadOpt = announceUploadRepository.findByAnnounceId(announceId);
         if(!announceUploadOpt.isPresent()){
             throw new UploadNotFoundException();

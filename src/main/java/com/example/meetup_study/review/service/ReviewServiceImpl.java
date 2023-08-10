@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
-    private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final ReviewMapper reviewMapper;
     private final JoinedUserService joinedUserService;
@@ -40,35 +39,26 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public List<ReviewDto> findByRoomId(Long roomId) {
-        Optional<Room> room = roomRepository.findById(roomId);
-        if(room.isPresent()) {
 
-            List<Review> reviews = reviewRepository.findByRoomId(roomId);
+        List<Review> reviews = reviewRepository.findByRoomId(roomId);
 
-            List<ReviewDto> reviewDtoList = reviews.stream()
-                    .map(review -> reviewMapper.toReviewDto(review))
-                    .collect(Collectors.toList());
-            return reviewDtoList;
+        List<ReviewDto> reviewDtoList = reviews.stream()
+                .map(review -> reviewMapper.toReviewDto(review))
+                .collect(Collectors.toList());
+        return reviewDtoList;
 
-        }else{
-            throw new RoomNotFoundException();
-        }
     }
 
     @Override
     public List<ReviewDto> findByUserId(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-//            List<Review> reviews = reviewRepository.findByUserId(userId);
-            List<Review> reviews = user.get().getReviewList();
 
-            List<ReviewDto> reviewDtoList = reviews.stream()
-                    .map(review -> reviewMapper.toReviewDto(review))
-                    .collect(Collectors.toList());
-            return reviewDtoList;
-        } else {
-            throw new UserNotFoundException();
-        }
+//        List<Review> reviewList = reviewRepository.findByUserId(userId);
+        List<Review> reviewList = reviewRepository.findByUserIdWithFetchJoin(userId);
+
+        List<ReviewDto> reviewDtoList = reviewList.stream()
+                .map(review -> reviewMapper.toReviewDto(review))
+                .collect(Collectors.toList());
+        return reviewDtoList;
     }
 
     @Override

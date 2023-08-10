@@ -30,8 +30,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<UserDto> findByIdReturnDto(Long id) {
-        Optional<User> userOpt = userRepository.findById(id);
+    public Optional<UserDto> findByIdWithUserImage(Long id) {
+
+        Optional<User> userOpt = userRepository.findByIdWithUserImage(id);
+
         if(!userOpt.isPresent()){
             throw new UserNotFoundException();
         }
@@ -41,8 +43,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<UserDto> findByUsername(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+    public Optional<UserDto> findByUsernameWithUserImage(String username) {
+        Optional<User> userOpt = userRepository.findByUsernameWithUserImage(username);
+
         if(!userOpt.isPresent()){
             throw new UserNotFoundException();
         }
@@ -52,8 +55,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserDto> findAllUser() {
-        List<User> userList = userRepository.findAll();
+    public List<UserDto> findAllUserWithUserImage() {
+        List<User> userList = userRepository.findAllUserWithUserImage();
+
+//        List<User> userList = userRepository.findAll();
         List<UserDto> userDtoList = userList.stream().map(user -> userMapper.toUserDto(user)).collect(Collectors.toList());
         return userDtoList;
     }

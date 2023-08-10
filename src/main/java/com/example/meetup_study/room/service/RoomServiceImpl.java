@@ -101,12 +101,10 @@ public class RoomServiceImpl implements RoomService {
     public Optional<Room> getRoom(Long id) {
         Optional<Room> roomOpt = roomRepository.findById(id);
         if(roomOpt.isPresent()) {
-            Room room = roomOpt.get();
+            return roomOpt;
         }else{
             throw new RoomNotFoundException();
         }
-
-        return roomOpt;
     }
 
     @Override

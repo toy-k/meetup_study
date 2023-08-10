@@ -11,11 +11,11 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
-    Optional<UserDto> findByIdReturnDto(Long id);
+    Optional<UserDto> findByIdWithUserImage(Long id);
 
-    Optional<UserDto> findByUsername(String username);
+    Optional<UserDto> findByUsernameWithUserImage(String username);
 
-    List<UserDto> findAllUser();
+    List<UserDto> findAllUserWithUserImage();
 
 
     Optional<UserDto> updateUser(Long id, RequestUserDto requestUserDto);

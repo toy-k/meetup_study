@@ -37,7 +37,7 @@ public class UserController {
     @GetMapping("/id/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id){
 
-        Optional<UserDto> userDto = userService.findByIdReturnDto(id);
+        Optional<UserDto> userDto = userService.findByIdWithUserImage(id);
         return ResponseEntity.ok(userDto.get());
     }
 
@@ -51,7 +51,7 @@ public class UserController {
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDto> findUserByUsername(@PathVariable String username){
 
-        Optional<UserDto> userDto = userService.findByUsername(username);
+        Optional<UserDto> userDto = userService.findByUsernameWithUserImage(username);
         return ResponseEntity.ok(userDto.get());
     }
 
@@ -60,7 +60,7 @@ public class UserController {
     @GetMapping("/list")
     public ResponseEntity<List<UserDto>> findAllUser(){
 
-        List<UserDto> userList = userService.findAllUser();
+        List<UserDto> userList = userService.findAllUserWithUserImage();
         return ResponseEntity.ok(userList);
     }
 
@@ -70,10 +70,9 @@ public class UserController {
     public ResponseEntity<UserDto> findMeByToken(HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
         Optional<Long> userId = jwtService.extractUserId(accessToken);
 
-        Optional<UserDto> userDto = userService.findByIdReturnDto(userId.get());
+        Optional<UserDto> userDto = userService.findByIdWithUserImage(userId.get());
         return ResponseEntity.ok(userDto.get());
     }
 
@@ -83,9 +82,10 @@ public class UserController {
     })
     @PutMapping("/me")
     public ResponseEntity<UserDto> updateMe(HttpServletRequest req, @RequestBody RequestUserDto requestUserDto){
-        String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
+        String accessToken = req.getAttribute(ACCESSTOKEN).toString();
         Optional<Long> userId = jwtService.extractUserId(accessToken);
+
         Optional<UserDto> updatedUserDto = userService.updateUser(userId.get(), requestUserDto);
         return ResponseEntity.ok(updatedUserDto.get());
     }
