@@ -1,4 +1,4 @@
-package com.example.meetup_study.announce;
+package com.example.meetup_study.announce.service;
 
 import com.example.meetup_study.announce.domain.Announce;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
@@ -8,7 +8,6 @@ import com.example.meetup_study.announce.exception.AnnounceInvalidRequestExcepti
 import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
 import com.example.meetup_study.mapper.AnnounceMapper;
-import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +34,13 @@ public class AnnounceServiceImpl implements AnnounceService {
 
     @Transactional
     @Override
-    public Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto) {
-        Optional<User> userOpt = userRepository.findById(requestAnnounceDto.getUserId());
+    public Optional<AnnounceDto> createAnnounce(RequestAnnounceDto requestAnnounceDto, Long userId) {
 
+        if(userId != requestAnnounceDto.getUserId()){
+            throw new AnnounceInvalidRequestException();
+        }
+
+        Optional<User> userOpt = userRepository.findById(requestAnnounceDto.getUserId());
 
         AnnounceImage announceImage = new AnnounceImage();
 
@@ -45,7 +48,6 @@ public class AnnounceServiceImpl implements AnnounceService {
 
         userOpt.get().addAnnounce(announce);
 
-//        AnnounceDto announceDto = new AnnounceDto().convertToAnnounceDto(announce);
 
         AnnounceDto announceDto = announceMapper.toAnnounceDto(announce);
 
@@ -87,6 +89,10 @@ public class AnnounceServiceImpl implements AnnounceService {
     @Override
     public Optional<AnnounceDto> updateAnnounce(AnnounceDto announceDto, Long userId) {
 
+        if(userId != announceDto.getUserId()){
+            throw new AnnounceInvalidRequestException();
+        }
+
         Optional<Announce> announceOpt = announceRepository.findById(announceDto.getId());
 
         if(!announceOpt.isPresent()){
@@ -110,6 +116,16 @@ public class AnnounceServiceImpl implements AnnounceService {
 
     @Override
     public Optional<AnnounceDto> deleteAnnounce(Long announceId, Long userId) {
+
+        Optional<AnnounceDto> announceDtoOpt = this.getAnnounce(announceId);
+
+        if(!announceDtoOpt.isPresent() ){
+            throw new AnnounceNotFoundException();
+        }
+
+        if(userId != announceDtoOpt.get().getUserId()){
+            throw new AnnounceInvalidRequestException();
+        }
 
 
         Optional<Announce> announceOpt = announceRepository.findById(announceId);

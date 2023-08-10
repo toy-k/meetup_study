@@ -1,6 +1,5 @@
-package com.example.meetup_study.admin;
+package com.example.meetup_study.admin.service;
 
-import com.example.meetup_study.common.aop.Timer;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
@@ -13,9 +12,12 @@ import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.review.domain.repository.ReviewRepository;
 import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
+import com.example.meetup_study.review.service.ReviewService;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
+import com.example.meetup_study.room.exception.RoomNotFoundException;
+import com.example.meetup_study.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +34,18 @@ public class AdminServiceImpl implements AdminService{
     private final RoomMapper roomMapper;
     private final HostReviewMapper hostReviewMapper;
     private final ReviewMapper reviewMapper;
+    private final RoomService roomService;
+    private final ReviewService reviewService;
 
     @Override
     public Optional<RoomDto> deleteRoom(Long id, Long userId) {
+
+        Optional<Room> roomOpt = roomService.getRoom(id);
+
+        if(!roomOpt.isPresent()){
+            throw new RoomNotFoundException();
+        }
+
         Optional <Room> room = roomRepository.findById(id);
 
         roomRepository.delete(room.get());
@@ -45,6 +56,16 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
+
+        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(reviewId);
+
+        Long roomId = reviewDtoOpt.get().getRoomId();
+
+        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        if(!roomOpt.isPresent()){
+            throw new RoomNotFoundException();
+        }
+
         Optional<Review> review = reviewRepository.findById(reviewId);
         if(review.isPresent()){
 
@@ -77,7 +98,6 @@ public class AdminServiceImpl implements AdminService{
             hostReviewRepository.deleteById(hostReviewId);
             reviewOpt.get().changeIsHostReview(false);
 
-//            HostReviewDto hostReviewDto = new HostReviewDto().convertToHostReviewDto(hostReviewOpt.get());
             HostReviewDto hostReviewDto = hostReviewMapper.toHostReviewDto(hostReviewOpt.get());
 
             return Optional.of(hostReviewDto);

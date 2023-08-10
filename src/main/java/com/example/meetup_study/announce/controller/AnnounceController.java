@@ -1,15 +1,11 @@
-package com.example.meetup_study.announce;
+package com.example.meetup_study.announce.controller;
 
+import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestDeleteAnnounceDto;
-import com.example.meetup_study.announce.exception.AnnounceInvalidRequestException;
-import com.example.meetup_study.announce.exception.AnnounceNotFoundException;
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
 import com.example.meetup_study.user.service.UserService;
-import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -46,21 +42,7 @@ public class AnnounceController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != requestAnnounceDto.getUserId()){
-            throw new AnnounceInvalidRequestException();
-        }
-
-        Optional<AnnounceDto> createdAnnounceDto = announceService.createAnnounce(requestAnnounceDto);
+        Optional<AnnounceDto> createdAnnounceDto = announceService.createAnnounce(requestAnnounceDto, userIdOpt.get());
 
         return ResponseEntity.ok(createdAnnounceDto.get());
     }
@@ -73,11 +55,7 @@ public class AnnounceController {
     public ResponseEntity<AnnounceDto> getAnnounce(@PathVariable Long id){
 
         Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(id);
-        if(announceDtoOpt.isPresent()){
-            return ResponseEntity.ok(announceDtoOpt.get());
-        }else{
-            throw new AnnounceNotFoundException();
-        }
+        return ResponseEntity.ok(announceDtoOpt.get());
     }
     @ApiOperation(value = "공지사항 리스트 조회", notes = "공지사항 리스트를 조회합니다.")
     @ApiImplicitParams({
@@ -109,21 +87,7 @@ public class AnnounceController {
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
-
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != AnnounceDto.getUserId()){
-            throw new AnnounceInvalidRequestException();
-        }
-
-        Optional<AnnounceDto> updatedAnnounceDto = announceService.updateAnnounce(AnnounceDto, userOpt.get().getId());
+        Optional<AnnounceDto> updatedAnnounceDto = announceService.updateAnnounce(AnnounceDto, userIdOpt.get());
 
         return ResponseEntity.ok(updatedAnnounceDto.get());
     }
@@ -138,26 +102,8 @@ public class AnnounceController {
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
 
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(requestDeleteAnnounceDto.getAnnounceId());
-
-        if(!announceDtoOpt.isPresent() ){
-            throw new AnnounceNotFoundException();
-        }
-
-        if(userOpt.get().getId() != announceDtoOpt.get().getUserId()){
-            throw new AnnounceInvalidRequestException();
-        }
-
-        Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(requestDeleteAnnounceDto.getAnnounceId(), userOpt.get().getId());
+        Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(requestDeleteAnnounceDto.getAnnounceId(), userIdOpt.get());
 
         return ResponseEntity.ok(deletedAnnounceDto.get());
     }

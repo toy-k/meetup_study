@@ -1,10 +1,11 @@
-package com.example.meetup_study.image.userImage;
+package com.example.meetup_study.image.userImage.service;
 
 import com.example.meetup_study.image.exception.ImageInvalidRequestException;
 import com.example.meetup_study.image.exception.ImageNotFoundException;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.image.userImage.domain.repository.UserImageRepository;
+import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,10 @@ public class UserImageServiceImpl implements UserImageService {
     public Optional<UserImageDto> updateUserImagee(MultipartFile file, Long userId) {
 
         try{
+            if (file.isEmpty()) {
+                throw new ImageNotFoundException();
+            }
+
             long fileSize = file.getSize();
 
 
@@ -39,11 +44,7 @@ public class UserImageServiceImpl implements UserImageService {
             String fileExtension = getFileExtension(file.getOriginalFilename());
             byte[] data = compressFile(file.getBytes(), fileExtension);
 
-//            System.out.println("=========================================");
-//            System.out.println("Uploaded file size: " + fileSize + " bytes");
-//            System.out.println("Uploaded file size: " + data.length + " bytes");
-//            System.out.println("=========================================");
-
+            UserImageDto userImageDtoOpt;
             if(userImage == null){
                 UserImage userImageInst = new UserImage(data);
 
@@ -51,10 +52,7 @@ public class UserImageServiceImpl implements UserImageService {
 
                 userOpt.get().changeUserImage(newUserImage);
 
-                UserImageDto userImageDtoOpt = new UserImageDto(newUserImage.getProfile());
-
-                return Optional.of(userImageDtoOpt);
-
+                userImageDtoOpt = new UserImageDto(newUserImage.getProfile());
             }else{
                 Optional<UserImage> userImageOpt = userImageRepository.findById(userImage.getId());
                 if (!userImageOpt.isPresent()) {
@@ -63,38 +61,25 @@ public class UserImageServiceImpl implements UserImageService {
 
                 userImageOpt.get().changeProfile(data);
                 userImageRepository.save(userImageOpt.get());
-                UserImageDto userImageDtoOpt = new UserImageDto(userImage.getProfile());
 
-                return Optional.of(userImageDtoOpt);
-
-
+                userImageDtoOpt = new UserImageDto(userImage.getProfile());
             }
+            return Optional.of(userImageDtoOpt);
+
         }catch (IOException e){
             throw new ImageInvalidRequestException();
         }
 
     }
 
-    //byte 응답 = 이미지 브라우저에 띄움
-//    @Override
-//    public Optional<byte[]> getUserImageee(Long userId) {
-//        Optional<User> userOpt = userService.findById(userId);
-//
-//        if (!userOpt.isPresent()) {
-//            throw new UserNotFoundException();
-//        }
-//
-//        UserImage userImage = userOpt.get().getUserImage();
-//        byte[] imageBytes = userImage.getProfile();
-//
-//        return Optional.of(imageBytes);
-//    }
-
 
     @Override
     public Optional<UserImageDto> getUserImagee(Long userId) {
 
         Optional<User> userOpt = userService.findById(userId);
+        if(!userOpt.isPresent()){
+            throw new UserNotFoundException();
+        }
 
         UserImage userImage = userOpt.get().getUserImage();
 

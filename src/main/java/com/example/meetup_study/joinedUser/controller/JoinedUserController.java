@@ -1,7 +1,8 @@
-package com.example.meetup_study.joinedUser;
+package com.example.meetup_study.joinedUser.controller;
 
 import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
 import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.joinedUser.service.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
 import com.example.meetup_study.joinedUser.domain.dto.RequestJoinedUserDto;
@@ -33,10 +34,7 @@ import java.util.Optional;
 public class JoinedUserController {
 
     private final JoinedUserService joinedUserService;
-    private final UserService userService;
-    private final RoomService roomService;
     private final JwtService jwtService;
-    private final JoinedUserMapper joinedUserMapper;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -48,29 +46,11 @@ public class JoinedUserController {
     public ResponseEntity<JoinedUserDto> joinRoom(@Valid @RequestBody RequestJoinedUserDto requestJoinedUserDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
-
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
+        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.joinRoom(requestJoinedUserDto, userIdOpt.get());
 
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != requestJoinedUserDto.getUserId()){
-            throw new UserInvalidRequestException("유저 아이디가 일치하지 않습니다.");
-        }
-
-        Optional<JoinedUser> joinedUseropt = joinedUserService.joinRoom(requestJoinedUserDto.getUserId(), requestJoinedUserDto.getRoomId());
-
-        JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
-
-        return ResponseEntity.ok(joinedUserDto);
+        return ResponseEntity.ok(joinedUserDtoOpt.get());
     }
 
     @ApiOperation(value = "방 나가기", notes = "방에서 나갑니다.")
@@ -79,30 +59,13 @@ public class JoinedUserController {
     })
     @DeleteMapping
     public ResponseEntity<JoinedUserDto> leaveRoom(@Valid @RequestBody RequestJoinedUserDto requestJoinedUserDto, HttpServletRequest req){
+
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
-
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        if(!userIdOpt.isPresent()){
-            throw new AccessTokenInvalidRequestException();
-        }
+        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.leaveRoom(requestJoinedUserDto,userIdOpt.get());
 
-        Optional<User> userOpt = userService.findById(userIdOpt.get());
-
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        if(userOpt.get().getId() != requestJoinedUserDto.getUserId()){
-            throw new UserInvalidRequestException("유저 아이디가 일치하지 않습니다.");
-        }
-
-        Optional<JoinedUser> joinedUseropt = joinedUserService.leaveRoom(requestJoinedUserDto.getUserId(),requestJoinedUserDto.getRoomId());
-
-        JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
-
-        return ResponseEntity.ok(joinedUserDto);
+        return ResponseEntity.ok(joinedUserDtoOpt.get());
     }
 
     @ApiOperation(value = "방 참여자 조회", notes = "방에 참여한 유저들을 조회합니다.")
@@ -111,15 +74,10 @@ public class JoinedUserController {
     })
     @GetMapping("/id/{id}")
     public ResponseEntity<JoinedUserDto> getJoinedUser(@PathVariable Long id){
-        Optional<JoinedUser> joinedUseropt =  joinedUserService.getJoinedUserById(id);
 
-        if(joinedUseropt.isPresent()){
-            JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
-            return ResponseEntity.ok(joinedUserDto);
+        Optional<JoinedUserDto> joinedUserDtoOpt =  joinedUserService.getJoinedUserById(id);
 
-        }else{
-            throw new JoinedUserNotFoundException();
-        }
+        return ResponseEntity.ok(joinedUserDtoOpt.get());
 
     }
 
@@ -130,25 +88,11 @@ public class JoinedUserController {
     })
     @GetMapping("/ids/roomId/{roomId}/userId/{userId}")
     public ResponseEntity<JoinedUserDto> getJoinedUser(@PathVariable Long userId, @PathVariable Long roomId) {
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
 
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
+        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, roomId);
 
-        Optional<JoinedUser> joinedUseropt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, roomId);
+        return ResponseEntity.ok(joinedUserDtoOpt.get());
 
-        if (joinedUseropt.isPresent()) {
-            JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUseropt.get());
-            return ResponseEntity.ok(joinedUserDto);
-
-        } else {
-            throw new JoinedUserNotFoundException();
-        }
     }
 
     @ApiOperation(value = "참여 방들 조회", notes = "한 유저가 참여한 방들을 조회합니다")
@@ -158,20 +102,9 @@ public class JoinedUserController {
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<JoinedUserDto>> getJoinedUserByUserId(@PathVariable Long userId){
 
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
+        List<JoinedUserDto> joinedUserDtoList =  joinedUserService.getJoinedUserByUserId(userId);
 
-        List<JoinedUser> joinedUseropt =  joinedUserService.getJoinedUserByUserId(userId);
-
-        List<JoinedUserDto> joinedUserDtos = new ArrayList<>();
-
-        for(JoinedUser joinedUser : joinedUseropt){
-            joinedUserDtos.add(joinedUserMapper.toJoinedUserDto(joinedUser));
-        }
-
-        return ResponseEntity.ok(joinedUserDtos);
+        return ResponseEntity.ok(joinedUserDtoList);
 
 
     }
@@ -183,20 +116,9 @@ public class JoinedUserController {
     @GetMapping("/roomId/{roomId}")
     public ResponseEntity<List<JoinedUserDto>> getJoinedUserByRoomId(@PathVariable Long roomId) {
 
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
+        List<JoinedUserDto> joinedUserDtoList = joinedUserService.getJoinedUserByRoomId(roomId);
 
-        List<JoinedUser> joinedUseropt = joinedUserService.getJoinedUserByRoomId(roomId);
-
-        List<JoinedUserDto> joinedUserDtos = new ArrayList<>();
-
-        for (JoinedUser joinedUser : joinedUseropt) {
-            joinedUserDtos.add(joinedUserMapper.toJoinedUserDto(joinedUser));
-        }
-
-        return ResponseEntity.ok(joinedUserDtos);
+        return ResponseEntity.ok(joinedUserDtoList);
     }
 
 }

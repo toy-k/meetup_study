@@ -1,7 +1,8 @@
-package com.example.meetup_study.image.announceImage;
+package com.example.meetup_study.image.announceImage.service;
 
-import com.example.meetup_study.announce.AnnounceService;
+import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.announce.domain.Announce;
+import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.repository.AnnounceRepository;
 import com.example.meetup_study.image.announceImage.domain.AnnounceImage;
 import com.example.meetup_study.image.announceImage.domain.dto.AnnounceImageDto;
@@ -31,13 +32,23 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
     @Override
     public Optional<AnnounceImageDto> updateAnnounceImage(MultipartFile file, Long announceId) {
         try{
+
+            if (file.isEmpty()) {
+                throw new ImageNotFoundException();
+            }
+
+
+
             Optional<Announce> announceOpt = announceRepository.findById(announceId);
+
+            if (!announceOpt.isPresent()) throw new ImageNotFoundException();
 
             AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 
             String fileExtension = getFileExtension(file.getOriginalFilename());
             byte[] data = compressFile(file.getBytes(), fileExtension);
 
+            AnnounceImageDto announceImageDtoOpt;
 
             if(announceImage == null){
                 AnnounceImage announceImageInst = new AnnounceImage(data);
@@ -46,30 +57,40 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
                 announceOpt.get().changeAnnounceImage(newAnnounceImage);
 
-                AnnounceImageDto announceImageDtoOpt = new AnnounceImageDto(newAnnounceImage.getProfile());
+                announceImageDtoOpt = new AnnounceImageDto(newAnnounceImage.getProfile());
 
-                return Optional.of(announceImageDtoOpt);
 
             }else{
                 Optional<AnnounceImage> announceImageOpt = announceImageRepository.findById(announceImage.getId());
+
                 if (!announceImageOpt.isPresent()) {
                     throw new ImageNotFoundException();
                 }
 
                 announceImageOpt.get().changeProfile(data);
                 announceImageRepository.save(announceImageOpt.get());
-                AnnounceImageDto announceImageDtoOpt = new AnnounceImageDto(announceImage.getProfile());
 
-                return Optional.of(announceImageDtoOpt);
+                announceImageDtoOpt = new AnnounceImageDto(announceImage.getProfile());
 
 
             }
+
+            return Optional.of(announceImageDtoOpt);
+
+
         }catch (IOException e){
             throw new ImageInvalidRequestException();
         }    }
 
     @Override
     public Optional<AnnounceImageDto> getAnnounceImage(Long announceId) {
+
+        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(announceId);
+
+        if(!announceDtoOpt.isPresent()){
+            throw new ImageNotFoundException();
+        }
+
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
@@ -80,7 +101,13 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
     @Override
     public Optional<AnnounceImageDto> deleteAnnounceImage(Long announceId) {
+
+
         Optional<Announce> announceOpt = announceRepository.findById(announceId);
+
+        if(!announceOpt.isPresent()){
+            throw new ImageNotFoundException();
+        }
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 

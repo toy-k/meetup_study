@@ -1,6 +1,7 @@
 package com.example.meetup_study.review.service;
 
-import com.example.meetup_study.joinedUser.JoinedUserService;
+import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
+import com.example.meetup_study.joinedUser.service.JoinedUserService;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.mapper.ReviewMapper;
@@ -20,6 +21,7 @@ import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +72,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
+    @Transactional
     public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
 
         Optional<Room> roomOpt = roomService.getRoom(requestReviewDto.getRoomId());
@@ -77,8 +80,8 @@ public class ReviewServiceImpl implements ReviewService{
             throw new RoomNotFoundException();
         }
 
-        Optional<JoinedUser> joinedUserOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
-        if(!joinedUserOpt.isPresent()){
+        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+        if(!joinedUserDtoOpt.isPresent()){
             throw new JoinedUserNotFoundException();
         }
 
