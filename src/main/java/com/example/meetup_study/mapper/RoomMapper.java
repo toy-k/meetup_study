@@ -64,27 +64,6 @@ public interface RoomMapper {
         Long hostUserId = hostUserList.isEmpty() ? null : hostUserList.get(0).getUser().getId();
         return hostUserId;
     }
-////    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//    default RoomDto createRoomDto(Room room) {
-//        return new RoomDto(
-//                room.getId(),
-//                room.getTitle(),
-//                room.getDescription(),
-//                convertToCategoryEnum(room.getCategory()),
-//                room.getLocation(),
-//                room.getMeetupStartDate(),
-//                room.getMeetupEndDate(),
-//                room.getMaxJoinNumber(),
-//                room.getCurrentJoinNumber(),
-//                room.getPrice(),
-//                room.getRoomStatus(),
-//                room.getRoomType(),
-//                room.getViewCount(),
-//                convertToHostUserId(room.getHostUserList()),
-//                room.getCreatedAt(),
-//                room.getUpdatedAt()
-//      );
-//    }
 }
 
 

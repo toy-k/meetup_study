@@ -67,10 +67,9 @@ public class RoomController {
     @GetMapping("/id/{id}")
     public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
 
-        Optional<Room> roomOpt = roomService.getRoomAndIncrementViewCount(id);
-        RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
+        Optional<RoomDto> roomDtoOpt = roomService.getRoomAndIncrementViewCount(id);
 
-        return ResponseEntity.ok(roomDtoOpt);
+        return ResponseEntity.ok(roomDtoOpt.get());
     }
 
     @ApiOperation(value = "방들 조회", notes = "방들을 조회합니다.")
@@ -148,14 +147,14 @@ public class RoomController {
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteRoomDto.class, required = true, paramType = "body")
     })
     @DeleteMapping
-    public ResponseEntity<RoomDto> deleteRoom(@RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
+    public ResponseEntity<Boolean> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        Optional<RoomDto> deletedRoomDto = roomService.deleteRoom(requestDeleteRoomDto.getId(), userIdOpt.get());
+        Boolean res = roomService.deleteRoom(requestDeleteRoomDto.getId(), userIdOpt.get());
 
-        return ResponseEntity.ok(deletedRoomDto.get());
+        return ResponseEntity.ok(res);
     }
 
     //방갯수

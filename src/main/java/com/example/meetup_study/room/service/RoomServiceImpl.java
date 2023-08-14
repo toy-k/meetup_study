@@ -66,9 +66,10 @@ public class RoomServiceImpl implements RoomService {
         Optional<User> userOpt = userRepository.findById(requestRoomDto.getHostUserId());
         Optional<Category> categoryOpt = categoryService.getCategory(requestRoomDto.getCategory());
 
+
         RoomImage roomImage = new RoomImage();
 
-        Room room = roomRepository.save(new Room(requestRoomDto, categoryOpt.get(), roomImage));
+        Room room = new Room(requestRoomDto, categoryOpt.get(), roomImage);
         JoinedUser joinedUser = new JoinedUser(userOpt.get(), room);
         room.addJoinedUser(joinedUser);
 
@@ -76,7 +77,10 @@ public class RoomServiceImpl implements RoomService {
         room.addHostUser(hostUser);
         initializeViewCount(room.getId());
 
-        RoomDto roomDto = roomMapper.toRoomDto(room);
+        Room roomRes = roomRepository.save(room);
+
+        RoomDto roomDto = roomMapper.toRoomDto(roomRes);
+
 
         return Optional.ofNullable(roomDto);
 
@@ -84,8 +88,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Transactional
     @Override
-    public Optional<Room> getRoomAndIncrementViewCount(Long id) {
-        Optional<Room> roomOpt = roomRepository.findById(id);
+    public Optional<RoomDto> getRoomAndIncrementViewCount(Long id) {
+        Optional<Room> roomOpt = roomRepository.findRoomWithCategoryAndHostUsersAndImage(id);
         if (roomOpt.isPresent()) {
             Room room = roomOpt.get();
             Long viewCount = this.incrementViewCount(id);
@@ -94,7 +98,9 @@ public class RoomServiceImpl implements RoomService {
             throw new RoomNotFoundException();
         }
 
-        return roomOpt;
+        RoomDto roomDto = roomMapper.toRoomDto(roomOpt.get());
+
+        return Optional.ofNullable(roomDto);
     }
 
     @Override
@@ -107,14 +113,16 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    //        Page<Room> roomsPage = roomRepository.findAll(pageRequest);
+
     @Override
     public List<RoomDto> getRoomList(Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
-        Page<Room> roomsPage = roomRepository.findAll(pageRequest);
+        Page<Room> roomsPage = roomRepository.findAllWithCategoryAndHostUsersAndImage(pageRequest);
 
         List<Room> rooms = roomsPage.getContent();
         if (rooms.isEmpty()) {
-            return new ArrayList<>(); // 빈 리스트 반환
+            return new ArrayList<>();
         }
 
         List<RoomDto> roomDtos = rooms.stream().map(r -> roomMapper.toRoomDto(r)).collect(Collectors.toList());
@@ -166,7 +174,7 @@ public class RoomServiceImpl implements RoomService {
             throw new RoomInvalidRequestException("시작 날짜가 끝나는 날짜보다 늦습니다.");
         }
 
-        Optional <Room> roomOpt = roomRepository.findById(roomDto.getId());
+        Optional <Room> roomOpt = roomRepository.findRoomWithCategoryAndHostUsersAndImage(roomDto.getId());
 
         if(roomOpt.isPresent() && (roomOpt.get().getHostUserList().get(0).getUser().getId().equals(userId))) {
 
@@ -198,8 +206,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Optional<RoomDto> deleteRoom(Long id, Long userId) {
-        Optional<Room> roomOpt = roomRepository.findById(id);
+    public Boolean deleteRoom(Long roomId, Long userId) {
+        Optional<Room> roomOpt = roomRepository.findRoomById(roomId);
 
         if(!roomOpt.isPresent()) {
             throw new RoomNotFoundException();
@@ -209,9 +217,8 @@ public class RoomServiceImpl implements RoomService {
         }
 
         roomRepository.delete(roomOpt.get());
-        Optional<RoomDto> roomDto = roomOpt.map(r -> roomMapper.toRoomDto(r));
 
-        return roomDto;
+        return true;
     }
 
     @Override
