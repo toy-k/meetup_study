@@ -1,6 +1,9 @@
 package com.example.meetup_study.review.domain.repository;
 
+import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.review.domain.Review;
+import com.example.meetup_study.room.domain.Room;
+import com.example.meetup_study.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +22,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Optional<Review> findByUserIdAndRoomId(Long userId, Long roomId);
 
+
+    @Query("SELECT r FROM Room r " +
+            "JOIN FETCH r.joinedUserList ju " +
+            "JOIN FETCH ju.user u " +
+            "WHERE r.id = :roomId")
+    Optional<Room> findRoomWithJoinedUsersAndUsersById(Long roomId);
 
 }

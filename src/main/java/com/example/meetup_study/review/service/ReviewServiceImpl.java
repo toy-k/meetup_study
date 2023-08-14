@@ -60,6 +60,45 @@ public class ReviewServiceImpl implements ReviewService{
                 .collect(Collectors.toList());
         return reviewDtoList;
     }
+//
+//    @Override
+//    @Transactional
+//    public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
+//
+//        Optional <Room> roomOpt = reviewRepository.findRoomWithJoinedUsersAndUsersById(requestReviewDto.getRoomId());
+//        if (!roomOpt.isPresent()) throw new RoomNotFoundException();
+//
+//
+//        User user = roomOpt.get().getJoinedUserList().stream().filter(joinedUser -> joinedUser.getUser().getId().equals(userId)).findFirst().get().getUser();
+//
+//        if(user == null) throw new UserNotFoundException();
+//
+//
+//
+//        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+//        if(!joinedUserDtoOpt.isPresent()){
+//            throw new JoinedUserNotFoundException();
+//        }
+//
+//        Optional<User> user = userRepository.findById(userId);
+//
+//        LocalDateTime now = LocalDateTime.now();
+//        if(now.isBefore(roomOpt.get().getMeetupEndDate())){
+//            throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
+//        }
+//
+//        Optional<ReviewDto> reviewDtoOpt = this.findByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+//        if(reviewDtoOpt.isPresent()){
+//            throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
+//        }
+//
+//
+//        Review review = reviewRepository.save(new Review(user.get(), roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
+//
+//        ReviewDto reviewDto = reviewMapper.toReviewDto(review);
+//
+//        return Optional.of(reviewDto);
+//    }
 
     @Override
     @Transactional
@@ -75,6 +114,8 @@ public class ReviewServiceImpl implements ReviewService{
             throw new JoinedUserNotFoundException();
         }
 
+        Optional<User> user = userRepository.findById(userId);
+
         LocalDateTime now = LocalDateTime.now();
         if(now.isBefore(roomOpt.get().getMeetupEndDate())){
             throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
@@ -85,7 +126,6 @@ public class ReviewServiceImpl implements ReviewService{
             throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
         }
 
-        Optional<User> user = userRepository.findById(userId);
 
         Review review = reviewRepository.save(new Review(user.get(), roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
