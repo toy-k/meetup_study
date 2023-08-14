@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final RoomService roomService;
 
     @Override
-    public List<ReviewDto> findByRoomId(Long roomId) {
+    public List<ReviewDto> findReviewListByRoomId(Long roomId) {
 
         List<Review> reviews = reviewRepository.findByRoomId(roomId);
 
@@ -50,114 +50,69 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public List<ReviewDto> findByUserId(Long userId) {
+    public List<ReviewDto> findReviewListByUserId(Long userId) {
 
 //        List<Review> reviewList = reviewRepository.findByUserId(userId);
-        List<Review> reviewList = reviewRepository.findByUserIdWithFetchJoin(userId);
+        List<Review> reviewList = reviewRepository.findByUserId(userId);
 
         List<ReviewDto> reviewDtoList = reviewList.stream()
                 .map(review -> reviewMapper.toReviewDto(review))
                 .collect(Collectors.toList());
         return reviewDtoList;
     }
-//
-//    @Override
-//    @Transactional
-//    public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
-//
-//        Optional <Room> roomOpt = reviewRepository.findRoomWithJoinedUsersAndUsersById(requestReviewDto.getRoomId());
-//        if (!roomOpt.isPresent()) throw new RoomNotFoundException();
-//
-//
-//        User user = roomOpt.get().getJoinedUserList().stream().filter(joinedUser -> joinedUser.getUser().getId().equals(userId)).findFirst().get().getUser();
-//
-//        if(user == null) throw new UserNotFoundException();
-//
-//
-//
-//        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
-//        if(!joinedUserDtoOpt.isPresent()){
-//            throw new JoinedUserNotFoundException();
-//        }
-//
-//        Optional<User> user = userRepository.findById(userId);
-//
-//        LocalDateTime now = LocalDateTime.now();
-//        if(now.isBefore(roomOpt.get().getMeetupEndDate())){
-//            throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
-//        }
-//
-//        Optional<ReviewDto> reviewDtoOpt = this.findByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
-//        if(reviewDtoOpt.isPresent()){
-//            throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
-//        }
-//
-//
-//        Review review = reviewRepository.save(new Review(user.get(), roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
-//
-//        ReviewDto reviewDto = reviewMapper.toReviewDto(review);
-//
-//        return Optional.of(reviewDto);
-//    }
 
     @Override
     @Transactional
     public Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId) {
 
-        Optional<Room> roomOpt = roomService.getRoom(requestReviewDto.getRoomId());
-        if (!roomOpt.isPresent()) {
-            throw new RoomNotFoundException();
-        }
+        Optional <Room> roomOpt = reviewRepository.findRoomWithJoinedUsersAndUsersById(requestReviewDto.getRoomId());
+        if (!roomOpt.isPresent()) throw new RoomNotFoundException();
 
-        Optional<JoinedUserDto> joinedUserDtoOpt = joinedUserService.getJoinedUserByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
-        if(!joinedUserDtoOpt.isPresent()){
-            throw new JoinedUserNotFoundException();
-        }
 
-        Optional<User> user = userRepository.findById(userId);
+        User user = roomOpt.get().getJoinedUserList().stream().filter(joinedUser -> joinedUser.getUser().getId().equals(userId)).findFirst().get().getUser();
+
+        if(user == null) throw new JoinedUserNotFoundException();
 
         LocalDateTime now = LocalDateTime.now();
         if(now.isBefore(roomOpt.get().getMeetupEndDate())){
             throw new ReviewInvalidRequestException("아직 모임이 끝나지 않아서 리뷰 작성할 수 없습니다.");
         }
 
-        Optional<ReviewDto> reviewDtoOpt = this.findByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
-        if(reviewDtoOpt.isPresent()){
+        Optional<Review> reviewOpt = reviewRepository.findByUserIdAndRoomId(userId, requestReviewDto.getRoomId());
+        if(reviewOpt.isPresent()){
             throw new ReviewInvalidRequestException("이미 리뷰를 작성하셨습니다.");
         }
 
-
-        Review review = reviewRepository.save(new Review(user.get(), roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
+        Review review = reviewRepository.save(new Review(user, roomOpt.get(), requestReviewDto.getRating(), requestReviewDto.getContent()));
 
         ReviewDto reviewDto = reviewMapper.toReviewDto(review);
 
         return Optional.of(reviewDto);
     }
 
-    @Override
-    public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
 
-        Optional<ReviewDto> reviewDtoOpt = this.findById(reviewId);
-        if(!reviewDtoOpt.isPresent()){
+    @Override
+    public Boolean deleteReview(Long reviewId, Long UserId) {
+
+
+        Optional<Review> reviewOpt = reviewRepository.findReviewWithRoomAndUserById(reviewId);
+        if(!reviewOpt.isPresent()){
             throw new ReviewNotFoundException();
         }
-
-        Long roomId = reviewDtoOpt.get().getRoomId();
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if (!roomOpt.isPresent()) {
+        if(reviewOpt.get().getRoom() == null) {
             throw new RoomNotFoundException();
         }
 
-        if(!reviewDtoOpt.get().getUserId().equals(UserId)){
+        if(!reviewOpt.get().getUser().getId().equals(UserId)){
             throw new ReviewInvalidRequestException("남의 리뷰 삭제할 수 없습니다.");
         }
-        if(reviewDtoOpt.get().getIsHostReview()){
+        if(reviewOpt.get().getIsHostReview()){
             throw new ReviewInvalidRequestException("이미 호스트가 리뷰 남겨서 삭제할 수 없습니다.");
         }
 
         reviewRepository.deleteById(reviewId);
 
-        return reviewDtoOpt;
+        return true;
     }
 
     @Override
@@ -174,16 +129,4 @@ public class ReviewServiceImpl implements ReviewService{
         }
     }
 
-    @Override
-    public Optional<ReviewDto> findByUserIdAndRoomId(Long userId, Long roomId) {
-        Optional<Review> review = reviewRepository.findByUserIdAndRoomId(userId, roomId);
-
-        if(review.isPresent()){
-            ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
-
-            return Optional.of(reviewDto);
-        }else{
-            return Optional.empty();
-        }
-    }
 }

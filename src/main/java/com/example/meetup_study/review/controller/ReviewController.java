@@ -56,9 +56,9 @@ public class ReviewController {
             @ApiImplicitParam(name= "roomId", value = "roomId", dataTypeClass = Long.class, required = true, paramType = "path")
     })
     @GetMapping("/roomId/{roomId}")
-    public ResponseEntity<List<ReviewDto>> getReview(@PathVariable Long roomId){
+    public ResponseEntity<List<ReviewDto>> getReviewList(@PathVariable Long roomId){
 
-        List<ReviewDto> reviewDtoList = reviewService.findByRoomId(roomId);
+        List<ReviewDto> reviewDtoList = reviewService.findReviewListByRoomId(roomId);
 
         return ResponseEntity.ok(reviewDtoList);
     }
@@ -70,7 +70,7 @@ public class ReviewController {
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<ReviewDto>> getReviewByUserId(@PathVariable Long userId){
 
-        List<ReviewDto> reviewDtoList = reviewService.findByUserId(userId);
+        List<ReviewDto> reviewDtoList = reviewService.findReviewListByUserId(userId);
 
         return ResponseEntity.ok(reviewDtoList);
     }
@@ -80,16 +80,16 @@ public class ReviewController {
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteReviewDto.class, required = true, paramType = "body")
     })
     @DeleteMapping
-    public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
+    public ResponseEntity<Boolean> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
 
-        Optional<ReviewDto> reviewDto = reviewService.deleteReview(requestDeleteReviewDto.getReviewId(), userIdOpt.get());
+        Boolean res= reviewService.deleteReview(requestDeleteReviewDto.getReviewId(), userIdOpt.get());
 
-        return ResponseEntity.ok(reviewDto.get());
+        return ResponseEntity.ok(res);
     }
 
 }

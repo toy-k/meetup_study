@@ -79,7 +79,7 @@ public class Room extends BaseEntity {
     private String meetupPhotoPath;
 
     //다른 테이블처럼 byte 형태로 수정.
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_image_id")
     private RoomImage roomImage;
 
