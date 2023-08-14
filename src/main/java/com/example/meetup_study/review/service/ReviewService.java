@@ -10,13 +10,12 @@ import java.util.Optional;
 public interface ReviewService {
     Optional<ReviewDto> createReview(RequestReviewDto requestReviewDto, Long userId);
 
-    List<ReviewDto> findByRoomId(Long roomId);
+    List<ReviewDto> findReviewListByRoomId(Long roomId);
 
-    List<ReviewDto> findByUserId(Long userId);
+    List<ReviewDto> findReviewListByUserId(Long userId);
 
-    Optional<ReviewDto> deleteReview(Long reviewId, Long UserId);
+    Boolean deleteReview(Long reviewId, Long UserId);
 
     Optional<ReviewDto> findById(Long reviewId);
 
-    Optional<ReviewDto> findByUserIdAndRoomId(Long userId, Long roomId);
 }
