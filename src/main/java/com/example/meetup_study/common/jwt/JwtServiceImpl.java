@@ -1,4 +1,4 @@
-package com.example.meetup_study.auth.jwt;
+package com.example.meetup_study.common.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

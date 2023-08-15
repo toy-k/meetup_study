@@ -1,12 +1,10 @@
 package com.example.meetup_study.image.announceImage.controller;
 
-import com.example.meetup_study.announce.service.AnnounceService;
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.image.announceImage.service.AnnounceImageService;
 import com.example.meetup_study.image.announceImage.domain.dto.AnnounceImageDto;
 import com.example.meetup_study.image.announceImage.domain.dto.RequestAnnounceImageDto;
 import com.example.meetup_study.image.announceImage.domain.dto.RequestDeleteAnnounceImageDto;
-import com.example.meetup_study.user.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

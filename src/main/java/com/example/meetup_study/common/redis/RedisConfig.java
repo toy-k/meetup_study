@@ -1,4 +1,4 @@
-package com.example.meetup_study.auth;
+package com.example.meetup_study.common.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;

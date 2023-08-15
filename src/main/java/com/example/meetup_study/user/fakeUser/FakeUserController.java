@@ -1,6 +1,6 @@
 package com.example.meetup_study.user.fakeUser;
 
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.image.userImage.domain.UserImage;
 import com.example.meetup_study.user.domain.enums.ProviderType;
 import com.example.meetup_study.user.domain.enums.RoleType;

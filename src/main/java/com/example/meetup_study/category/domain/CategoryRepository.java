@@ -1,4 +1,4 @@
-package com.example.meetup_study.Category.domain;
+package com.example.meetup_study.category.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

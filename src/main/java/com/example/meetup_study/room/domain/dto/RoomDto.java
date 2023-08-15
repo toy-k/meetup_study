@@ -1,6 +1,6 @@
 package com.example.meetup_study.room.domain.dto;
 
-import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.category.domain.CategoryEnum;
 import com.example.meetup_study.room.domain.enums.RoomStatus;
 import com.example.meetup_study.room.domain.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;

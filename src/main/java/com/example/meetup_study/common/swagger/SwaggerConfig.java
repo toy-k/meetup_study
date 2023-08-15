@@ -1,4 +1,4 @@
-package com.example.meetup_study.auth;
+package com.example.meetup_study.common.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

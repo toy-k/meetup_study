@@ -1,7 +1,6 @@
 package com.example.meetup_study.user.controller;
 
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.user.service.UserService;
 import com.example.meetup_study.user.domain.dto.RequestUserDto;
 import com.example.meetup_study.user.domain.dto.UserDto;

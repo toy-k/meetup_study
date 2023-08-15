@@ -1,6 +1,6 @@
 package com.example.meetup_study.hostReview.controller;
 
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.hostReview.service.HostReviewService;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
