@@ -1,4 +1,4 @@
-package com.example.meetup_study.auth.jwt;
+package com.example.meetup_study.common.jwt;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

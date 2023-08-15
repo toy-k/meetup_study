@@ -1,4 +1,4 @@
-package com.example.meetup_study.Category.exception;
+package com.example.meetup_study.category.exception;
 
 import com.example.meetup_study.common.exception.ForbiddenException;
 

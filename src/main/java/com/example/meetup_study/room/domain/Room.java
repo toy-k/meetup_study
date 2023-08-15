@@ -1,6 +1,6 @@
 package com.example.meetup_study.room.domain;
 
-import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.category.domain.Category;
 import com.example.meetup_study.common.domain.BaseEntity;
 import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;

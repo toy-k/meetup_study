@@ -1,20 +1,9 @@
 package com.example.meetup_study.joinedUser.controller;
 
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.joinedUser.service.JoinedUserService;
-import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
 import com.example.meetup_study.joinedUser.domain.dto.RequestJoinedUserDto;
-import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
-import com.example.meetup_study.mapper.JoinedUserMapper;
-import com.example.meetup_study.room.service.RoomService;
-import com.example.meetup_study.room.domain.Room;
-import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.user.service.UserService;
-import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

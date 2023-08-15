@@ -1,13 +1,9 @@
 package com.example.meetup_study.admin.controller;
 
 import com.example.meetup_study.admin.service.AdminService;
-import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
-import com.example.meetup_study.hostReview.domain.dto.RequestDeleteHostReviewDto;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.review.domain.dto.RequestDeleteReviewDto;
-import com.example.meetup_study.review.domain.dto.ReviewDto;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
-import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.user.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

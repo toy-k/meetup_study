@@ -4,8 +4,7 @@ import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestDeleteAnnounceDto;
-import com.example.meetup_study.auth.jwt.JwtService;
-import com.example.meetup_study.user.service.UserService;
+import com.example.meetup_study.common.jwt.JwtService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 

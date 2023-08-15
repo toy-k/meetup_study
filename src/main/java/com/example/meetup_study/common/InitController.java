@@ -1,7 +1,7 @@
 package com.example.meetup_study.common;
 
-import com.example.meetup_study.Category.CategoryService;
-import com.example.meetup_study.Category.domain.Category;
+import com.example.meetup_study.category.CategoryService;
+import com.example.meetup_study.category.domain.Category;
 import com.example.meetup_study.announce.service.AnnounceService;
 import com.example.meetup_study.announce.domain.dto.AnnounceDto;
 import com.example.meetup_study.announce.domain.dto.RequestAnnounceDto;
@@ -15,7 +15,7 @@ import com.example.meetup_study.review.domain.dto.RequestReviewDto;
 import com.example.meetup_study.room.domain.enums.RoomStatus;
 import com.example.meetup_study.room.domain.enums.RoomType;
 import com.example.meetup_study.user.domain.*;
-import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.category.domain.CategoryEnum;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;

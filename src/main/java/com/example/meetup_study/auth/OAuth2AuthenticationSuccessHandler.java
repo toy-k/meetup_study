@@ -1,10 +1,9 @@
 package com.example.meetup_study.auth;
 
 import com.example.meetup_study.auth.exception.OAuth2SuccessInvalidRequestException;
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;

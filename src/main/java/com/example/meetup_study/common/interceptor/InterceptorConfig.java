@@ -1,4 +1,4 @@
-package com.example.meetup_study.auth;
+package com.example.meetup_study.common.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

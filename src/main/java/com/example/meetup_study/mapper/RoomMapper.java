@@ -1,13 +1,11 @@
 package com.example.meetup_study.mapper;
 
-import com.example.meetup_study.Category.domain.Category;
-import com.example.meetup_study.Category.domain.CategoryEnum;
+import com.example.meetup_study.category.domain.Category;
+import com.example.meetup_study.category.domain.CategoryEnum;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RoomDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.example.meetup_study.image.userImage.controller;
 
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.image.userImage.service.UserImageService;
 import com.example.meetup_study.image.userImage.domain.dto.UserImageDto;
 import com.example.meetup_study.user.service.UserService;

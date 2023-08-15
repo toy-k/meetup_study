@@ -1,8 +1,8 @@
 package com.example.meetup_study.room.service;
 
-import com.example.meetup_study.Category.CategoryService;
-import com.example.meetup_study.Category.domain.Category;
-import com.example.meetup_study.Category.exception.CategoryNotFoundException;
+import com.example.meetup_study.category.CategoryService;
+import com.example.meetup_study.category.domain.Category;
+import com.example.meetup_study.category.exception.CategoryNotFoundException;
 import com.example.meetup_study.hostUser.domain.HostUser;
 import com.example.meetup_study.image.roomImage.domain.RoomImage;
 import com.example.meetup_study.joinedUser.domain.JoinedUser;
@@ -13,7 +13,6 @@ import com.example.meetup_study.room.domain.dto.RoomDto;
 import com.example.meetup_study.room.domain.repository.RoomRepository;
 import com.example.meetup_study.room.exception.RoomInvalidRequestException;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;

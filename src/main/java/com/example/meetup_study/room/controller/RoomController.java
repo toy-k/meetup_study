@@ -1,18 +1,11 @@
 package com.example.meetup_study.room.controller;
 
-import com.example.meetup_study.auth.exception.AccessTokenInvalidRequestException;
-import com.example.meetup_study.auth.jwt.JwtService;
+import com.example.meetup_study.common.jwt.JwtService;
 import com.example.meetup_study.mapper.RoomMapper;
 import com.example.meetup_study.room.service.RoomService;
-import com.example.meetup_study.room.domain.Room;
 import com.example.meetup_study.room.domain.dto.RequestDeleteRoomDto;
 import com.example.meetup_study.room.domain.dto.RequestRoomDto;
 import com.example.meetup_study.room.domain.dto.RoomDto;
-import com.example.meetup_study.room.exception.RoomInvalidRequestException;
-import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import com.example.meetup_study.user.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
