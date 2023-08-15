@@ -37,9 +37,7 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
                 throw new ImageNotFoundException();
             }
 
-
-
-            Optional<Announce> announceOpt = announceRepository.findById(announceId);
+            Optional<Announce> announceOpt = announceImageRepository.findAnnounceImageAndAnnounceByAnnounceId(announceId);
 
             if (!announceOpt.isPresent()) throw new ImageNotFoundException();
 
@@ -61,14 +59,11 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
 
 
             }else{
-                Optional<AnnounceImage> announceImageOpt = announceImageRepository.findById(announceImage.getId());
 
-                if (!announceImageOpt.isPresent()) {
-                    throw new ImageNotFoundException();
-                }
+                AnnounceImage announceImageOpt = announceOpt.get().getAnnounceImage();
 
-                announceImageOpt.get().changeProfile(data);
-                announceImageRepository.save(announceImageOpt.get());
+                announceImageOpt.changeProfile(data);
+                announceImageRepository.save(announceImageOpt);
 
                 announceImageDtoOpt = new AnnounceImageDto(announceImage.getProfile());
 
@@ -85,13 +80,12 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
     @Override
     public Optional<AnnounceImageDto> getAnnounceImage(Long announceId) {
 
-        Optional<AnnounceDto> announceDtoOpt = announceService.getAnnounce(announceId);
 
-        if(!announceDtoOpt.isPresent()){
+        Optional<Announce> announceOpt = announceImageRepository.findAnnounceImageAndAnnounceByAnnounceId(announceId);
+
+        if(!announceOpt.isPresent()){
             throw new ImageNotFoundException();
         }
-
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
 
         AnnounceImage announceImage = announceOpt.get().getAnnounceImage();
 
@@ -103,7 +97,7 @@ public class AnnounceImageServiceImpl implements AnnounceImageService{
     public Optional<AnnounceImageDto> deleteAnnounceImage(Long announceId) {
 
 
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
+        Optional<Announce> announceOpt = announceImageRepository.findAnnounceImageAndAnnounceByAnnounceId(announceId);
 
         if(!announceOpt.isPresent()){
             throw new ImageNotFoundException();

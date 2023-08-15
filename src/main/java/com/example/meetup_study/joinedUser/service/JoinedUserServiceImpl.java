@@ -33,7 +33,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     private final JoinedUserMapper joinedUserMapper;
 
     @Override
-    public Optional<JoinedUserDto> getJoinedUserById(Long id) {
+    public Optional<JoinedUserDto> getJoinedById(Long id) {
         Optional<JoinedUser> joinedUser = joinedUserRepository.findById(id);
         if(!joinedUser.isPresent()){
              throw new JoinedUserNotFoundException();
@@ -56,7 +56,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
             throw new RoomNotFoundException();
         }
 
-        Optional<JoinedUser> joinedUser = joinedUserRepository.findByUserIdAndRoomId(userId, roomId);
+        Optional<JoinedUser> joinedUser = joinedUserRepository.findJoinedUserAndUserAndRoom(userId, roomId);
         if(!joinedUser.isPresent()){
              throw new JoinedUserNotFoundException();
         }
@@ -69,10 +69,6 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     @Override
     public List<JoinedUserDto> getJoinedUserByUserId(Long userId) {
 
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
 
         List<JoinedUser> joinedUsers = joinedUserRepository.findByUserId(userId);
         if(joinedUsers.isEmpty()){
@@ -90,11 +86,6 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     }
     @Override
     public List<JoinedUserDto> getJoinedUserByRoomId(Long roomId) {
-
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
 
         List<JoinedUser> joinedUsers = joinedUserRepository.findByRoomId(roomId);
         if(joinedUsers.isEmpty()){
@@ -117,15 +108,19 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     public Optional<JoinedUserDto> joinRoom(RequestJoinedUserDto requestJoinedUserDto, Long userId){
 
         Long reqUserId = requestJoinedUserDto.getUserId();
+        Long resRoomId = requestJoinedUserDto.getRoomId();
 
         if(userId != reqUserId){
             throw new UserInvalidRequestException("유저 아이디가 일치하지 않습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(reqUserId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
+
+        Optional<JoinedUser> joinedUserOpt = joinedUserRepository.findJoinedUserAndUserAndRoom(reqUserId, resRoomId);
+        if(joinedUserOpt.isPresent()){
+            throw new JoinedUserInvalidRequestException("이미 참여한 방입니다.");
         }
+
+        Optional<User> userOpt = userService.findById(reqUserId);
 
         Optional<Room> roomOpt = roomService.getRoom(requestJoinedUserDto.getRoomId());
         if(!roomOpt.isPresent()){
@@ -135,14 +130,16 @@ public class JoinedUserServiceImpl implements JoinedUserService{
         Room room = roomOpt.get();
         User user = userOpt.get();
 
+        if(room.getCurrentJoinNumber() == room.getMaxJoinNumber()){
+            throw new JoinedUserInvalidRequestException("방이 꽉 찼습니다.");
+        }
+
+
        JoinedUser joinedUser  = new JoinedUser(user, room);
         user.getJoinedUserList().add(joinedUser);
         room.getJoinedUserList().add(joinedUser);
         JoinedUser joinedUserRes = joinedUserRepository.save(joinedUser);
 
-        if(room.getCurrentJoinNumber() == room.getMaxJoinNumber()){
-            throw new JoinedUserInvalidRequestException("방이 꽉 찼습니다.");
-        }
 
         room.changeCurrentJoinNumber(room.getCurrentJoinNumber() + 1);
 
@@ -170,26 +167,16 @@ public class JoinedUserServiceImpl implements JoinedUserService{
             throw new UserInvalidRequestException("유저 아이디가 일치하지 않습니다.");
         }
 
-        Optional<User> userOpt = userService.findById(reqUserId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
-
-        Optional<Room> roomOpt = roomService.getRoom(requestJoinedUserDto.getRoomId());
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
-        Room room = roomOpt.get();
-
-        Optional<JoinedUser> joinedUserOpt = joinedUserRepository.findByUserIdAndRoomId(reqUserId, resRoomId);
-        if(!joinedUserOpt.isPresent()){
+        Optional<JoinedUser> joinedUserOpt = joinedUserRepository.findJoinedUserAndUserAndRoom(reqUserId, resRoomId);
+        if(joinedUserOpt.isEmpty()){
             throw new JoinedUserInvalidRequestException("해당 유저가 방에 존재하지 않습니다.");
         }
 
-        //제거
-        userOpt.get().getJoinedUserList().remove(joinedUserOpt.get());
-        room.getJoinedUserList().remove(joinedUserOpt.get());
+        User user = joinedUserOpt.get().getUser();
+        Room room = joinedUserOpt.get().getRoom();
+
+//        user.getJoinedUserList().remove(joinedUserOpt.get());
+//        room.getJoinedUserList().remove(joinedUserOpt.get());
         joinedUserRepository.delete(joinedUserOpt.get());
 
         if(room.getCurrentJoinNumber() == room.getMaxJoinNumber()){
@@ -197,7 +184,6 @@ public class JoinedUserServiceImpl implements JoinedUserService{
         }
 
         room.changeCurrentJoinNumber(room.getCurrentJoinNumber() - 1);
-
 
         JoinedUserDto joinedUserDto = joinedUserMapper.toJoinedUserDto(joinedUserOpt.get());
 

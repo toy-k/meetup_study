@@ -26,7 +26,6 @@ public class AnnounceController {
 
     private final AnnounceService announceService;
     private final JwtService jwtService;
-    private final UserService userService;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -81,7 +80,7 @@ public class AnnounceController {
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = AnnounceDto.class, required = true, paramType = "body")
     })
     @PutMapping
-    public ResponseEntity<AnnounceDto> updateAnnounce(@RequestBody AnnounceDto AnnounceDto, HttpServletRequest req) throws AccessDeniedException {
+    public ResponseEntity<AnnounceDto> updateAnnounce(@RequestBody AnnounceDto AnnounceDto, HttpServletRequest req)  {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
@@ -97,15 +96,15 @@ public class AnnounceController {
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteAnnounceDto.class, required = true, paramType = "body")
     })
     @DeleteMapping
-    public ResponseEntity<AnnounceDto> deleteAnnounce(@Valid @RequestBody RequestDeleteAnnounceDto requestDeleteAnnounceDto, HttpServletRequest req){
+    public ResponseEntity<Boolean> deleteAnnounce(@Valid @RequestBody RequestDeleteAnnounceDto requestDeleteAnnounceDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
-        Optional<AnnounceDto> deletedAnnounceDto = announceService.deleteAnnounce(requestDeleteAnnounceDto.getAnnounceId(), userIdOpt.get());
+        Boolean res = announceService.deleteAnnounce(requestDeleteAnnounceDto.getAnnounceId(), userIdOpt.get());
 
-        return ResponseEntity.ok(deletedAnnounceDto.get());
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "공지사항 갯수", notes = "공지사항 갯수를 조회합니다.")

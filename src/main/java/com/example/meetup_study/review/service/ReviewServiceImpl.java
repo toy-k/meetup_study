@@ -32,10 +32,7 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
     private final ReviewMapper reviewMapper;
-    private final JoinedUserService joinedUserService;
-    private final RoomService roomService;
 
     @Override
     public List<ReviewDto> findReviewListByRoomId(Long roomId) {

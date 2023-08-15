@@ -56,7 +56,7 @@ public class AnnounceServiceImpl implements AnnounceService {
 
     @Override
     public Optional<AnnounceDto> getAnnounce(Long announceId) {
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
+        Optional<Announce> announceOpt = announceRepository.findAnnounceAndUserByAnnounceId(announceId);
         if(announceOpt.isPresent()) {
             Announce announce = announceOpt.get();
             Long viewCount = this.incrementViewCount(announceId);
@@ -72,9 +72,8 @@ public class AnnounceServiceImpl implements AnnounceService {
     @Override
     public List<AnnounceDto> getAnnounceList(Integer page, Integer size) {
 
-//        PageRequest pageRequest = PageRequest.of(page-1, size);
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
-        Page<Announce> announcePage = announceRepository.findAll(pageRequest);
+        Page<Announce> announcePage = announceRepository.findAllWithUser(pageRequest);
 
         List<Announce> announce = announcePage.getContent();
         if(announce.isEmpty()){
@@ -93,8 +92,7 @@ public class AnnounceServiceImpl implements AnnounceService {
             throw new AnnounceInvalidRequestException();
         }
 
-        Optional<Announce> announceOpt = announceRepository.findById(announceDto.getId());
-
+        Optional<Announce> announceOpt = announceRepository.findAnnounceAndUserByAnnounceId(announceDto.getId());
         if(!announceOpt.isPresent()){
             throw new AnnounceNotFoundException();
         }
@@ -115,21 +113,9 @@ public class AnnounceServiceImpl implements AnnounceService {
     }
 
     @Override
-    public Optional<AnnounceDto> deleteAnnounce(Long announceId, Long userId) {
+    public Boolean deleteAnnounce(Long announceId, Long userId) {
 
-        Optional<AnnounceDto> announceDtoOpt = this.getAnnounce(announceId);
-
-        if(!announceDtoOpt.isPresent() ){
-            throw new AnnounceNotFoundException();
-        }
-
-        if(userId != announceDtoOpt.get().getUserId()){
-            throw new AnnounceInvalidRequestException();
-        }
-
-
-        Optional<Announce> announceOpt = announceRepository.findById(announceId);
-
+        Optional<Announce> announceOpt = announceRepository.findAnnounceAndUserByAnnounceId(announceId);
         if(!announceOpt.isPresent()){
             throw new AnnounceNotFoundException();
         }
@@ -137,10 +123,10 @@ public class AnnounceServiceImpl implements AnnounceService {
         if (!announceOpt.get().getUser().getId().equals(userId)) {
             throw new AnnounceInvalidRequestException();
         }
-        announceRepository.deleteById(announceId);
-        Optional<AnnounceDto> announceDto = announceOpt.map(r -> announceMapper.toAnnounceDto(r));
 
-        return announceDto;
+        announceRepository.deleteById(announceId);
+
+        return true;
     }
 
     @Override

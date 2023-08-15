@@ -15,8 +15,9 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    @EntityGraph(attributePaths = { "hostUserList", "hostUserList.user" })
-    Optional<Room> findById(Long id);
+ //room 만 조회
+    @Query("SELECT r FROM Room r WHERE r.id = :id")
+    Optional<Room> findById(@Param("id") Long id);
 
     @Query("SELECT DISTINCT r FROM Room r WHERE r.id = :id")
     Optional<Room> findRoomById(@Param("id") Long id);

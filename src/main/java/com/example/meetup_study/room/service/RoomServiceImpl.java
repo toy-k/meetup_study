@@ -113,8 +113,6 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
-    //        Page<Room> roomsPage = roomRepository.findAll(pageRequest);
-
     @Override
     public List<RoomDto> getRoomList(Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());

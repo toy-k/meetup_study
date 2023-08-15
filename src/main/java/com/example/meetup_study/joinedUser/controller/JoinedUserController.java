@@ -75,7 +75,7 @@ public class JoinedUserController {
     @GetMapping("/id/{id}")
     public ResponseEntity<JoinedUserDto> getJoinedUser(@PathVariable Long id){
 
-        Optional<JoinedUserDto> joinedUserDtoOpt =  joinedUserService.getJoinedUserById(id);
+        Optional<JoinedUserDto> joinedUserDtoOpt =  joinedUserService.getJoinedById(id);
 
         return ResponseEntity.ok(joinedUserDtoOpt.get());
 

@@ -37,8 +37,8 @@ public class UserImageServiceImpl implements UserImageService {
 
             long fileSize = file.getSize();
 
+            Optional<User> userOpt = userImageRepository.findByIdWithUserImage(userId);
 
-            Optional<User> userOpt = userService.findById(userId);
             UserImage userImage = userOpt.get().getUserImage();
 
             String fileExtension = getFileExtension(file.getOriginalFilename());
@@ -54,13 +54,8 @@ public class UserImageServiceImpl implements UserImageService {
 
                 userImageDtoOpt = new UserImageDto(newUserImage.getProfile());
             }else{
-                Optional<UserImage> userImageOpt = userImageRepository.findById(userImage.getId());
-                if (!userImageOpt.isPresent()) {
-                    throw new ImageNotFoundException();
-                }
-
-                userImageOpt.get().changeProfile(data);
-                userImageRepository.save(userImageOpt.get());
+                userImage.changeProfile(data);
+                userImageRepository.save(userImage);
 
                 userImageDtoOpt = new UserImageDto(userImage.getProfile());
             }
@@ -76,10 +71,7 @@ public class UserImageServiceImpl implements UserImageService {
     @Override
     public Optional<UserImageDto> getUserImagee(Long userId) {
 
-        Optional<User> userOpt = userService.findById(userId);
-        if(!userOpt.isPresent()){
-            throw new UserNotFoundException();
-        }
+        Optional<User> userOpt = userImageRepository.findByIdWithUserImage(userId);
 
         UserImage userImage = userOpt.get().getUserImage();
 
@@ -92,7 +84,7 @@ public class UserImageServiceImpl implements UserImageService {
     @Override
     public Optional<UserImageDto> deleteUserImagee(Long userId) {
 
-        Optional<User> userOpt = userService.findById(userId);
+        Optional<User> userOpt = userImageRepository.findByIdWithUserImage(userId);
 
         UserImage userImage = userOpt.get().getUserImage();
 

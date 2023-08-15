@@ -19,13 +19,11 @@ import java.util.Optional;
 public class HostUserServiceImpl implements HostUserService {
 
     private final HostUserRepository hostUserRepository;
-    private final UserService userService;
-    private final RoomService roomService;
     private final HostUserMapper hostUserMapper;
 
     @Override
     public Optional<HostUserDto> getHostUserById(Long id) {
-        Optional<HostUser> hostUserOpt = hostUserRepository.findById(id);
+        Optional<HostUser> hostUserOpt = hostUserRepository.findHostUserAndUserAndRoomByHostUserId(id);
         if (!hostUserOpt.isPresent()) {
             throw new HostUserNotFoundException();
         }
@@ -38,7 +36,7 @@ public class HostUserServiceImpl implements HostUserService {
 
     @Override
     public Optional<HostUser> getHostUserByRoomId(Long roomId) {
-        Optional<HostUser> hostUser = hostUserRepository.findByRoomId(roomId);
+        Optional<HostUser> hostUser = hostUserRepository.findHostUserAndUserAndRoomByRoomId(roomId);
         if (!hostUser.isPresent()) {
             throw new HostUserNotFoundException();
         }
@@ -49,12 +47,7 @@ public class HostUserServiceImpl implements HostUserService {
     @Override
     public Optional<HostUserDto> getHostUserByUserIdAndRoomId(Long userId, Long roomId) {
 
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
-        Optional<HostUser> hostUserOpt = hostUserRepository.findByUserIdAndRoomId(userId, roomId);
+        Optional<HostUser> hostUserOpt = hostUserRepository.findHostUserAndUserAndRoomByUserIdAndRoomId(userId, roomId);
         if (!hostUserOpt.isPresent()) {
             throw new HostUserNotFoundException();
         }

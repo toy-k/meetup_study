@@ -24,8 +24,6 @@ import java.util.Optional;
 @RequestMapping("/api/announceImage")
 public class AnnounceImageController {
     private final JwtService jwtService;
-    private final UserService userService;
-    private final AnnounceService announceService;
     private final AnnounceImageService announceImageService;
 
     private String ACCESSTOKEN = "AccessToken";
@@ -36,7 +34,7 @@ public class AnnounceImageController {
             @ApiImplicitParam(name= "file", value = "Request File", dataTypeClass = MultipartFile.class, required = true, paramType = "form")
     })
     @PutMapping
-    public ResponseEntity<AnnounceImageDto> updateAnnounceImage(@RequestParam("file") MultipartFile file, @Valid @RequestBody RequestAnnounceImageDto requestAnnounceImageDto, HttpServletRequest req) throws Exception {
+    public ResponseEntity<AnnounceImageDto> updateAnnounceImage(@RequestParam("file") MultipartFile file, @Valid @RequestBody RequestAnnounceImageDto requestAnnounceImageDto, HttpServletRequest req) {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 

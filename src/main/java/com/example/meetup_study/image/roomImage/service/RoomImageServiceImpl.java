@@ -35,14 +35,12 @@ public class RoomImageServiceImpl implements RoomImageService{
     public Optional<RoomImageDto> updateRoomImage(MultipartFile file, Long roomId, Long userId) {
         try{
 
-            Optional<Room> roomOpt = roomService.getRoom(roomId);
+            Optional<Room> roomOpt = roomImageRepository.findRoomWithCategoryAndHostUsersAndImage(roomId);
             if (!roomOpt.isPresent()) throw new RoomNotFoundException();
 
+            HostUser hostUser = roomOpt.get().getHostUserList().get(0);
 
-            Optional<HostUser> hostUserOpt = hostUserService.getHostUserByRoomId(roomId);
-            if (!hostUserOpt.isPresent()) throw new UserNotFoundException();
-            if (hostUserOpt.get().getUser().getId() != userId) throw new UserInvalidRequestException("해당 방의 방장이 아닙니다.");
-
+            if (hostUser.getUser().getId() != userId) throw new UserInvalidRequestException("해당 방의 방장이 아닙니다.");
             if (file.isEmpty()) {
                 throw new ImageNotFoundException();
             }
@@ -85,7 +83,8 @@ public class RoomImageServiceImpl implements RoomImageService{
     @Override
     public Optional<RoomImageDto> getRoomImage(Long roomId) {
 
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
+        Optional<Room> roomOpt = roomImageRepository.findRoomAndRoomImageByRoomId(roomId);
+
         if(!roomOpt.isPresent()){
             throw new RoomNotFoundException();
         }
@@ -94,7 +93,8 @@ public class RoomImageServiceImpl implements RoomImageService{
 
         RoomImageDto roomImageDto = new RoomImageDto(roomImage.getProfile());
 
-        return Optional.of(roomImageDto);    }
+        return Optional.of(roomImageDto);
+    }
 
     @Override
     public Optional<RoomImageDto> deleteRoomImage(Long roomId) {

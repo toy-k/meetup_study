@@ -4,6 +4,8 @@ import com.example.meetup_study.hostReview.domain.HostReview;
 import com.example.meetup_study.hostReview.domain.dto.HostReviewDto;
 import com.example.meetup_study.hostReview.domain.repository.HostReviewRepository;
 import com.example.meetup_study.hostReview.exception.HostReviewNotFoundException;
+import com.example.meetup_study.hostReview.service.HostReviewService;
+import com.example.meetup_study.hostUser.service.HostUserService;
 import com.example.meetup_study.mapper.HostReviewMapper;
 import com.example.meetup_study.mapper.ReviewMapper;
 import com.example.meetup_study.mapper.RoomMapper;
@@ -38,74 +40,25 @@ public class AdminServiceImpl implements AdminService{
     private final ReviewService reviewService;
 
     @Override
-    public Optional<RoomDto> deleteRoom(Long id, Long userId) {
+    public Boolean deleteRoom(Long id, Long userId) {
 
         Optional<Room> roomOpt = roomService.getRoom(id);
-
         if(!roomOpt.isPresent()){
             throw new RoomNotFoundException();
         }
 
-        Optional <Room> room = roomRepository.findById(id);
+        roomRepository.delete(roomOpt.get());
 
-        roomRepository.delete(room.get());
-        Optional<RoomDto> roomDto = room.map(r -> roomMapper.toRoomDto(r));
-
-        return roomDto;
+        return true;
     }
 
     @Override
-    public Optional<ReviewDto> deleteReview(Long reviewId, Long UserId) {
+    public Boolean deleteReview(Long reviewId, Long userId) {
 
-        Optional<ReviewDto> reviewDtoOpt = reviewService.findById(reviewId);
+        Boolean res = reviewService.deleteReview(reviewId, userId);
 
-        Long roomId = reviewDtoOpt.get().getRoomId();
-
-        Optional<Room> roomOpt = roomService.getRoom(roomId);
-        if(!roomOpt.isPresent()){
-            throw new RoomNotFoundException();
-        }
-
-        Optional<Review> review = reviewRepository.findById(reviewId);
-        if(review.isPresent()){
-
-            if(review.get().getIsHostReview()){
-                throw new ReviewInvalidRequestException("이미 호스트가 리뷰 남겨서 삭제할 수 없습니다.");
-            }
-
-            reviewRepository.deleteById(reviewId);
-
-            ReviewDto reviewDto = reviewMapper.toReviewDto(review.get());
-            return Optional.of(reviewDto);
-        }else{
-            throw new ReviewNotFoundException();
-        }
+        return res;
     }
 
-
-    @Transactional
-    @Override
-    public Optional<HostReviewDto> deleteHostReview(Long hostReviewId, Long userId) {
-        Optional<HostReview> hostReviewOpt = hostReviewRepository.findById(hostReviewId);
-        if(hostReviewOpt.isPresent()){
-
-            Optional<Review> reviewOpt = reviewRepository.findById(hostReviewOpt.get().getReviewId());
-
-            if (!reviewOpt.isPresent()) {
-                throw new HostReviewNotFoundException();
-            }
-
-            hostReviewRepository.deleteById(hostReviewId);
-            reviewOpt.get().changeIsHostReview(false);
-
-            HostReviewDto hostReviewDto = hostReviewMapper.toHostReviewDto(hostReviewOpt.get());
-
-            return Optional.of(hostReviewDto);
-
-        }else{
-            throw new HostReviewNotFoundException();
-        }
-
-    }
 
 }

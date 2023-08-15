@@ -35,15 +35,14 @@ public class AdminController {
             @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteRoomDto.class, required = true, paramType = "body")
     })
     @DeleteMapping("/room")
-    public ResponseEntity<RoomDto> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
+    public ResponseEntity<Boolean> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
         Optional<Long> userId = jwtService.extractUserId(accessToken);
 
-        Optional<RoomDto> deletedRoomDto = adminService.deleteRoom(requestDeleteRoomDto.getId(), userId.get());
+        Boolean res = adminService.deleteRoom(requestDeleteRoomDto.getId(), userId.get());
 
-        return ResponseEntity.ok(deletedRoomDto.get());
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "리뷰 삭제", notes = "")
@@ -51,32 +50,16 @@ public class AdminController {
             @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteReviewDto.class, required = true, paramType = "body")
     })
     @DeleteMapping("/review")
-    public ResponseEntity<ReviewDto> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
+    public ResponseEntity<Boolean> deleteReview(@Valid @RequestBody RequestDeleteReviewDto requestDeleteReviewDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
 
-        Optional<ReviewDto> reviewDto = adminService.deleteReview(requestDeleteReviewDto.getReviewId(), userIdOpt.get());
+        Boolean res = adminService.deleteReview(requestDeleteReviewDto.getReviewId(), userIdOpt.get());
 
-        return ResponseEntity.ok(reviewDto.get());
-    }
-
-    @ApiOperation(value = "호스트 리뷰 삭제", notes = "")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestDeleteHostReviewDto.class, required = true, paramType = "body")
-    })
-    @DeleteMapping("/hostReview")
-    public ResponseEntity<HostReviewDto> deleteHostReview(@Valid @RequestBody RequestDeleteHostReviewDto requestDeleteHostReviewDto, HttpServletRequest req){
-
-        String accessToken = req.getAttribute(ACCESSTOKEN).toString();
-
-        Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
-
-        Optional<HostReviewDto> hostReviewDtoOpt = adminService.deleteHostReview(requestDeleteHostReviewDto.getHostReviewId(), userIdOpt.get());
-
-        return ResponseEntity.ok(hostReviewDtoOpt.get());
+        return ResponseEntity.ok(res);
     }
 
 

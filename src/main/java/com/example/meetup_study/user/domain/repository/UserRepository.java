@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
 
-    @EntityGraph(attributePaths = { "joinedUserList"})
-    Optional<User> findById(Long userId);
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmail(@Param("email") String email);
+
+    @Query("SELECT u FROM User u WHERE u.id = :userId")
+    Optional<User> findById(@Param("userId") Long userId);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userImage WHERE u.id = :userId")
     Optional<User> findByIdWithUserImage(@Param("userId") Long userId);

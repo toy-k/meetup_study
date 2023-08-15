@@ -10,9 +10,8 @@ import java.util.Optional;
 
 public interface AdminService {
 
-    Optional<RoomDto> deleteRoom(Long id, Long userId);
+    Boolean deleteRoom(Long id, Long userId);
 
-    Optional<ReviewDto> deleteReview(Long reviewId, Long UserId);
+    Boolean deleteReview(Long reviewId, Long userId);
 
-    Optional<HostReviewDto> deleteHostReview(Long hostReviewId, Long userId);
 }

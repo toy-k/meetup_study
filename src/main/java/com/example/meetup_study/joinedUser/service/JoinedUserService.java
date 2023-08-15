@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface JoinedUserService {
-    Optional<JoinedUserDto> getJoinedUserById(Long id);
+    Optional<JoinedUserDto> getJoinedById(Long id);
 
     Optional<JoinedUserDto> getJoinedUserByUserIdAndRoomId(Long userId, Long roomId);
 

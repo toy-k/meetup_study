@@ -25,9 +25,7 @@ import java.util.Optional;
 public class RoomImageController {
 
     private final RoomImageService roomImageService;
-    private final RoomService roomService;
     private final JwtService jwtService;
-    private final UserService userService;
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -37,7 +35,7 @@ public class RoomImageController {
             @ApiImplicitParam(name = "body", value = "Request Body", dataTypeClass = RequestRoomImageDto.class, required = true, paramType = "body")
     })
     @PutMapping
-    public ResponseEntity<RoomImageDto> updateRoomImage(@RequestParam("file") MultipartFile file, @Valid @RequestBody RequestRoomImageDto requestRoomImageDto, HttpServletRequest req) throws Exception {
+    public ResponseEntity<RoomImageDto> updateRoomImage(@RequestParam("file") MultipartFile file, @Valid @RequestBody RequestRoomImageDto requestRoomImageDto, HttpServletRequest req) {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
 

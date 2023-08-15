@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HostUserService {
+
+
     Optional<HostUserDto> getHostUserById(Long id);
 
     Optional<HostUser> getHostUserByRoomId(Long roomId);
