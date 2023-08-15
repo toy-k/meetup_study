@@ -92,15 +92,19 @@ https://github.com/toy-k/vuejs_study/edit/main/README.md
 
 
 
-[7/20 ~]
+[7/20 ~ 8/15]
 
 쿼리 최적화 
--> fetch join으로 요청 쿼리 횟수 줄이는 중.
--> 고치면서 dto 고치니 사방에서 에러 터진상황
+-> fetch join으로 요청 쿼리 횟수 줄이기
+
+DTO mapping
+-> entity에서 Dto 변환 모듈 생성 및 관리
 
 인덱스
 -> User 엔티티의 username 필드에 index 셋팅. 원래 중복 허용했어서 카디널리티가 낮았는데, API 호출용으로 사용중이고, 적어도 이메일보단 짧아서 선택.
 
+레디스 조회 싱크
+-> room 생성시 레디스 키 값 지정으로 해결
 
 
 
@@ -108,7 +112,6 @@ https://github.com/toy-k/vuejs_study/edit/main/README.md
 
   - 기타 소셜 로그인 추가
   - API 스트레스 테스트
-  - 레디스 조회수 싱크 수정
   - 환경변수 통합 및 예시 업로드 (도커, 테스트 환경)
   - 실행환경 별 로깅 콘솔 출력 유무 변경
   - makefile로 도커 컨테이너 시작 중지 삭제 및 볼륨 초기화 명령어 셋팅
@@ -119,7 +122,6 @@ https://github.com/toy-k/vuejs_study/edit/main/README.md
       - 기능 추가하거나 구조 수정하면 테스트가 통째로 틀려서 빌드자체가 안되는 문제
           -> 일단 전부 주석
           -> 트랜잭션 등 핵심적 비즈니스 코드에만 최소 적용?
-  - fetch join 추가 및 비효율적인 예외처리 중 사용하는 쿼리 최적화
   - 각 테이블 별 높은 카디널리티 + 비교 효율성 가진 컬럼 인덱싱
   - 룸 파일 업로드시 에러 수정
   - 도커 레디스 연결 에러 수정
