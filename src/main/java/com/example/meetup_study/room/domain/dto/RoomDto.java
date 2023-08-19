@@ -16,12 +16,13 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoomDto {
+public class RoomDto implements Serializable {
 
     @Schema(description = "방 id", example = "1", required = true)
     @Positive
