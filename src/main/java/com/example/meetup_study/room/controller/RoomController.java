@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,17 +54,32 @@ public class RoomController {
     }
 
 
+//    @ApiOperation(value = "방 조회", notes = "방을 조회합니다.")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name= "id", value = "방 id", dataTypeClass = Long.class, required = true, paramType = "path")
+//    })
+//    @Cacheable(value = "room", key = "#id")
+//    @GetMapping("/id/{id}")
+//    public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
+//
+//        Optional<RoomDto> roomDtoOpt = roomService.getRoomAndIncrementViewCount(id);
+//
+//        return ResponseEntity.ok(roomDtoOpt.get());
+//    }
+
     @ApiOperation(value = "방 조회", notes = "방을 조회합니다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name= "id", value = "방 id", dataTypeClass = Long.class, required = true, paramType = "path")
     })
+    @Cacheable(value = "room", key = "#id")
     @GetMapping("/id/{id}")
-    public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
+    public RoomDto getRoom(@PathVariable Long id){
 
         Optional<RoomDto> roomDtoOpt = roomService.getRoomAndIncrementViewCount(id);
 
-        return ResponseEntity.ok(roomDtoOpt.get());
+        return (roomDtoOpt.get());
     }
+
 
     @ApiOperation(value = "방들 조회", notes = "방들을 조회합니다.")
     @ApiImplicitParams({
