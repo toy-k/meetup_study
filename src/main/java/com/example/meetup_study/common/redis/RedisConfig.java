@@ -1,5 +1,7 @@
 package com.example.meetup_study.common.redis;
 
+import com.example.meetup_study.cart.domain.dao.CartDao;
+import com.example.meetup_study.cart.domain.dto.CartDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -43,6 +45,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
+
 
     @Override
     @Bean
