@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +32,6 @@ public class RoomController {
 
     private final RoomService roomService;
     private final JwtService jwtService;
-    private final RoomMapper roomMapper;
-    private final UserService userService;
-//    RoomDto roomDtoOpt = roomMapper.toRoomDto(roomOpt.get());
 
     private String ACCESSTOKEN = "AccessToken";
 
@@ -53,19 +52,6 @@ public class RoomController {
         return ResponseEntity.ok(createdRoomDto.get());
     }
 
-
-//    @ApiOperation(value = "방 조회", notes = "방을 조회합니다.")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name= "id", value = "방 id", dataTypeClass = Long.class, required = true, paramType = "path")
-//    })
-//    @Cacheable(value = "room", key = "#id")
-//    @GetMapping("/id/{id}")
-//    public ResponseEntity<RoomDto> getRoom(@PathVariable Long id){
-//
-//        Optional<RoomDto> roomDtoOpt = roomService.getRoomAndIncrementViewCount(id);
-//
-//        return ResponseEntity.ok(roomDtoOpt.get());
-//    }
 
     @ApiOperation(value = "방 조회", notes = "방을 조회합니다.")
     @ApiImplicitParams({
@@ -140,32 +126,34 @@ public class RoomController {
     @ApiImplicitParams({
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RoomDto.class, required = true, paramType = "body")
     })
+    @CachePut(value = "room", key = "#roomDto.id")
     @PutMapping()
-    public ResponseEntity<RoomDto> updateRoom(@Valid @RequestBody RoomDto roomDto, HttpServletRequest req) throws AccessDeniedException {
+    public RoomDto updateRoom(@Valid @RequestBody RoomDto roomDto, HttpServletRequest req) {
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         Optional<RoomDto> updatedRoomDto = roomService.updateRoom(roomDto, userIdOpt.get());
 
-        return ResponseEntity.ok(updatedRoomDto.get());
+        return (updatedRoomDto.get());
     }
+
 
     @ApiOperation(value = "방 삭제", notes = "방을 삭제합니다.")
     @ApiImplicitParams({
             @ApiImplicitParam(name= "body", value = "Request Body", dataTypeClass = RequestDeleteRoomDto.class, required = true, paramType = "body")
     })
+    @CacheEvict(value = "room", key = "#requestDeleteRoomDto.id")
     @DeleteMapping
-    public ResponseEntity<Boolean> deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
+    public Boolean deleteRoom(@Valid @RequestBody RequestDeleteRoomDto requestDeleteRoomDto, HttpServletRequest req){
 
         String accessToken = req.getAttribute(ACCESSTOKEN).toString();
         Optional<Long> userIdOpt = jwtService.extractUserId(accessToken);
 
         Boolean res = roomService.deleteRoom(requestDeleteRoomDto.getId(), userIdOpt.get());
 
-        return ResponseEntity.ok(res);
+        return (res);
     }
-
     //방갯수
     @ApiOperation(value = "방 갯수", notes = "방 갯수를 조회합니다.")
     @GetMapping("/count")
