@@ -11,6 +11,7 @@ import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class HostUserServiceImpl implements HostUserService {
     private final HostUserRepository hostUserRepository;
     private final HostUserMapper hostUserMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<HostUserDto> getHostUserById(Long id) {
         Optional<HostUser> hostUserOpt = hostUserRepository.findHostUserAndUserAndRoomByHostUserId(id);
@@ -34,6 +36,7 @@ public class HostUserServiceImpl implements HostUserService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<HostUser> getHostUserByRoomId(Long roomId) {
         Optional<HostUser> hostUser = hostUserRepository.findHostUserAndUserAndRoomByRoomId(roomId);
@@ -44,6 +47,7 @@ public class HostUserServiceImpl implements HostUserService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<HostUserDto> getHostUserByUserIdAndRoomId(Long userId, Long roomId) {
 

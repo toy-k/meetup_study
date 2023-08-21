@@ -1,8 +1,5 @@
 package com.example.meetup_study.review.service;
 
-import com.example.meetup_study.joinedUser.domain.dto.JoinedUserDto;
-import com.example.meetup_study.joinedUser.service.JoinedUserService;
-import com.example.meetup_study.joinedUser.domain.JoinedUser;
 import com.example.meetup_study.joinedUser.exception.JoinedUserNotFoundException;
 import com.example.meetup_study.mapper.ReviewMapper;
 import com.example.meetup_study.review.domain.Review;
@@ -12,16 +9,12 @@ import com.example.meetup_study.review.domain.repository.ReviewRepository;
 import com.example.meetup_study.review.exception.ReviewInvalidRequestException;
 import com.example.meetup_study.review.exception.ReviewNotFoundException;
 import com.example.meetup_study.room.domain.Room;
-import com.example.meetup_study.room.domain.repository.RoomRepository;
 import com.example.meetup_study.room.exception.RoomNotFoundException;
-import com.example.meetup_study.room.service.RoomService;
 import com.example.meetup_study.user.domain.User;
-import com.example.meetup_study.user.domain.repository.UserRepository;
-import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public List<ReviewDto> findReviewListByRoomId(Long roomId) {
 
@@ -46,6 +40,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     }
 
+
+    @Transactional(readOnly = true)
     @Override
     public List<ReviewDto> findReviewListByUserId(Long userId) {
 
@@ -112,6 +108,7 @@ public class ReviewServiceImpl implements ReviewService{
         return true;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<ReviewDto> findById(Long reviewId) {
         Optional<Review> review = reviewRepository.findById(reviewId);

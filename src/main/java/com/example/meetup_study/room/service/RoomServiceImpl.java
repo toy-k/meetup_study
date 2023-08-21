@@ -18,7 +18,7 @@ import com.example.meetup_study.user.domain.repository.UserRepository;
 import com.example.meetup_study.user.fakeUser.exception.UserInvalidRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -44,9 +44,7 @@ public class RoomServiceImpl implements RoomService {
     private final RedisTemplate<String, String> redisTemplate;
     private final CategoryService categoryService;
     private final RoomMapper roomMapper;
-
-//    RoomDto roomDto = roomMapper.toRoomDto(room);
-
+    
 
     @Transactional
     @Override
@@ -241,7 +239,7 @@ public class RoomServiceImpl implements RoomService {
     private Long incrementViewCount(Long roomId) {
         String key = "room:" + roomId + ":viewCount";
         Long count = redisTemplate.opsForValue().increment(key,1L);
-        System.out.println("incrementViewCount "+ roomId +" : " + count);
+        log.debug("incrementViewCount "+ roomId +" : " + count);
 
         return count.longValue();
     }
