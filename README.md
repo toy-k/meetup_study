@@ -1,4 +1,5 @@
 # meetup_study (모임 서비스)
+  - 프로젝트 아키텍처
   - 사용기술
   - 실행방법
   - 스크린샷
@@ -7,12 +8,22 @@
   - 학습 자료
 
 
+## [프로젝트 아키텍처]
+![image](https://github.com/toy-k/meetup_study/assets/88143547/2aea3719-c653-4323-b966-7ec7fcc0bf4b)
+
+
 ## [사용기술]
 
-<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-
+- Java 11
+- Spring Boot
+- Junit
+- MySQL
+- Jpa
+- Spring Security
+- Redis
+- GitAction
+- Docker
+  
 ## [실행방법]
 ```
 ./gradlew build
