@@ -24,8 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +86,7 @@ public class RoomServiceImpl implements RoomService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Optional<RoomDto> getRoomAndIncrementViewCount(Long id) {
         Optional<Room> roomOpt = roomRepository.findRoomWithCategoryAndHostUsersAndImage(id);
@@ -103,6 +103,7 @@ public class RoomServiceImpl implements RoomService {
         return Optional.ofNullable(roomDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Room> getRoom(Long id) {
         Optional<Room> roomOpt = roomRepository.findById(id);
@@ -113,6 +114,7 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RoomDto> getRoomList(Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
@@ -128,6 +130,7 @@ public class RoomServiceImpl implements RoomService {
         return roomDtos;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RoomDto> getRoomListBeforeMeetupStart(Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
@@ -144,6 +147,7 @@ public class RoomServiceImpl implements RoomService {
         return roomDtos;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RoomDto> getRoomListAfterMeetupStart(Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page-1, size, Sort.by("id").descending());
@@ -224,6 +228,7 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.deleteAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Long getRoomCount() {
         return roomRepository.count();

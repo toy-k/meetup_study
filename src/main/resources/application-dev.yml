@@ -6,10 +6,16 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
-    url: ${APPLICATION_URL}
-    username: ${APPLICATION_USERNAME}
-    password:
+    master:
+      driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
+      jdbc-url: ${APPLICATION_URL}
+      username: ${APPLICATION_USERNAME}
+      password:
+    slave:
+      driver-class-name: ${APPLICATION_DRIVER_CLASS_NAME}
+      jdbc-url: ${APPLICATION_REPLICATION_URL}
+      username: ${APPLICATION_USERNAME}
+      password:
   jpa:
     hibernate:
       ddl-auto: create
