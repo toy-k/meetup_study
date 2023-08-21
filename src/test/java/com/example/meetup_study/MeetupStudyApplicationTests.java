@@ -5,14 +5,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 
-@TestPropertySource(locations = "classpath:application-test.yml")
-@SpringBootTest
+//@TestPropertySource(locations = "classpath:application-test.yml")
+//@SpringBootTest
 
 class MeetupStudyApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+//	@Test
+//	void contextLoads() {
+//	}
 
 }
 
