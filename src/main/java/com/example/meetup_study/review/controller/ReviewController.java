@@ -27,13 +27,8 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final JwtService jwtService;
-    private final UserService userService;
-    private final JoinedUserService joinedUserService;
-    private final RoomService roomService;
 
     private String ACCESSTOKEN = "AccessToken";
-
-    //joineduser로 조건확인, 룸 상태확인(end)
 
 
     @ApiOperation(value = "리뷰 생성", notes = "리뷰를 생성합니다.")

@@ -16,8 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +54,7 @@ public class AnnounceServiceImpl implements AnnounceService {
         return Optional.of(announceDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<AnnounceDto> getAnnounce(Long announceId) {
         Optional<Announce> announceOpt = announceRepository.findAnnounceAndUserByAnnounceId(announceId);
@@ -69,6 +70,7 @@ public class AnnounceServiceImpl implements AnnounceService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AnnounceDto> getAnnounceList(Integer page, Integer size) {
 
@@ -129,6 +131,7 @@ public class AnnounceServiceImpl implements AnnounceService {
         return true;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Long getAnnounceCount() {
         return announceRepository.count();

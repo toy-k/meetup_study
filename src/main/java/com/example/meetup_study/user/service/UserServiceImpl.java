@@ -10,8 +10,8 @@ import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +24,13 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<UserDto> findByIdWithUserImage(Long id) {
 
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService{
         return userDtoOpt;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<UserDto> findByUsernameWithUserImage(String username) {
         Optional<User> userOpt = userRepository.findByUsernameWithUserImage(username);
@@ -54,6 +57,7 @@ public class UserServiceImpl implements UserService{
         return userDtoOpt;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<UserDto> findAllUserWithUserImage() {
         List<User> userList = userRepository.findAllUserWithUserImage();

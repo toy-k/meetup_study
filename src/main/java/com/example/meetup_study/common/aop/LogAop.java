@@ -23,7 +23,6 @@ public class LogAop {
     private static final String LOG_DIRECTORY = "./log/";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-//    @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.auth.jwt.JwtAuthenticationProcessingFilter.*(..)) && !execution(* com.example.meetup_study.common.scheduler.EventEmailScheduler.*(..))")
 @Pointcut("execution(* com.example.meetup_study..*(..)) && !execution(* com.example.meetup_study.common.jwt.JwtAuthenticationProcessingFilter.*(..))")
     private void cut(){}
 
@@ -39,12 +38,6 @@ public class LogAop {
 
         writeLogToFile(logMsg, LogLevel.INFO);
 
-//        Object[] args = joinPoint.getArgs();
-//        if (args.length <= 0) log.info("no parameter");
-//        for (Object arg : args) {
-//            log.info("parameter : " + arg.getClass().getSimpleName());
-//            log.info("parameter : " + arg);
-//        }
     }
 
     @AfterThrowing(value = "cut()", throwing = "exception")

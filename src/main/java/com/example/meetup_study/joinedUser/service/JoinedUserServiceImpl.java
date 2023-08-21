@@ -17,8 +17,8 @@ import com.example.meetup_study.user.domain.User;
 import com.example.meetup_study.user.fakeUser.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +32,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
     private final RoomService roomService;
     private final JoinedUserMapper joinedUserMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<JoinedUserDto> getJoinedById(Long id) {
         Optional<JoinedUser> joinedUser = joinedUserRepository.findById(id);
@@ -43,6 +44,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
         return Optional.of(joinedUserDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<JoinedUserDto> getJoinedUserByUserIdAndRoomId(Long userId, Long roomId) {
 
@@ -66,6 +68,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
         return Optional.of(joinedUserDto);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<JoinedUserDto> getJoinedUserByUserId(Long userId) {
 
@@ -84,6 +87,7 @@ public class JoinedUserServiceImpl implements JoinedUserService{
 
         return joinedUserDtoList;
     }
+    @Transactional(readOnly = true)
     @Override
     public List<JoinedUserDto> getJoinedUserByRoomId(Long roomId) {
 

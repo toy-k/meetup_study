@@ -55,6 +55,6 @@ jwt:
 
 logging:
   level:
-    root: info
-    com.example: debug
     com.example.meetup_study: debug
+#    root: debug
+#    com.example: debug
