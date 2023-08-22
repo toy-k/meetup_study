@@ -8,6 +8,6 @@ COPY ${JAR_FILE} app.jar
 
 ENV    PROFILE dev
 
-#CMD ["java", "-Dspring.profiles.active=${PROFILE}", "-jar","/app.jar"]
+CMD ["java", "-Dspring.profiles.active=${PROFILE}", "-jar","/app.jar"]
 
-CMD ["java", "-jar","/app.jar"]
+#CMD ["java", "-jar","/app.jar"]

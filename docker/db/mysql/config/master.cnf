@@ -1,3 +1,9 @@
+
+
+
 [mysqld]
-log-bin=mysql-bin
-server-id=1
+log_bin = mysql-bin
+server_id = 224555
+expire_logs_days = 7
+default_authentication_plugin = caching_sha2_password
+lower_case_table_names=1

@@ -1,5 +1,10 @@
+
+
+
 [mysqld]
-log-bin=mysql-bin
-server-id=2
-relay-log=relaylog
-log-slave_updates=1
+log_bin = mysql-bin
+server_id = 1333333
+log_slave_updates = 1
+read_only = 1
+lower_case_table_names=1
+default_authentication_plugin = caching_sha2_password
